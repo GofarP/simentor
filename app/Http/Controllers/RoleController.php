@@ -6,15 +6,19 @@ use Illuminate\Http\Request;
 use App\Http\Requests\RoleRequest;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use App\Services\Permission\PermissionServiceInterface;
 use App\Services\Role\RoleServiceInterface;
 
 class RoleController extends Controller
 {
     protected RoleServiceInterface $roleService;
+    protected PermissionServiceInterface $permissionService;
 
-    public function __construct(RoleServiceInterface $roleService)
+
+    public function __construct(RoleServiceInterface $roleService, PermissionServiceInterface $permissionService)
     {
         $this->roleService = $roleService;
+        $this->permissionService = $permissionService;
     }
     /**
      * Display a listing of the resource.
@@ -31,17 +35,25 @@ class RoleController extends Controller
      */
     public function create()
     {
-        return view('role.create');
+        // $search bisa null, $perPage diabaikan karena $eager=true
+        $permissions = $this->permissionService->getAllPermissions(null, 10, true);
+
+        return view('role.create', compact('permissions'));
     }
+
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(RoleRequest $request)
     {
-        $this->roleService->storeRole($request->validated());
+        $data = $request->validated();
+        $permissions = $request->input('permissions', []); // array of IDs
+        $this->roleService->storeRole($data, $permissions);
+
         return redirect()->route('role.index')->with('success', 'Role berhasil ditambahkan.');
     }
+
 
     /**
      * Display the specified resource.

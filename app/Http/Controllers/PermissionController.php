@@ -31,6 +31,7 @@ class PermissionController extends Controller
 
     public function store(PermissionRequest $request)
     {
+
         $this->permissionService->storePermission($request->all());
         return redirect()->route('permission.index')->with('success', 'Sukses Menambah Permission.');
     }

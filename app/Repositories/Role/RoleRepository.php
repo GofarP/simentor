@@ -2,32 +2,67 @@
 
 namespace App\Repositories\Role;
 
+use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Role;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Spatie\Permission\Models\Permission;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class RoleRepository implements RoleRepositoryInterface
 {
-    public function getAll(string $search = '', int $perPage = 10): LengthAwarePaginator
+    public function getAll(?string $search = null, int $perPage = 10, bool $eager = false): LengthAwarePaginator|Collection
     {
-        return Role::where('name', 'like', '%' . $search . '%')
-            ->orderByDesc('created_at')
-            ->paginate($perPage)
-            ->onEachSide(1);
+        $query = Role::query();
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $query->orderByDesc('created_at');
+
+        return $eager ? $query->get() : $query->paginate($perPage)->onEachSide(1);
     }
 
-    public function storeRole(array $data)
+    public function store(array $data, array $permissionIds = []): Role
     {
-        return Role::create($data);
-    }
+        $role = Role::create($data);
 
-    public function editRole(Role $role, array $data)
-    {
-        $role->update($data);
+        if (!empty($permissionIds)) {
+            // Ambil nama permission berdasarkan ID dan paksa guard 'web'
+            $permissionNames = Permission::whereIn('id', $permissionIds)
+                ->where('guard_name', 'web')
+                ->pluck('name')
+                ->toArray();
+
+            $role->syncPermissions($permissionNames); // sync ke role
+        }
+
         return $role;
     }
 
-    public function deleteRole(Role $role): bool
+    public function update(Role $role, array $data, array $permissionIds = []): Role
+    {
+        $role->update($data);
+
+        if (!empty($permissionIds)) {
+            $permissionNames = Permission::whereIn('id', $permissionIds)
+                ->where('guard_name', 'web')
+                ->pluck('name')
+                ->toArray();
+
+            $role->syncPermissions($permissionNames);
+        }
+
+        return $role;
+    }
+
+    public function delete(Role $role): bool
     {
         return $role->delete();
+    }
+
+    public function syncPermissions(Role $role, array $permissionNames): Role
+    {
+        $role->syncPermissions($permissionNames);
+        return $role;
     }
 }

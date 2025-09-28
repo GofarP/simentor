@@ -18,7 +18,7 @@ class RoleRequest extends FormRequest
 
         return [
             'name' => 'required|string|max:100|unique:roles,name,' . $id,
-            'permissions' => 'nullable|array',
+            'permissions' => 'required|array',
             'permissions.*' => 'exists:permissions,id',
         ];
     }
@@ -28,6 +28,7 @@ class RoleRequest extends FormRequest
         return [
             'name.required' => 'Nama role wajib diisi.',
             'name.unique'   => 'Role sudah ada.',
+            'permission.required'=>'Pilih Permission',
             'permissions.*.exists' => 'Permission tidak valid.',
         ];
     }

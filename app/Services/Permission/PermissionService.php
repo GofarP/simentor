@@ -2,34 +2,37 @@
 
 namespace App\Services\Permission;
 
+use App\Repositories\Permission\PermissionRepositoryInterface;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class PermissionService implements PermissionServiceInterface
 {
-    public function getAllPermissions(string $search = null, int $perPage = 10)
+    protected PermissionRepositoryInterface $permissionRepository;
+
+    public function __construct(PermissionRepositoryInterface $permissionRepository)
     {
-        $query = Permission::query();
+        $this->permissionRepository = $permissionRepository;
+    }
 
-        if ($search) {
-            $query->where('name', 'like', "%{$search}%");
-        }
-
-        return $query->orderByDesc('created_at')->paginate($perPage)->onEachSide(1);
+    public function getAllPermissions( $search = null, int $perPage = 10, bool $eager = false)
+    {
+        return $this->permissionRepository->getAll($search, $perPage, $eager);
     }
 
     public function storePermission(array $data): Permission
     {
-        return Permission::create($data);
+        return $this->permissionRepository->storePermission($data);
     }
 
     public function editPermission(Permission $permission, array $data): Permission
     {
-        $permission->update($data);
-        return $permission;
+        return $this->permissionRepository->editPermission($permission, $data);
     }
 
     public function deletePermission(Permission $permission): bool
     {
-        return $permission->delete();
+        return $this->permissionRepository->deletePermission($permission);
     }
 }

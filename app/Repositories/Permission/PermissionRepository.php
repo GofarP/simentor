@@ -1,18 +1,30 @@
 <?php
 
-namespace App\Repositories;
+namespace App\Repositories\Permission;
 
+use App\Repositories\Permission\PermissionRepositoryInterface;
+use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Permission;
 
 class PermissionRepository implements PermissionRepositoryInterface
 {
-    public function getAll(string $search = '', int $perPage = 10)
+    public function getAll(?string $search = '', int $perPage = 10, bool $eager = false)
     {
-        return Permission::where('name', 'like', '%' . $search . '%')
-            ->orderByDesc('created_at')
-            ->paginate($perPage)
-            ->onEachSide(1);
+        $query = Permission::query();
+
+        if ($search) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+
+        $query->orderByDesc('created_at');
+
+        if ($eager) {
+            return $query->get();
+        }
+
+        return $query->paginate($perPage)->onEachSide(1);
     }
+
 
     public function storePermission(array $data)
     {
@@ -28,5 +40,10 @@ class PermissionRepository implements PermissionRepositoryInterface
     public function deletePermission(Permission $permission): bool
     {
         return $permission->delete();
+    }
+
+    public function getNamesByIds(array $ids): Collection
+    {
+        return Permission::whereIn('id', $ids)->pluck('name');
     }
 }

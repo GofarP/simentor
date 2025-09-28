@@ -26,7 +26,7 @@ use App\Http\Controllers\RoleController;
 
 Route::redirect('/', 'login');
 
-Route::middleware(['auth:sanctum', 'verified'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
 
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
