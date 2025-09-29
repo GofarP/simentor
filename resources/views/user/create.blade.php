@@ -13,7 +13,7 @@
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
                                   focus:ring-2 focus:ring-violet-500 focus:border-violet-500
                                   dark:bg-gray-800 dark:text-gray-200"
-                        required placeholder="Masukkan nama user">
+                         placeholder="Masukkan nama user">
                     @error('name')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
@@ -25,7 +25,7 @@
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
                                   focus:ring-2 focus:ring-violet-500 focus:border-violet-500
                                   dark:bg-gray-800 dark:text-gray-200"
-                        required placeholder="Masukkan Email">
+                         placeholder="Masukkan Email">
                     @error('email')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
@@ -37,7 +37,7 @@
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
                                   focus:ring-2 focus:ring-violet-500 focus:border-violet-500
                                   dark:bg-gray-800 dark:text-gray-200"
-                        required placeholder="Masukkan Telp">
+                         placeholder="Masukkan Telp">
                     @error('telp')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
@@ -51,7 +51,7 @@
                             <option value="{{ $role->id }}">{{ $role->name }}</option>
                         @endforeach
                     </select>
-                    @error('telp')
+                    @error('role_id')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
@@ -63,7 +63,7 @@
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
                               focus:ring-2 focus:ring-violet-500 focus:border-violet-500
                               dark:bg-gray-800 dark:text-gray-200"
-                        required placeholder="Masukkan Password">
+                         placeholder="Masukkan Password">
 
                     @error('password')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
@@ -78,7 +78,7 @@
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
                               focus:ring-2 focus:ring-violet-500 focus:border-violet-500
                               dark:bg-gray-800 dark:text-gray-200"
-                        required placeholder="Masukkan Konfirmasi Password">
+                         placeholder="Masukkan Konfirmasi Password">
 
                     @error('password_confirmation')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
