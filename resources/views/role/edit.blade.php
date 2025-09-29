@@ -5,7 +5,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 w-full">
             <h2 class="text-2xl font-bold text-violet-600 mb-6">Edit Role</h2>
 
-            <form method="POST" action="{{ route('role.update', $role) }}">
+            <form method="POST" action="{{ route('role.update', $role->id) }}">
                 @csrf
                 @method('PUT')
 
@@ -34,7 +34,7 @@
                         class="w-full js-select2 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
                                focus:ring-2 focus:ring-violet-500 focus:border-violet-500
                                dark:bg-gray-800 dark:text-gray-200">
-                        @foreach($allPermissions as $permission)
+                        @foreach($permissions as $permission)
                             <option value="{{ $permission->id }}"
                                 {{ in_array($permission->id, old('permissions', $rolePermissions)) ? 'selected' : '' }}>
                                 {{ $permission->name }}

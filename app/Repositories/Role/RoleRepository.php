@@ -11,7 +11,7 @@ class RoleRepository implements RoleRepositoryInterface
 {
     public function getAll(?string $search = null, int $perPage = 10, bool $eager = false): LengthAwarePaginator|Collection
     {
-        $query = Role::query();
+        $query = Role::query()->with('permissions'); // eager load permissions
 
         if ($search) {
             $query->where('name', 'like', "%{$search}%");
@@ -19,7 +19,9 @@ class RoleRepository implements RoleRepositoryInterface
 
         $query->orderByDesc('created_at');
 
-        return $eager ? $query->get() : $query->paginate($perPage)->onEachSide(1);
+        return $eager
+            ? $query->get()
+            : $query->paginate($perPage)->onEachSide(1);
     }
 
     public function store(array $data, array $permissionIds = []): Role
@@ -40,6 +42,7 @@ class RoleRepository implements RoleRepositoryInterface
     }
     public function update(Role $role, array $data, array $permissionIds = []): Role
     {
+    
         // update data role
         $role->update($data);
 

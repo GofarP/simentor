@@ -26,13 +26,9 @@
 
 
                 <!-- Search di bawah tombol -->
-                <form method="GET" action="{{ route('permission.index') }}" class="w-full sm:w-64">
-                    <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Cari permission..."
-                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
-                                  focus:ring-2 focus:ring-violet-500 focus:border-violet-500
-                                  dark:bg-gray-800 dark:text-gray-200" />
-                </form>
+                <input type="text" name="search" wire:model.live.debounce.500ms="search" placeholder="Cari permission..." class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
+              focus:ring-2 focus:ring-violet-500 focus:border-violet-500
+              dark:bg-gray-800 dark:text-gray-200" />
 
                 <a href="{{ route('permission.create') }}"
                     class=" mt-3 inline-flex items-center px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-lg shadow hover:bg-violet-700 focus:outline-none w-full sm:w-auto justify-center">
@@ -65,11 +61,14 @@
                 @forelse($permissions as $index => $permission)
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $index + 1 }}</td>
+                            {{ $index + 1 }}
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $permission->name }}</td>
+                            {{ $permission->name }}
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $permission->guard_name }}</td>
+                            {{ $permission->guard_name }}
+                        </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
                             <a href="{{ route('permission.edit', $permission) }}"
                                 class="px-3 py-1 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition">

@@ -25,9 +25,8 @@ class RoleController extends Controller
      */
     public function index()
     {
-        // $roles = $this->roleService->getAllRoles($request->get('search', ''), 10);
+        return view('role.index', );
 
-        return view('role.index');
     }
 
     /**
@@ -35,7 +34,6 @@ class RoleController extends Controller
      */
     public function create()
     {
-        // $search bisa null, $perPage diabaikan karena $eager=true
         $permissions = $this->permissionService->getAllPermissions(null, 10, true);
 
         return view('role.create', compact('permissions'));
@@ -68,14 +66,20 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        return view('role.edit', compact('role'));
+        $permissions = $this->permissionService->getAllPermissions(null, 10, true);
+
+        $rolePermissions = $role->permissions->pluck('id')->toArray();
+
+
+        return view('role.edit', compact('permissions', 'role','rolePermissions'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Role $role)
+    public function update(RoleRequest $request, Role $role)
     {
+        return $request;
         $this->roleService->editRole($role, $request->validated());
         return redirect()->route('role.index')->with('success', 'Role berhasil diperbarui.');
     }

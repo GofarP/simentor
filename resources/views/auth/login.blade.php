@@ -1,5 +1,5 @@
 <x-authentication-layout>
-    <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+    <div class="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900">
         <div class="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
 
             <!-- Header -->
