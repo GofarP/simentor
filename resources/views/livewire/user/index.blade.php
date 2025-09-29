@@ -74,14 +74,15 @@
                         </td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $user->roles }}
+                            {{ $user->roles->first()->name ?? '-' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
                             <a href="{{ route('user.edit', $user) }}"
                                 class="px-3 py-1 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition">
                                 Edit
                             </a>
-                            <form action="{{ route('user.destroy', $user) }}" method="POST">
+                            <form action="{{ route('user.destroy', $user) }}" method="POST"
+                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus user ini?')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"
@@ -89,6 +90,7 @@
                                     Hapus
                                 </button>
                             </form>
+
                         </td>
                     </tr>
                 @empty
