@@ -11,7 +11,5 @@ interface PermissionRepositoryInterface
     public function storePermission(array $data);
     public function editPermission(Permission $permission, array $data);
     public function deletePermission(Permission $permission): bool;
-    public function getNamesByIds(array $ids): Collection
-    ;
-
+    public function getNamesByIds(array $ids): Collection;
 }

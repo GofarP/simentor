@@ -1,5 +1,4 @@
 <div class="px-4 sm:px-6 lg:px-8 py-12 w-full max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
-    <!-- Flash Message -->
     @if (session('success'))
         <div
             class="mb-4 px-4 py-3 rounded-lg bg-green-100 border border-green-300 text-green-800 dark:bg-green-800 dark:text-green-100 dark:border-green-700">
@@ -7,10 +6,8 @@
         </div>
     @endif
 
-    <!-- Header + tombol + search -->
     <div class="mb-6">
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
-            <!-- Judul -->
             <div>
                 <p class="text-3xl md:text-4xl font-extrabold text-violet-600 mb-2">
                     Permission
@@ -20,12 +17,8 @@
                 </p>
             </div>
 
-            <!-- Tombol + Search -->
             <div class="flex flex-col items-end gap-2">
-                <!-- Tombol Tambah -->
 
-
-                <!-- Search di bawah tombol -->
                 <input type="text" name="search" wire:model.live.debounce.500ms="search" placeholder="Cari permission..." class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
               focus:ring-2 focus:ring-violet-500 focus:border-violet-500
               dark:bg-gray-800 dark:text-gray-200" />
@@ -38,7 +31,6 @@
         </div>
     </div>
 
-    <!-- Table -->
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-100 dark:bg-gray-700">

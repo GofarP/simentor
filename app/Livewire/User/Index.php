@@ -3,11 +3,33 @@
 namespace App\Livewire\User;
 
 use Livewire\Component;
+use Livewire\WithPagination;
+use App\Services\User\UserServiceInterface;
+
 
 class Index extends Component
 {
+    use WithPagination;
+    public string $search = '';
+    protected UserServiceInterface $userService;
+
+
+    public function boot(UserServiceInterface $userService)
+    {
+        $this->userService = $userService;
+    }
+
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
+    }
+
     public function render()
     {
-        return view('livewire.user.index');
+        $users=$this->userService->getAllUser($this->search,10);
+        return view('livewire.user.index',[
+            'users'=>$users
+        ]);
     }
 }

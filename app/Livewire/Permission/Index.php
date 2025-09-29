@@ -13,9 +13,7 @@ class Index extends Component
     public string $search = '';
     protected PermissionServiceInterface $permissionService;
 
-    /**
-     * Dependency Injection lewat boot()
-     */
+
     public function boot(PermissionServiceInterface $permissionService)
     {
         $this->permissionService = $permissionService;

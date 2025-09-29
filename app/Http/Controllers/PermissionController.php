@@ -12,11 +12,14 @@ class PermissionController extends Controller
 {
     private PermissionServiceInterface $permissionService;
 
-
-
-    public function index(Request $request)
+    public function __construct(PermissionServiceInterface $permissionService)
     {
-        return view('permission.index', );
+        $this->permissionService = $permissionService;
+    }
+
+    public function index()
+    {
+        return view('permission.index',);
     }
 
     public function create()

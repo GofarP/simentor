@@ -10,5 +10,5 @@ interface PermissionServiceInterface
     public function storePermission(array $data): Permission;
     public function editPermission(Permission $permission, array $data): Permission;
     public function deletePermission(Permission $permission): bool;
-    
+
 }
