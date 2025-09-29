@@ -13,7 +13,8 @@ class RoleService implements RoleServiceInterface
     public function __construct(
         protected RoleRepositoryInterface $roleRepository,
         protected PermissionRepositoryInterface $permissionRepository
-    ) {}
+    ) {
+    }
 
     public function getAllRoles(?string $search = null, int $perPage = 10, bool $eager = false): LengthAwarePaginator|Collection
     {

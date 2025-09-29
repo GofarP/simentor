@@ -42,17 +42,13 @@ class RoleRepository implements RoleRepositoryInterface
     }
     public function update(Role $role, array $data, array $permissionIds = []): Role
     {
-    
-        // update data role
         $role->update($data);
 
         if (!empty($permissionIds)) {
-            // ambil Permission model langsung
             $permissions = Permission::whereIn('id', $permissionIds)
                 ->where('guard_name', 'web')
                 ->get();
 
-            // sync ke role
             $role->syncPermissions($permissions);
         }
 

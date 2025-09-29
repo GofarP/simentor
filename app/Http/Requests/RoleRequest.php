@@ -8,16 +8,15 @@ class RoleRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        // Bisa diatur untuk policy, sementara true
         return true;
     }
 
     public function rules(): array
     {
-        $id = $this->route('role'); // ambil id dari route (untuk update)
+        $roleId = $this->route('role')?->id ?? null;
 
         return [
-            'name' => 'required|string|max:100|unique:roles,name,' . $id,
+            'name' => 'required|string|max:100|unique:roles,name,' . $roleId,
             'permissions' => 'required|array',
             'permissions.*' => 'exists:permissions,id',
         ];
@@ -27,8 +26,9 @@ class RoleRequest extends FormRequest
     {
         return [
             'name.required' => 'Nama role wajib diisi.',
-            'name.unique'   => 'Role sudah ada.',
-            'permission.required'=>'Pilih Permission',
+            'name.unique' => 'Role sudah ada.',
+            'permissions.required' => 'Pilih Permission',
+            'permissions.array' => 'Format permissions harus berupa array.',
             'permissions.*.exists' => 'Permission tidak valid.',
         ];
     }

@@ -66,24 +66,21 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
-        $permissions = $this->permissionService->getAllPermissions(null, 10, true);
-
+        $permissions = $this->permissionService->getAllPermissions(null, 100, true); // ambil semua permission
         $rolePermissions = $role->permissions->pluck('id')->toArray();
 
-
-        return view('role.edit', compact('permissions', 'role','rolePermissions'));
+        return view('role.edit', compact('role', 'permissions', 'rolePermissions'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(RoleRequest $request, Role $role)
     {
-        return $request;
-        $this->roleService->editRole($role, $request->validated());
+        // Pastikan input permissions selalu array
+        $permissionIds = $request->input('permissions', []);
+
+        $this->roleService->editRole($role, $request->validated(), $permissionIds);
+
         return redirect()->route('role.index')->with('success', 'Role berhasil diperbarui.');
     }
-
     /**
      * Remove the specified resource from storage.
      */

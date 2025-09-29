@@ -13,11 +13,9 @@
                     <label for="name" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
                         Nama Role
                     </label>
-                    <input type="text" name="name" id="name" value="{{ old('name') }}"
-                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
+                    <input type="text" name="name" id="name" value="{{ old('name') }}" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
                                focus:ring-2 focus:ring-violet-500 focus:border-violet-500
-                               dark:bg-gray-800 dark:text-gray-200"
-                        placeholder="Masukkan nama role">
+                               dark:bg-gray-800 dark:text-gray-200" placeholder="Masukkan nama role">
                     @error('name')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
@@ -29,8 +27,7 @@
                         Permission
                     </label>
 
-                    <select name="permissions[]" id="permissions" multiple
-                        class="w-full js-select2 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
+                    <select name="permissions[]" id="permissions" multiple class="w-full js-select2 px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
                                focus:ring-2 focus:ring-violet-500 focus:border-violet-500
                                dark:bg-gray-800 dark:text-gray-200">
                         @foreach($permissions as $permission)
@@ -63,17 +60,38 @@
     @push('css')
         <!-- Select2 CSS -->
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-        <!-- Optional Tailwind override -->
+
+        <!-- Tailwind overrides untuk Select2 -->
         <style>
+            /* Container multi select */
             .select2-container--default .select2-selection--multiple {
                 @apply bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm;
-                padding: 0.5rem;
+                padding: 0.5rem 0.75rem;
+                /* sedikit lebih rapi */
+                min-height: 2.5rem;
+                /* tinggi konsisten */
             }
+
+            /* Pilihan tags */
             .select2-container--default .select2-selection--multiple .select2-selection__choice {
                 @apply bg-violet-600 text-white rounded px-2 py-1 m-1;
+                font-size: 0.875rem;
+                /* text-sm */
             }
+
+            /* Tombol remove tag */
             .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
                 @apply text-white ml-1 cursor-pointer;
+            }
+
+            /* Placeholder */
+            .select2-container--default .select2-selection--multiple .select2-selection__placeholder {
+                @apply text-gray-400 dark:text-gray-400;
+            }
+
+            /* Focus ring */
+            .select2-container--default.select2-container--focus .select2-selection--multiple {
+                @apply ring-2 ring-violet-500 border-violet-500;
             }
         </style>
     @endpush
@@ -86,7 +104,7 @@
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
         <script>
-            $(document).ready(function() {
+            $(document).ready(function () {
                 $('.js-select2').select2({
                     placeholder: "Pilih permission...",
                     width: '100%'
