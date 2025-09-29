@@ -13,7 +13,7 @@
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
                                   focus:ring-2 focus:ring-violet-500 focus:border-violet-500
                                   dark:bg-gray-800 dark:text-gray-200"
-                        required placeholder="Masukkan nama user">
+                         placeholder="Masukkan nama user">
                     @error('name')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
@@ -25,7 +25,7 @@
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
                                   focus:ring-2 focus:ring-violet-500 focus:border-violet-500
                                   dark:bg-gray-800 dark:text-gray-200"
-                        required placeholder="Masukkan Email">
+                         placeholder="Masukkan Email">
                     @error('email')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
@@ -33,12 +33,28 @@
 
                 <div class="mb-4">
                     <label for="telp" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Telp</label>
-                    <input type="number" name="telp" id="telp" value="{{ old('telp') }}"
+                    <input type="number" name="telp" id="telp" value="{{ $user->telp }}"
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
                                   focus:ring-2 focus:ring-violet-500 focus:border-violet-500
                                   dark:bg-gray-800 dark:text-gray-200"
-                        required placeholder="Masukkan Telp">
+                         placeholder="Masukkan Telp">
                     @error('telp')
+                        <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                <div class="mb-4">
+                    <label for="role_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Role</label>
+                    <select name="role_id" id="role_id" class="form-control js-example-basic-single">
+                        <option value="">Pilih Role</option>
+                        @foreach ($roles as $role)
+                            <option value="{{ $role->id }}"
+                                {{ $user->roles->first() && $user->roles->first()->id == $role->id ? 'selected' : '' }}>
+                                {{ $role->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('role_id')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
@@ -47,11 +63,11 @@
                 <div class="mb-4">
                     <label for="password"
                         class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Password</label>
-                    <input type="password" name="telp" id="telp" value="{{ old('password') }}"
+                    <input type="password" name="password" id="password" value="{{ old('password') }}"
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
                               focus:ring-2 focus:ring-violet-500 focus:border-violet-500
                               dark:bg-gray-800 dark:text-gray-200"
-                        required placeholder="Masukkan Password">
+                         placeholder="Masukkan Password">
 
                     @error('password')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
@@ -67,7 +83,7 @@
                         class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
                               focus:ring-2 focus:ring-violet-500 focus:border-violet-500
                               dark:bg-gray-800 dark:text-gray-200"
-                        required placeholder="Masukkan Konfirmasi Password">
+                         placeholder="Masukkan Konfirmasi Password">
 
                     @error('password_confirmation')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
@@ -75,27 +91,11 @@
                 </div>
 
 
-                <div class="mb-4">
-                    <label for="role_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Role</label>
-                    <select name="role_id" id="role_id" class="form-control js-example-basic-single">
-                        <option value="">Pilih Role</option>
-                        @foreach ($roles as $role)
-                            <option value="{{ $role->id }}">{{ $role->name }}</option>
-                        @endforeach
-                    </select>
-                    @error('telp')
-                        <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
-                    @enderror
-                </div>
-
-
-
-
                 <div class="mt-6 flex justify-end gap-3">
                     <a href="{{ route('permission.index') }}"
                         class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">Batal</a>
                     <button type="submit"
-                        class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition">Simpan</button>
+                        class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition">Update</button>
                 </div>
             </form>
         </div>
