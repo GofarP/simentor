@@ -30,14 +30,18 @@
                     @enderror
                 </div>
 
-                <div class="mb-4">
+                <div x-data="{ deskripsi: '{{ old('deskripsi', $data->deskripsi ?? '') }}' }" class="mb-4">
                     <label for="deskripsi"
                         class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Deskripsi</label>
+
+                    <input id="deskripsi" type="hidden" name="deskripsi" x-model="deskripsi">
+                    <trix-editor input="deskripsi" class="border rounded-lg"></trix-editor>
 
                     @error('deskripsi')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
+
 
                 <div class="mb-4">
                     <label for="waktu_mulai" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
@@ -95,18 +99,24 @@
 
     @push('css')
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/2.1.0/trix.min.css">
     @endpush
 
     @push('js')
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"
             integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/2.1.0/trix.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
         <script>
             $(document).ready(function () {
-                $('.js-example-basic-single').select2();
-            })
-        </script>
+                $('.js-example-basic-single').select2({
+                    width: '100%'
+                });
 
+            });
+        </script>
     @endpush
 
 </x-app-layout>
