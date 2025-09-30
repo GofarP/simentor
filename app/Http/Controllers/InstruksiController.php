@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\InstruksiRequest;
 use App\Models\instruksi;
 use App\Services\Instruksi\InstruksiServiceInterface;
 use App\Services\User\UserServiceInterface;
@@ -14,9 +15,10 @@ class InstruksiController extends Controller
     private UserServiceInterface $userService;
 
 
-    public function __construct(InstruksiServiceInterface $instruksiService, UserServiceInterface $userService) {
-        $this->instruksiService=$instruksiService;
-        $this->userService=$userService;
+    public function __construct(InstruksiServiceInterface $instruksiService, UserServiceInterface $userService)
+    {
+        $this->instruksiService = $instruksiService;
+        $this->userService = $userService;
     }
     /**
      * Display a listing of the resource.
@@ -31,16 +33,17 @@ class InstruksiController extends Controller
      */
     public function create()
     {
-        $users=$this->userService->getPenerima();
-        return view('instruksi.create',compact('users'));
+        $users = $this->userService->getPenerima();
+        return view('instruksi.create', compact('users'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(InstruksiRequest $request)
     {
-        return $request;
+        $this->instruksiService->storeInstruksi($request->all());
+        return redirect()->route('instruksi.index')->with('success', 'Sukses menambah instruksi');
     }
 
     /**
@@ -56,15 +59,18 @@ class InstruksiController extends Controller
      */
     public function edit(instruksi $instruksi)
     {
-        return view('instruksi.edit',compact('instruksi'));
+        $users = $this->userService->getPenerima();
+
+        return view('instruksi.edit', compact('instruksi', 'users'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, instruksi $instruksi)
+    public function update(InstruksiRequest $request, instruksi $instruksi)
     {
-        //
+        $this->instruksiService->editInstruksi($instruksi, $request->all());
+        return redirect()->route('instruksi.index')->with('success', 'Sukses mengubah instruksi');
     }
 
     /**
@@ -72,6 +78,7 @@ class InstruksiController extends Controller
      */
     public function destroy(instruksi $instruksi)
     {
-        //
+        $this->instruksiService->deleteInstruksi($instruksi);
+        return redirect()->route('instruksi.index')->with('success', 'Sukses menghapus instruksi');
     }
 }

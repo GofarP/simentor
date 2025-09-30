@@ -95,7 +95,7 @@
                             {{ $instruksi->judul }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $instruksi->deskripsi }}
+                            {!! $instruksi->deskripsi !!}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                             {{ \Carbon\Carbon::parse($instruksi->waktu_mulai)->format('d-m-Y') }}
@@ -139,7 +139,7 @@
 
     <!-- Pagination -->
     <div class="mt-4 flex justify-end">
-        {{ $permissions->withQueryString()->links('vendor.pagination.tailwind') }}
+        {{ $instruksis->withQueryString()->links('vendor.pagination.tailwind') }}
     </div>
 
 </div>

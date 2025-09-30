@@ -4,6 +4,7 @@ namespace App\Repositories\Instruksi;
 
 use App\Models\Instruksi;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -11,18 +12,23 @@ class InstruksiRepository implements InstruksiRepositoryInterface
 {
     public function getAll(?string $search = '', int $perPage = 10, bool $eager = false)
     {
-        $query = Instruksi::query()->with(['pengirim', 'penerima']);
+        $query = Instruksi::with(['pengirim', 'penerima']);
 
-        if ($search) {
+        if (!empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->whereHas('pengirim', function ($sub) use ($search) {
-                    $sub->where('name', 'like', "%$search%");
-                })
-                    ->orWhereHas('penerima', function ($sub) use ($search) {
-                        $sub->where('name', 'like', "%$search%");
-                    })
-                    ->orWhere('judul', 'like', "%$search%")
-                    ->orWhere('deskripsi', 'like', "%$search%");
+                // cari di nama pengirim
+                $q->orWhereHas('pengirim', function ($sub) use ($search) {
+                    $sub->where('name', 'like', "%{$search}%");
+                });
+
+                // cari di nama penerima
+                $q->orWhereHas('penerima', function ($sub) use ($search) {
+                    $sub->where('name', 'like', "%{$search}%");
+                });
+
+                // cari di field instruksi langsung
+                $q->orWhere('judul', 'like', "%{$search}%")
+                    ->orWhere('deskripsi', 'like', "%{$search}%");
             });
         }
 
@@ -33,11 +39,13 @@ class InstruksiRepository implements InstruksiRepositoryInterface
             : $query->paginate($perPage)->onEachSide(1);
     }
 
+
     public function storeInstruksi(array $data)
     {
         if (request()->hasFile('lampiran')) {
             $data['lampiran'] = request()->file('lampiran')->store('lampiran', 'public');
         }
+        $data['pengirim_id'] = Auth::user()->id;
         return Instruksi::create($data);
     }
 

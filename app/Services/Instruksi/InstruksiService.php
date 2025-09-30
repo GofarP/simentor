@@ -12,7 +12,7 @@ class InstruksiService implements InstruksiServiceInterface{
 
 
     public function getAllInstruksi($search = null, int $perPage = 10, bool $eager = false){
-
+        return $this->instruksiRepository->getAll($search, $perPage, $eager);
     }
 
     public function storeInstruksi(array $data): Instruksi
