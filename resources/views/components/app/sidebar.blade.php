@@ -66,12 +66,12 @@
                                 <div class="flex items-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="shrink-0 fill-current" width="16"
                                         height="16" viewBox="0 0 24 24">
-                                        <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 
-                                                1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 
-                                                2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 
-                                                3zm0 2c-2.33 0-7 1.17-7 
-                                                3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 
-                                                0c-.29 0-.62.02-.97.05 1.16.84 1.97 
+                                        <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3
+                                                1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34
+                                                2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3
+                                                3zm0 2c-2.33 0-7 1.17-7
+                                                3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8
+                                                0c-.29 0-.62.02-.97.05 1.16.84 1.97
                                                 2.06 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
                                     </svg>
 
@@ -149,7 +149,7 @@
                         <div class="lg:hidden lg:sidebar-expanded:block 2xl:block">
                             <ul class="pl-8 mt-1" :class="open ? 'block' : 'hidden'">
                                 <li class="mb-1 last:mb-0">
-                                    <a href="#"
+                                    <a href="{{ route('instruksi.index') }}"
                                         class="block text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition truncate">
                                         <span
                                             class="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
@@ -246,8 +246,8 @@
                                     @endif" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                         stroke-linejoin="round">
-                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 
-                                     18.18 21.02 12 17.77 5.82 21.02 
+                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14
+                                     18.18 21.02 12 17.77 5.82 21.02
                                      7 14.14 2 9.27 8.91 8.26 12 2" />
                                     </svg>
                                     <span
@@ -327,8 +327,8 @@
 
 
                     <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0
-                bg-linear-to-r @if (in_array(Request::segment(1), ['user', 'user-role'])) 
-                    from-green-500/[0.12] dark:from-green-500/[0.24] to-green-500/[0.04] 
+                bg-linear-to-r @if (in_array(Request::segment(1), ['user', 'user-role']))
+                    from-green-500/[0.12] dark:from-green-500/[0.24] to-green-500/[0.04]
                 @endif" x-data="{ open: {{ in_array(Request::segment(1), ['user', 'user-role']) ? 1 : 0 }} }">
 
                         <a class="block text-gray-800 dark:text-gray-100 truncate transition" href="#0"
