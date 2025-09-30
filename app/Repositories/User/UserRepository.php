@@ -5,6 +5,7 @@ namespace App\Repositories\User;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class UserRepository implements UserRepositoryInterface
 {
@@ -55,14 +56,32 @@ class UserRepository implements UserRepositoryInterface
     }
 
 
-    public function editUser(User $user, array $data)
+    public function editUser(User $user, array $data): User
     {
+        // Jika password kosong, jangan update
+        if (empty($data['password'])) {
+            unset($data['password']);
+        } else {
+            $data['password'] = bcrypt($data['password']);
+        }
+
         $user->update($data);
-        return $user;
+
+        // Sinkronisasi role
+        if (!empty($data['role_id'])) {
+            $role = Role::find($data['role_id']);
+            if ($role) {
+                $user->syncRoles([$role->name]);
+            }
+        }
+
+        return $user; 
     }
 
     public function deleteUser(User $user): bool
     {
-        return $user->delete();
+        $user->syncRoles([]);
+        $user->delete();
+        return true;
     }
 }
