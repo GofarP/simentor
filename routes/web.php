@@ -35,6 +35,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('permission',PermissionController::class);
     Route::resource('role',RoleController::class);
     Route::resource('user',UserController::class);
+    Route::resource('koordinasi',UserController::class);
+
 
 
 
