@@ -22,9 +22,11 @@
 
                 <div class="mb-4">
                     <label for="judul" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Judul</label>
-                    <input type="text" name="judul" id="judul" value="{{ old('judul') }}" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
+                    <input type="text" name="judul" id="judul" value="{{ old('judul') }}"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
                                   focus:ring-2 focus:ring-violet-500 focus:border-violet-500
-                                  dark:bg-gray-800 dark:text-gray-200" required placeholder="Masukkan judul">
+                                  dark:bg-gray-800 dark:text-gray-200"
+                        required placeholder="Masukkan judul">
                     @error('judul')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
@@ -99,18 +101,85 @@
 
     @push('css')
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/trix/2.1.0/trix.min.css">
+        <link rel="stylesheet" href="https://unpkg.com/trix@2.1.0/dist/trix.css">
+        <style>
+            /* Dark mode untuk Trix */
+            .dark trix-editor {
+                background-color: #1f2937;
+                /* bg-gray-800 */
+                color: #e5e7eb;
+                /* text-gray-200 */
+                border-color: #374151;
+                /* border-gray-700 */
+            }
+
+            .dark trix-editor:focus {
+                outline: none;
+                border-color: #8b5cf6;
+                /* violet-500 */
+                box-shadow: 0 0 0 1px #8b5cf6;
+            }
+
+            /* Toolbar Trix di dark mode */
+            .dark .trix-button-group {
+                background-color: #111827;
+                /* bg-gray-900 */
+                border-color: #374151;
+            }
+
+            .dark .trix-button {
+                color: #e5e7eb;
+            }
+
+            .dark .trix-button:hover {
+                background-color: #374151;
+            }
+
+            .dark .trix-button.trix-active {
+                background-color: #8b5cf6;
+                color: white;
+            }
+
+            /* Toolbar Trix di dark mode */
+            .dark .trix-button-group {
+                background-color: #1f2937;
+                /* bg-gray-800 */
+                border-color: #374151;
+                /* border-gray-700 */
+            }
+
+            .dark .trix-button {
+                background-color: #374151;
+                /* bg-gray-700 */
+                color: #ffffff !important;
+                /* Putih */
+                border: none;
+            }
+
+            .dark .trix-button:hover {
+                background-color: #4b5563;
+                /* bg-gray-600 */
+                color: #ffffff !important;
+            }
+
+            .dark .trix-button.trix-active {
+                background-color: #8b5cf6;
+                /* violet-500 */
+                color: #ffffff !important;
+            }
+        </style>
     @endpush
 
     @push('js')
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"
             integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/trix/2.1.0/trix.min.js"></script>
+        <script src="https://unpkg.com/trix@2.1.0/dist/trix.umd.min.js"></script>
+
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
         <script>
-            $(document).ready(function () {
+            $(document).ready(function() {
                 $('.js-example-basic-single').select2({
                     width: '100%'
                 });
