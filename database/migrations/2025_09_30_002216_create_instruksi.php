@@ -19,7 +19,7 @@ return new class extends Migration
             $table->longText('deskripsi');
             $table->longText('waktu_mulai');
             $table->date('batas_waktu');
-            $table->string('lampiran');
+            $table->string('lampiran')->nullable();
             $table->timestamps();
         });
     }
