@@ -20,7 +20,8 @@
             <div class="flex flex-col items-end gap-2">
 
                 <input type="text" name="search" wire:model.live.debounce.500ms="search"
-                    placeholder="Cari permission..." class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
+                    placeholder="Cari permission..."
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
               focus:ring-2 focus:ring-violet-500 focus:border-violet-500
               dark:bg-gray-800 dark:text-gray-200" />
 
@@ -28,6 +29,15 @@
                     class=" mt-3 inline-flex items-center px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-lg shadow hover:bg-violet-700 focus:outline-none w-full sm:w-auto justify-center">
                     + Tambah
                 </a>
+
+                <div>
+                    <select id="jenis_pesan" class="form-control js-example-basic-single w-full" wire:model.live='jenisPesan'>
+                        <option value="semua">Semua</option>
+                        <option value="dikirim">Dikirim</option>
+                        <option value="diterima">Diterima</option>
+                    </select>
+                </div>
+
             </div>
         </div>
     </div>
@@ -104,11 +114,11 @@
                             {{ \Carbon\Carbon::parse($instruksi->batas_waktu)->format('d-m-Y') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                @if ($instruksi->lampiran != "")
-                                    <p>Ada lampiran</p>
-                                @else
-                                    <p>Tidak Ada Lampiran</p>
-                                @endif
+                            @if ($instruksi->lampiran != '')
+                                <p>Ada lampiran</p>
+                            @else
+                                <p>Tidak Ada Lampiran</p>
+                            @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
                             <a href="{{ route('instruksi.edit', $instruksi) }}"
@@ -141,5 +151,21 @@
     <div class="mt-4 flex justify-end">
         {{ $instruksis->withQueryString()->links('vendor.pagination.tailwind') }}
     </div>
+    @push('css')
+        <style>
+            td ol {
+                list-style: decimal;
+                padding-left: 1.5rem;
+                /* biar agak masuk ke dalam */
+            }
+
+            td ul {
+                list-style: disc;
+                padding-left: 1.5rem;
+            }
+        </style>
+    @endpush
+
+
 
 </div>
