@@ -13,6 +13,9 @@
                     </label>
                     <select name="penerima_id" id="penerima_id" class="form-control js-example-basic-single w-full">
                         <option value="">Pilih Penerima</option>
+                        @foreach ($users as $user )
+                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                        @endforeach
                     </select>
                     @error('penerima_id')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
