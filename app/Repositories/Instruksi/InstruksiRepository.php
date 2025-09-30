@@ -1,8 +1,11 @@
 <?php
+
 namespace App\Repositories\Instruksi;
+
 use App\Models\Instruksi;
-use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class InstruksiRepository implements InstruksiRepositoryInterface
 {
@@ -15,11 +18,11 @@ class InstruksiRepository implements InstruksiRepositoryInterface
                 $q->whereHas('pengirim', function ($sub) use ($search) {
                     $sub->where('name', 'like', "%$search%");
                 })
-                ->orWhereHas('penerima', function ($sub) use ($search) {
+                    ->orWhereHas('penerima', function ($sub) use ($search) {
                         $sub->where('name', 'like', "%$search%");
-                })
-                ->orWhere('judul', 'like', "%$search%")
-                ->orWhere('deskripsi', 'like', "%$search%");
+                    })
+                    ->orWhere('judul', 'like', "%$search%")
+                    ->orWhere('deskripsi', 'like', "%$search%");
             });
         }
 
@@ -32,20 +35,33 @@ class InstruksiRepository implements InstruksiRepositoryInterface
 
     public function storeInstruksi(array $data)
     {
+        if (request()->hasFile('lampiran')) {
+            $data['lampiran'] = request()->file('lampiran')->store('lampiran', 'public');
+        }
         return Instruksi::create($data);
     }
 
     public function editInstruksi(Instruksi $instruksi, array $data)
     {
+        if (request()->hasFile('lampiran')) {
+            if ($instruksi->lampiran && Storage::disk('public')->exists($instruksi->lampiran)) {
+                Storage::disk('public')->delete($instruksi->lampiran);
+            }
+            $data['lampiran'] = request()->file('lampiran')->store('lampiran', 'public');
+        }
+
         $instruksi->update($data);
+
         return $instruksi;
     }
 
 
     public function deleteInstruksi(Instruksi $instruksi): bool
     {
+        if ($instruksi->lampiran && Storage::disk('public')->exists($instruksi->lampiran)) {
+            Storage::disk('public')->delete($instruksi->lampiran);
+        }
+
         return $instruksi->delete();
     }
-
-
 }
