@@ -13,8 +13,11 @@ return new class extends Migration
     {
         Schema::create('instruksis', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('pengirim_id');
+            $table->bigInteger('penerima_id');
             $table->string('judul');
             $table->longText('deskripsi');
+            $table->longText('waktu_mulai');
             $table->date('batas_waktu');
             $table->string('lampiran');
             $table->timestamps();
