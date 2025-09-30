@@ -66,7 +66,8 @@
                                 class="px-3 py-1 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition">
                                 Edit
                             </a>
-                            <form action="{{ route('permission.destroy', $permission) }}" method="POST">
+                            <form action="{{ route('permission.destroy', $permission) }}" method="POST"
+                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus permission ini?')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"
