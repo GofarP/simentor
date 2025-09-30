@@ -30,7 +30,8 @@ class User extends Authenticatable
         'email',
         'password',
         'telp',
-        'role_id'
+        'pengirim_id',
+        'penerima_id'
     ];
 
     /**
@@ -63,5 +64,6 @@ class User extends Authenticatable
         'profile_photo_url',
     ];
 
+    
 
 }

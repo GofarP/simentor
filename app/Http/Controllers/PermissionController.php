@@ -49,6 +49,6 @@ class PermissionController extends Controller
     public function destroy(Permission $permission)
     {
         $this->permissionService->deletePermission($permission);
-        return redirect()->route('permission.index')->with('success', 'Sukses Mengubah Permission.');
+        return redirect()->route('permission.index')->with('success', 'Sukses Menghapus Permission.');
     }
 }

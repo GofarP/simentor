@@ -18,9 +18,9 @@ class UserRepository implements UserRepositoryInterface
                     ->orWhere('email', 'like', '%' . $search . '%')
                     ->orWhere('telp', 'like', '%' . $search . '%');
             })
-                ->orWhereHas('role', function ($q) use ($search) {
+            ->orWhereHas('roles', function ($q) use ($search) {
                     $q->where('name', 'like', '%' . $search . '%');
-                });
+            });
         }
 
 
