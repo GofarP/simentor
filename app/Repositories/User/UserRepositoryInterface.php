@@ -11,4 +11,6 @@ interface UserRepositoryInterface
     public function storeUser(array $data);
     public function editUser(User $permission, array $data);
     public function deleteUser(User $permission): bool;
+    public function getPenerima();
+
 }

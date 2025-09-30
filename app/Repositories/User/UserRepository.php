@@ -5,6 +5,7 @@ namespace App\Repositories\User;
 use App\Models\User;
 use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserRepository implements UserRepositoryInterface
@@ -75,7 +76,7 @@ class UserRepository implements UserRepositoryInterface
             }
         }
 
-        return $user; 
+        return $user;
     }
 
     public function deleteUser(User $user): bool
@@ -83,5 +84,10 @@ class UserRepository implements UserRepositoryInterface
         $user->syncRoles([]);
         $user->delete();
         return true;
+    }
+
+    public function getPenerima()
+    {
+        return User::where('id','!=',Auth::user()->id)->get();
     }
 }
