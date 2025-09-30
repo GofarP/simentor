@@ -6,6 +6,7 @@
 
             <form method="POST" action="{{ route('user.update', $user->id) }}">
                 @csrf
+                @method('PUT')
 
                 <div class="mb-4">
                     <label for="name" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Nama</label>
