@@ -70,7 +70,8 @@
                             @if($role->permissions->isNotEmpty())
                                 <div class="grid grid-cols-5 gap-1">
                                     @foreach($role->permissions as $permission)
-                                        <span class="px-2 py-1 text-xs font-medium text-center text-white bg-violet-500 rounded-full truncate">
+                                        <span
+                                            class="px-2 py-1 text-xs font-medium text-center text-white bg-violet-500 rounded-full truncate">
                                             {{ $permission->name }}
                                         </span>
                                     @endforeach
@@ -85,7 +86,8 @@
                                 class="px-3 py-1 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition">
                                 Edit
                             </a>
-                            <form action="{{ route('role.destroy', $role) }}" method="POST">
+                            <form action="{{ route('role.destroy', $role) }}" method="POST"
+                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus role ini?')">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit"
