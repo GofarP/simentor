@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InstruksiController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DataFeedController;
@@ -29,15 +30,12 @@ Route::redirect('/', 'login');
 
 Route::middleware(['auth', 'verified'])->group(function () {
 
-
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::resource('permission',PermissionController::class);
     Route::resource('role',RoleController::class);
     Route::resource('user',UserController::class);
     Route::resource('koordinasi',UserController::class);
-
-
-
+    Route::resource('instruksi',InstruksiController::class);
 
 });
