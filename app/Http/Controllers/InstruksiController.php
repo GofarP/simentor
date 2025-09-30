@@ -4,15 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Models\instruksi;
 use App\Services\Instruksi\InstruksiServiceInterface;
+use App\Services\User\UserServiceInterface;
 use Illuminate\Http\Request;
 
 class InstruksiController extends Controller
 {
 
-    private InstruksiServiceInterface $instruksiServiceInterface;
+    private InstruksiServiceInterface $instruksiService;
+    private UserServiceInterface $userService;
 
-    public function __construct(InstruksiServiceInterface $instruksiServiceInterface) {
-        $this->instruksiServiceInterface=$instruksiServiceInterface;
+
+    public function __construct(InstruksiServiceInterface $instruksiService, UserServiceInterface $userService) {
+        $this->instruksiService=$instruksiService;
+        $this->userService=$userService;
     }
     /**
      * Display a listing of the resource.
@@ -27,7 +31,8 @@ class InstruksiController extends Controller
      */
     public function create()
     {
-        return view('instruksi.create');
+        $users=$this->userService->getPenerima();
+        return view('instruksi.create',compact('users'));
     }
 
     /**
@@ -35,7 +40,7 @@ class InstruksiController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return $request;
     }
 
     /**
