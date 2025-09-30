@@ -40,9 +40,12 @@
                         </a>
                     @endif
 
-                    <x-button class="bg-violet-600 hover:bg-violet-700 w-full sm:w-auto">
+                    <x-button class="!bg-violet-600 !hover:bg-violet-700 !text-white w-full sm:w-auto">
                         {{ __('Sign in') }}
                     </x-button>
+
+
+
                 </div>
 
                 <x-validation-errors class="mt-4" />
@@ -52,4 +55,5 @@
 
         </div>
     </div>
+   
 </x-authentication-layout>
