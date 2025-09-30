@@ -30,4 +30,8 @@ class UserService implements UserServiceInterface
     public function deleteUser(User $user):bool{
         return $this->userRepository->deleteUser($user);
     }
+
+    public function getPenerima(){
+        return $this->userRepository->getPenerima();
+    }
 }
