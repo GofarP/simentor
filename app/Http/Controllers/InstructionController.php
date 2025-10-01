@@ -96,6 +96,7 @@ class InstructionController extends Controller
 
 
     public function forwardInstruction(ForwardRequest $request, Instruction $instruction){
-        $this->instructionService->forwardInstruction($instruction)
+        $this->authorize('forward',$instruction);
+        $this->instructionService->forwardInstruction($instruction,$request->all());
     }
 }
