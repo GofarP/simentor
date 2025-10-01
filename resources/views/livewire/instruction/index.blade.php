@@ -50,13 +50,13 @@
                         class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         #</th>
 
-                    @if($messageType == 'sent' || $messageType == 'all')
+                    @if($messageType == 'received' || $messageType == 'all')
                         <th
                             class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                             Pengirim</th>
                     @endif
 
-                    @if($messageType == 'received' || $messageType == 'all')
+                    @if($messageType == 'sent' || $messageType == 'all')
                         <th
                             class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                             Penerima</th>
@@ -65,6 +65,9 @@
                     <th
                         class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         Diteruskan Oleh</th>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                        Penerima Forward</th>
                     <th
                         class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         Judul</th>
@@ -92,21 +95,17 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{{ $index + 1 }}
                         </td>
 
-                        @if ($messageType == 'sent' || $messageType == 'all')
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                <span
-                                    class="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded-full text-xs">
-                                    {{ $instruction->sender->name }}
-                                </span>
-                            </td>
-                        @endif
-
                         @if ($messageType == 'received' || $messageType == 'all')
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                                 <span
-                                    class="px-2 py-1 bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 rounded-full text-xs">
-                                    {{ $instruction->receiver->name }}
-                                </span>
+                                    class="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded-full text-xs">{{ $instruction->sender->name }}</span>
+                            </td>
+                        @endif
+
+                        @if ($messageType == 'sent' || $messageType == 'all')
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                <span
+                                    class="px-2 py-1 bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 rounded-full text-xs">{{ $instruction->receiver->name }}</span>
                             </td>
                         @endif
 
@@ -115,9 +114,19 @@
                             @if($instruction->forwards->isNotEmpty())
                                 @foreach($instruction->forwards->unique('forwarded_by') as $forward)
                                     <span
-                                        class="px-2 py-1 bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-100 rounded-full text-xs inline-block mb-1">
-                                        {{ $forward->forwarder->name ?? '-' }}
-                                    </span>
+                                        class="px-2 py-1 bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-100 rounded-full text-xs inline-block mb-1">{{ $forward->forwarder->name ?? '-' }}</span>
+                                @endforeach
+                            @else
+                                <span class="text-gray-400">-</span>
+                            @endif
+                        </td>
+
+                        <!-- Penerima Forward -->
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                            @if($instruction->forwards->isNotEmpty())
+                                @foreach($instruction->forwards as $forward)
+                                    <span
+                                        class="px-2 py-1 bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 rounded-full text-xs inline-block mb-1">{{ $forward->receiver->name ?? '-' }}</span>
                                 @endforeach
                             @else
                                 <span class="text-gray-400">-</span>
@@ -134,15 +143,13 @@
                         </td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ \Carbon\Carbon::parse($instruction->start_time)->format('d-m-Y') }}
-                        </td>
+                            {{ \Carbon\Carbon::parse($instruction->start_time)->format('d-m-Y') }}</td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ \Carbon\Carbon::parse($instruction->end_time)->format('d-m-Y') }}
-                        </td>
+                            {{ \Carbon\Carbon::parse($instruction->end_time)->format('d-m-Y') }}</td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            @if ($instruction->lampiran)
+                            @if ($instruction->attachment)
                                 <a href="{{ asset($instruction->lampiran) }}" target="_blank"
                                     class="text-blue-600 dark:text-blue-400 underline">Lihat Lampiran</a>
                             @else
@@ -174,7 +181,7 @@
                     </tr>
                 @empty
                     @php
-                        $colspanNumber = ($messageType == 'sent' || $messageType == 'received') ? 9 : 6;
+                        $colspanNumber = ($messageType == 'sent' || $messageType == 'received') ? 10 : 8;
                     @endphp
                     <tr>
                         <td colspan="{{ $colspanNumber }}" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">

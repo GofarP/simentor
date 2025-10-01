@@ -38,17 +38,17 @@ class InstructionPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Instruction $instruksi): bool
+    public function update(User $user, Instruction $instruction): bool
     {
-        return $user->id === $instruksi->sender_id;
+        return $user->id === $instruction->sender_id;
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Instruction $instruksi): bool
+    public function delete(User $user, Instruction $instruction): bool
     {
-        return $user->id === $instruksi->sender_id;
+        return $user->id === $instruction->sender_id;
     }
 
     /**

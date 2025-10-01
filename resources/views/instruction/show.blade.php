@@ -8,7 +8,7 @@
             <div class="mb-4">
                 <label class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Penerima</label>
                 <p class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
-                    {{ $instruksi->penerima?->name ?? '-' }}
+                    {{ $instruction->receiver?->name ?? '-' }}
                 </p>
             </div>
 
@@ -16,7 +16,7 @@
             <div class="mb-4">
                 <label class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Judul</label>
                 <p class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
-                    {{ $instruksi->judul }}
+                    {{ $instruction->title }}
                 </p>
             </div>
 
@@ -24,7 +24,7 @@
             <div class="mb-4">
                 <label class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Deskripsi</label>
                 <div class="px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200 trix-content prose prose-violet max-w-none">
-                    {!! $instruksi->deskripsi !!}
+                    {!! $instruction->description !!}
                 </div>
             </div>
 
@@ -32,7 +32,7 @@
             <div class="mb-4">
                 <label class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Waktu Mulai</label>
                 <p class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
-                    {{ $instruksi->waktu_mulai ? \Carbon\Carbon::parse($instruksi->waktu_mulai)->translatedFormat('d M Y') : '-' }}
+                    {{ $instruction->start_time ? \Carbon\Carbon::parse($instruction->start_time)->translatedFormat('d M Y') : '-' }}
                 </p>
             </div>
 
@@ -40,20 +40,20 @@
             <div class="mb-4">
                 <label class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Batas Waktu</label>
                 <p class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
-                    {{ $instruksi->batas_waktu ? \Carbon\Carbon::parse($instruksi->batas_waktu)->translatedFormat('d M Y') : '-' }}
+                    {{ $instruction->end_time ? \Carbon\Carbon::parse($instruction->end_time)->translatedFormat('d M Y') : '-' }}
                 </p>
             </div>
 
             {{-- Lampiran --}}
             <div class="mb-4">
                 <label class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Lampiran</label>
-                @if ($instruksi->lampiran)
-                    <a href="{{ Storage::url($instruksi->lampiran) }}" target="_blank"
+                @if ($instruction->attachment)
+                    <a href="{{ Storage::url($instruction->attachment) }}" target="_blank"
                         class="px-4 py-2 inline-block bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition">
                         Lihat Lampiran
                     </a>
                     <p class="text-md text-white mt-3">
-                        Nama File {{ basename($instruksi->lampiran) }}
+                        Nama File {{ basename($instruction->attachment) }}
                     </p>
                 @else
                     <p class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400">
@@ -64,7 +64,7 @@
 
             {{-- Tombol --}}
             <div class="mt-6 flex justify-end">
-                <a href="{{ route('instruksi.index') }}"
+                <a href="{{ route('instruction.index') }}"
                     class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
                     Kembali
                 </a>
