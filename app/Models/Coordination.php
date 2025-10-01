@@ -8,7 +8,15 @@ class Coordination extends Model
 {
     //
 
-    protected $fillable=[""];
+    protected $fillable=[
+        "sender_id",
+        "receiver_id",
+        "title",
+        "description",
+        "start_time",
+        "end_time",
+        "attachment",
+    ];
 
     public function sender()
     {
@@ -19,4 +27,6 @@ class Coordination extends Model
     {
         return $this->belongsTo(User::class, 'receiver_id');
     }
+
+
 }
