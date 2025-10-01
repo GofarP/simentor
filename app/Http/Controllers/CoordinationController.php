@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Koordinasi;
+use App\Models\Coordination;
 use Illuminate\Http\Request;
 
-class KoordinasiController extends Controller
+class CoordinationController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class KoordinasiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Koordinasi $koordinasi)
+    public function show(Coordination $koordinasi)
     {
         //
     }
@@ -42,7 +42,7 @@ class KoordinasiController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Koordinasi $koordinasi)
+    public function edit(Coordination $koordinasi)
     {
         //
     }
@@ -50,7 +50,7 @@ class KoordinasiController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Koordinasi $koordinasi)
+    public function update(Request $request, Coordination $koordinasi)
     {
         //
     }
@@ -58,7 +58,7 @@ class KoordinasiController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Koordinasi $koordinasi)
+    public function destroy(Coordination $koordinasi)
     {
         //
     }

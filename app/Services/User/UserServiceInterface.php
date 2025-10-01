@@ -10,6 +10,6 @@ interface UserServiceInterface
     public function storeUser(array $data): User;
     public function editUser(User $permission, array $data): User;
     public function deleteUser(User $permission): bool;
-    public function getPenerima();
+    public function getReceiver();
 
 }

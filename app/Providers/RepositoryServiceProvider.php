@@ -30,8 +30,8 @@ class RepositoryServiceProvider extends ServiceProvider
         );
 
         $this->app->bind(
-            \App\Services\Instruksi\InstruksiServiceInterface::class,
-            \App\Services\Instruksi\InstruksiService::class
+            \App\Services\Instruction\InstructionServiceInterface::class,
+            \App\Services\Instruction\InstructionService::class
         );
 
         // Repository
@@ -50,8 +50,8 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Repositories\User\UserRepository::class
         );
         $this->app->bind(
-            \App\Repositories\Instruksi\InstruksiRepositoryInterface::class,
-            \App\Repositories\Instruksi\InstruksiRepository::class
+            \App\Repositories\Instruction\InstructionRepositoryInterface::class,
+            \App\Repositories\Instruction\InstructionRepository::class
         );
     }
 

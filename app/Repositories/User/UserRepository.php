@@ -86,7 +86,7 @@ class UserRepository implements UserRepositoryInterface
         return true;
     }
 
-    public function getPenerima()
+    public function getReceiver()
     {
         return User::where('id','!=',Auth::user()->id)->get();
     }

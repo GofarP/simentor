@@ -24,17 +24,17 @@
               focus:ring-2 focus:ring-violet-500 focus:border-violet-500
               dark:bg-gray-800 dark:text-gray-200" />
 
-                <a href="{{ route('instruksi.create') }}"
+                <a href="{{ route('instruction.create') }}"
                     class=" mt-3 inline-flex items-center px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-lg shadow hover:bg-violet-700 focus:outline-none w-full sm:w-auto justify-center">
                     + Tambah
                 </a>
 
                 <div>
-                    <select id="jenis_pesan" class="form-control js-example-basic-single w-full"
-                        wire:model.live='jenisPesan'>
-                        <option value="diterima">Diterima</option>
-                        <option value="dikirim">Dikirim</option>
-                        <option value="semua">Semua</option>
+                    <select id="message_type" class="form-control js-example-basic-single w-full"
+                        wire:model.live='messageType'>
+                        <option value="sent">Terkirim</option>
+                        <option value="received">Diterima</option>
+                        <option value="all">Semua</option>
                     </select>
                 </div>
 
@@ -51,19 +51,24 @@
                         #
                     </th>
 
-                    @if($jenisPesan == 'diterima')
+                    @if($messageType == 'sent' || $messageType=='all')
                         <th
                             class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                             Pengirim
                         </th>
                     @endif
-
-                    @if($jenisPesan == 'dikirim')
+                    @if($messageType == 'received' || $messageType=='all')
                         <th
                             class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                             Penerima
                         </th>
                     @endif
+
+                    <th
+                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                        Diteruskan Oleh
+                    </th>
+
                     <th
                         class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         Judul
@@ -99,55 +104,68 @@
                 </tr>
             </thead>
             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                @forelse($instruksis as $index => $instruksi)
+                @forelse($instructions as $index => $instruction)
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                             {{ $index + 1 }}
                         </td>
-                        @if ($jenisPesan == 'diterima')
+                        @if ($messageType == 'sent' || $messageType=='all')
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                {{ $instruksi->pengirim->name }}
+                                {{ $instruction->sender->name }}
                             </td>
                         @endif
 
-                        @if ($jenisPesan == 'dikirim')
+                        @if ($messageType == 'received' || $messageType=='all')
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                {{ $instruksi->penerima->name }}
+                                {{ $instruction->receiver->name }}
                             </td>
                         @endif
+
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $instruksi->judul }}
+                            {{ $instruction->diteruskanOleh->name ?? '-' }}
+                        </td>
+
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                            {{ $instruction->title }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {!! $instruksi->deskripsi !!}
+                            {!! $instruction->description !!}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ \Carbon\Carbon::parse($instruksi->waktu_mulai)->format('d-m-Y') }}
+                            {{ \Carbon\Carbon::parse($instruction->start_time)->format('d-m-Y') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ \Carbon\Carbon::parse($instruksi->batas_waktu)->format('d-m-Y') }}
+                            {{ \Carbon\Carbon::parse($instruction->end_time)->format('d-m-Y') }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            @if ($instruksi->lampiran != '')
+                            @if ($instruction->lampiran != '')
                                 <p>Ada lampiran</p>
                             @else
                                 <p>Tidak Ada Lampiran</p>
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
-                            <a href="{{ route('instruksi.show', $instruksi) }}"
-                                class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue:700 transition">Show</a>
 
-                            @can('update', $instruksi)
-                                <a href="{{ route('instruksi.edit', $instruksi) }}"
+                            <a href="{{ route('instruction.forward', $instruction) }}"
+                                class="px-3 py-1 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-blue:700 transition">
+                                Forward
+                            </a>
+
+                            <a href="{{ route('instruction.show', $instruction) }}"
+                                class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue:700 transition">
+                                Show
+                            </a>
+
+                            @can('update', $instruction)
+                                <a href="{{ route('instruction.edit', $instruction) }}"
                                     class="px-3 py-1 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition">
                                     Edit
                                 </a>
                             @endcan
 
-                            @can('delete', $instruksi)
-                                <form action="{{ route('instruksi.destroy', $instruksi) }}" method="POST"
-                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus instruksi ini?')">
+                            @can('delete', $instruction)
+                                <form action="{{ route('instruction.destroy', $instruction) }}" method="POST"
+                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus instruction ini?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
@@ -161,11 +179,15 @@
                 @empty
                     <tr>
                         @php
-                            $colspanNumber = $colspanNumber != 'semua' ? 8 : 6;
+                            $colspanNumber = $messageType != 'semua' ? 9 : 6;
                         @endphp
+
+                    <tr>
                         <td colspan="{{ $colspanNumber }}" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                            Data instruksi tidak ditemukan
+                            Data instruction tidak ditemukan
                         </td>
+                    </tr>
+
                     </tr>
                 @endforelse
             </tbody>
@@ -174,7 +196,7 @@
 
     <!-- Pagination -->
     <div class="mt-4 flex justify-end">
-        {{ $instruksis->withQueryString()->links('vendor.pagination.tailwind') }}
+        {{ $instructions->withQueryString()->links('vendor.pagination.tailwind') }}
     </div>
     @push('css')
         <style>
