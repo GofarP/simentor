@@ -21,9 +21,10 @@ class InstructionPolicy
      */
     public function view(User $user, Instruction $instruction): bool
     {
-        return $user->id === $instruction->sender_id || $user->id === $instruction->receiver_id;
+        return $user->id === $instruction->sender_id
+            || $user->id === $instruction->receiver_id
+            || $instruction->forwards()->where('forwarded_to', $user->id)->exists();
     }
-
     /**
      * Determine whether the user can create models.
      */

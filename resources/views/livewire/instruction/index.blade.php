@@ -20,7 +20,8 @@
             <div class="flex flex-col items-end gap-2">
 
                 <input type="text" name="search" wire:model.live.debounce.500ms="search"
-                    placeholder="Cari permission..." class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
+                    placeholder="Cari permission..."
+                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
               focus:ring-2 focus:ring-violet-500 focus:border-violet-500
               dark:bg-gray-800 dark:text-gray-200" />
 
@@ -50,13 +51,13 @@
                         class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         #</th>
 
-                    @if($messageType == 'received' || $messageType == 'all')
+                    @if ($messageType == 'received' || $messageType == 'all')
                         <th
                             class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                             Pengirim</th>
                     @endif
 
-                    @if($messageType == 'sent' || $messageType == 'all')
+                    @if ($messageType == 'sent' || $messageType == 'all')
                         <th
                             class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                             Penerima</th>
@@ -92,7 +93,8 @@
             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                 @forelse($instructions as $index => $instruction)
                     <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{{ $index + 1 }}
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                            {{ $index + 1 }}
                         </td>
 
                         @if ($messageType == 'received' || $messageType == 'all')
@@ -111,8 +113,8 @@
 
                         <!-- Diteruskan Oleh -->
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            @if($instruction->forwards->isNotEmpty())
-                                @foreach($instruction->forwards->unique('forwarded_by') as $forward)
+                            @if ($instruction->forwards->isNotEmpty())
+                                @foreach ($instruction->forwards->unique('forwarded_by') as $forward)
                                     <span
                                         class="px-2 py-1 bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-100 rounded-full text-xs inline-block mb-1">{{ $forward->forwarder->name ?? '-' }}</span>
                                 @endforeach
@@ -123,8 +125,8 @@
 
                         <!-- Penerima Forward -->
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            @if($instruction->forwards->isNotEmpty())
-                                @foreach($instruction->forwards as $forward)
+                            @if ($instruction->forwards->isNotEmpty())
+                                @foreach ($instruction->forwards as $forward)
                                     <span
                                         class="px-2 py-1 bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 rounded-full text-xs inline-block mb-1">{{ $forward->receiver->name ?? '-' }}</span>
                                 @endforeach
@@ -158,8 +160,13 @@
                         </td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
-                            <a href="{{ route('instruction.forward', $instruction) }}"
-                                class="px-3 py-1 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition">Forward</a>
+                            @can('forward', $instruction)
+                                <a href="{{ route('instruction.forward', $instruction) }}"
+                                    class="px-3 py-1 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition">
+                                    Forward
+                                </a>
+                            @endcan
+
                             <a href="{{ route('instruction.show', $instruction) }}"
                                 class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">Show</a>
 
@@ -181,10 +188,11 @@
                     </tr>
                 @empty
                     @php
-                        $colspanNumber = ($messageType == 'sent' || $messageType == 'received') ? 10 : 8;
+                        $colspanNumber = $messageType == 'sent' || $messageType == 'received' ? 10 : 8;
                     @endphp
                     <tr>
-                        <td colspan="{{ $colspanNumber }}" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                        <td colspan="{{ $colspanNumber }}"
+                            class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                             Data instruction tidak ditemukan</td>
                     </tr>
                 @endforelse

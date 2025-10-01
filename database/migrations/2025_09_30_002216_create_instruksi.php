@@ -11,15 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('instruksis', function (Blueprint $table) {
+        Schema::create('instructions', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('pengirim_id');
-            $table->bigInteger('penerima_id');
-            $table->string('judul');
-            $table->longText('deskripsi');
-            $table->longText('waktu_mulai');
-            $table->date('batas_waktu');
-            $table->string('lampiran')->nullable();
+            $table->bigInteger('sender_id');
+            $table->bigInteger('receiver_id');
+            $table->string('title');
+            $table->longText('description');
+            $table->longText('start_time');
+            $table->date('end_time');
+            $table->string('attachment')->nullable();
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('instruksi');
+        Schema::dropIfExists('instructions');
     }
 };

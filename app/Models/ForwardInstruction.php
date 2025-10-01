@@ -27,7 +27,7 @@ class ForwardInstruction extends Model
     // User penerima forward
     public function receiver()
     {
-        return $this->belongsTo(User::class, 'forwarded_to');
+        return $this->belongsTo(User::class, 'forwarded_to','id');
     }
 
 

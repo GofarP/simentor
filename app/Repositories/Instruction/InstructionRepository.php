@@ -10,37 +10,36 @@ use Illuminate\Support\Facades\Storage;
 
 class InstructionRepository implements InstructionRepositoryInterface
 {
+
     public function getAll(?string $search = '', int $perPage = 10, InstructionType $instructionType, bool $eager = false)
     {
-        $query = Instruction::with([
-            'sender',
-            'receiver',
-            'forwards', 
-        ]);
+        $userId = Auth::id();
 
-        if ($instructionType == InstructionType::All) {
-            $query->where(function ($q) {
-                $q->where('sender_id', Auth::id())
-                    ->orWhere('receiver_id', Auth::id());
+        $query = Instruction::with(['sender', 'receiver', 'forwards.forwarder', 'forwards.receiver'])
+            ->where(function ($q) use ($userId, $instructionType) {
+                switch ($instructionType) {
+                    case InstructionType::Sent:
+                        $q->where('sender_id', $userId);
+                        break;
+
+                    case InstructionType::Received:
+                        $q->where('receiver_id', $userId)
+                            ->orWhereHas('forwards', fn($sub) => $sub->where('forwarded_to', $userId));
+                        break;
+
+                    case InstructionType::All:
+                    default:
+                        $q->where('sender_id', $userId)
+                            ->orWhere('receiver_id', $userId)
+                            ->orWhereHas('forwards', fn($sub) => $sub->where('forwarded_to', $userId));
+                        break;
+                }
             });
-        }
-
-        if ($instructionType == InstructionType::Sent) {
-            $query->where('sender_id', Auth::id());
-        }
-
-        if ($instructionType == InstructionType::Received) {
-            $query->where('receiver_id', Auth::id());
-        }
 
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->orWhereHas('sender', function ($sub) use ($search) {
-                    $sub->where('name', 'like', "%{$search}%");
-                })
-                    ->orWhereHas('receiver', function ($sub) use ($search) {
-                        $sub->where('name', 'like', "%{$search}%");
-                    })
+                $q->whereHas('sender', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('receiver', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
                     ->orWhere('title', 'like', "%{$search}%")
                     ->orWhere('description', 'like', "%{$search}%");
             });
@@ -48,12 +47,8 @@ class InstructionRepository implements InstructionRepositoryInterface
 
         $query->orderByDesc('created_at');
 
-        return $eager
-            ? $query->get()
-            : $query->paginate($perPage)->onEachSide(1);
-
+        return $eager ? $query->get() : $query->paginate($perPage)->onEachSide(1);
     }
-
 
     public function storeInstruction(array $data)
     {
@@ -101,8 +96,5 @@ class InstructionRepository implements InstructionRepositoryInterface
         }
 
         return $forwardedRecords;
-
     }
-
-
 }
