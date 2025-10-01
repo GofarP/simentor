@@ -3,6 +3,7 @@
 namespace App\Repositories\Instruction;
 
 use App\Enums\InstructionType;
+use App\Models\ForwardInstruction;
 use App\Models\Instruction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -11,7 +12,11 @@ class InstructionRepository implements InstructionRepositoryInterface
 {
     public function getAll(?string $search = '', int $perPage = 10, InstructionType $instructionType, bool $eager = false)
     {
-        $query = Instruction::with(['sender', 'receiver']);
+        $query = Instruction::with([
+            'sender',
+            'receiver',
+            'forwards', 
+        ]);
 
         if ($instructionType == InstructionType::All) {
             $query->where(function ($q) {
@@ -83,13 +88,21 @@ class InstructionRepository implements InstructionRepositoryInterface
         return $instruction->delete();
     }
 
-    public function forwardInstruction(Instruction $instruction,array $data){
-        return Instruction::create([
-            'instruction_Id'=>$instruction->id,
-            'forwarded_by'=>Auth::id(),
-            'forwarded_to'=>$data['forwarded_to']
-        ]);
+    public function forwardInstruction(Instruction $instruction, array $data)
+    {
+        $forwardedRecords = [];
+
+        foreach ($data['forwarded_to'] as $receiverId) {
+            $forwardedRecords[] = ForwardInstruction::create([
+                'instruction_id' => $instruction->id,
+                'forwarded_by' => Auth::id(),
+                'forwarded_to' => $receiverId,
+            ]);
+        }
+
+        return $forwardedRecords;
+
     }
 
-    
+
 }

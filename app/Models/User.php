@@ -60,10 +60,26 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-    protected $appends = [
-        'profile_photo_url',
-    ];
+    public function sentInstructions()
+    {
+        return $this->hasMany(Instruction::class, 'sender_id');
+    }
 
-    
+    // Instruksi yang diterima user
+    public function receivedInstructions()
+    {
+        return $this->hasMany(Instruction::class, 'receiver_id');
+    }
 
+    // Forward yang dilakukan user
+    public function forwardsMade()
+    {
+        return $this->hasMany(ForwardInstruction::class, 'forwarded_by');
+    }
+
+    // Forward yang diterima user
+    public function forwardsReceived()
+    {
+        return $this->hasMany(ForwardInstruction::class, 'forwarded_to');
+    }
 }

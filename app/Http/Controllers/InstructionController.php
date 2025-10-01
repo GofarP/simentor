@@ -98,5 +98,6 @@ class InstructionController extends Controller
     public function forwardInstruction(ForwardRequest $request, Instruction $instruction){
         $this->authorize('forward',$instruction);
         $this->instructionService->forwardInstruction($instruction,$request->all());
+        return redirect()->route('instruction.index')->with('success','Sukses meneruskan instruksi');
     }
 }

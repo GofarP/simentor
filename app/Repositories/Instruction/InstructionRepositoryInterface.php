@@ -8,10 +8,10 @@ interface InstructionRepositoryInterface
     public function getAll(? string $search=null, int $perPage=10, InstructionType $instructionType  ,bool $eager=false);
     public function storeInstruction(array $data);
 
-    public function editInstruction(Instruction $instruksi, array $data);
+    public function editInstruction(Instruction $instruction, array $data);
 
-    public function deleteInstruction(Instruction $instruksi):bool;
+    public function deleteInstruction(Instruction $instruction):bool;
 
-    public function forwardInstruction(Instruction $instruksi, array $data);
+    public function forwardInstruction(Instruction $instruction, array $data);
     
 }

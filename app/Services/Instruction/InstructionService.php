@@ -32,7 +32,7 @@ class InstructionService implements InstructionServiceInterface{
     }
 
     public function forwardInstruction(Instruction $instruction, array $data){
-        return $this->instruksiRepository->forwardInstruction($instruction, $data);
+        return $this->instructionRepository->forwardInstruction($instruction, $data);
     }
 
 }

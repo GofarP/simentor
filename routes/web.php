@@ -34,6 +34,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/teruskan/{instruction}', [InstructionController::class, 'forward'])->name('instruction.forward');
 
+    Route::post('/teruskan/{instruction}',[InstructionController::class,'forwardInstruction'])->name('instruction.forwardinstruction');
+
     Route::resource('permission',PermissionController::class);
     Route::resource('role',RoleController::class);
     Route::resource('user',UserController::class);
