@@ -20,8 +20,7 @@
             <div class="flex flex-col items-end gap-2">
 
                 <input type="text" name="search" wire:model.live.debounce.500ms="search"
-                    placeholder="Cari permission..."
-                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
+                    placeholder="Cari permission..." class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
               focus:ring-2 focus:ring-violet-500 focus:border-violet-500
               dark:bg-gray-800 dark:text-gray-200" />
 
@@ -31,10 +30,11 @@
                 </a>
 
                 <div>
-                    <select id="jenis_pesan" class="form-control js-example-basic-single w-full" wire:model.live='jenisPesan'>
-                        <option value="semua">Semua</option>
-                        <option value="dikirim">Dikirim</option>
+                    <select id="jenis_pesan" class="form-control js-example-basic-single w-full"
+                        wire:model.live='jenisPesan'>
                         <option value="diterima">Diterima</option>
+                        <option value="dikirim">Dikirim</option>
+                        <option value="semua">Semua</option>
                     </select>
                 </div>
 
@@ -48,13 +48,22 @@
                 <tr>
                     <th
                         class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        #</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Pengirim</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Penerima</th>
+                        #
+                    </th>
+
+                    @if($jenisPesan == 'diterima')
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                            Pengirim
+                        </th>
+                    @endif
+
+                    @if($jenisPesan == 'dikirim')
+                        <th
+                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                            Penerima
+                        </th>
+                    @endif
                     <th
                         class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         Judul
@@ -95,12 +104,17 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                             {{ $index + 1 }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $instruksi->pengirim->name }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $instruksi->penerima->name }}
-                        </td>
+                        @if ($jenisPesan == 'diterima')
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                {{ $instruksi->pengirim->name }}
+                            </td>
+                        @endif
+
+                        @if ($jenisPesan == 'dikirim')
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                {{ $instruksi->penerima->name }}
+                            </td>
+                        @endif
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                             {{ $instruksi->judul }}
                         </td>
@@ -121,24 +135,35 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
-                            <a href="{{ route('instruksi.edit', $instruksi) }}"
-                                class="px-3 py-1 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition">
-                                Edit
-                            </a>
-                            <form action="{{ route('instruksi.destroy', $instruksi) }}" method="POST"
-                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus instruksi ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                    class="px-3 py-1 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition">
-                                    Hapus
-                                </button>
-                            </form>
+                            <a href="{{ route('instruksi.show', $instruksi) }}"
+                                class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue:700 transition">Show</a>
+
+                            @can('update', $instruksi)
+                                <a href="{{ route('instruksi.edit', $instruksi) }}"
+                                    class="px-3 py-1 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition">
+                                    Edit
+                                </a>
+                            @endcan
+
+                            @can('delete', $instruksi)
+                                <form action="{{ route('instruksi.destroy', $instruksi) }}" method="POST"
+                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus instruksi ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit"
+                                        class="px-3 py-1 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition">
+                                        Hapus
+                                    </button>
+                                </form>
+                            @endcan
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                        @php
+                            $colspanNumber = $colspanNumber != 'semua' ? 8 : 6;
+                        @endphp
+                        <td colspan="{{ $colspanNumber }}" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                             Data instruksi tidak ditemukan
                         </td>
                     </tr>
