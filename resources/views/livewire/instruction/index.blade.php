@@ -150,7 +150,7 @@
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                             @if ($instruction->attachment)
-                                <a href="{{ asset($instruction->lampiran) }}" target="_blank"
+                                <a href="{{ Storage::url($instruction->attachment) }}" target="_blank"
                                     class="text-blue-600 dark:text-blue-400 underline">Lihat Lampiran</a>
                             @else
                                 <span class="text-gray-400">Tidak Ada Lampiran</span>
