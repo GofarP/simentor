@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('koordinasis', function (Blueprint $table) {
+        Schema::create('coordinations', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('sender_id');
             $table->bigInteger('receiver_id');
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('koordinasis');
+        Schema::dropIfExists('coordinations');
     }
 };
