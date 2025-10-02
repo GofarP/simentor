@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ForwardRequest;
 use App\Http\Requests\InstructionRequest;
 use App\Models\Instruction;
+use App\Services\ForwardInstruction\ForwardInstructionServiceInterface;
 use App\Services\Instruction\InstructionServiceInterface;
 use App\Services\User\UserServiceInterface;
 use Illuminate\Http\Request;
@@ -14,12 +15,17 @@ class InstructionController extends Controller
 
     private InstructionServiceInterface $instructionService;
     private UserServiceInterface $userService;
+    private ForwardInstructionServiceInterface $forwardInstructionService;
 
 
-    public function __construct(InstructionServiceInterface $instructionService, UserServiceInterface $userService) {
+    public function __construct(
+        InstructionServiceInterface $instructionService,
+        UserServiceInterface $userService,
+        ForwardInstructionServiceInterface $forwardInstructionService
+    ) {
         $this->instructionService=$instructionService;
         $this->userService=$userService;
-
+        $this->forwardInstructionService=$forwardInstructionService;
     }
     /**
      * Display a listing of the resource.
@@ -97,7 +103,7 @@ class InstructionController extends Controller
 
     public function forwardInstruction(ForwardRequest $request, Instruction $instruction){
         $this->authorize('forward',$instruction);
-        $this->instructionService->forwardInstruction($instruction,$request->all());
+        $this->forwardInstructionService->forwardInstruction($instruction,$request->all());
         return redirect()->route('instruction.index')->with('success','Sukses meneruskan instruksi');
     }
 }

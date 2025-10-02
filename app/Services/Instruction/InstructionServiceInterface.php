@@ -10,5 +10,4 @@ interface InstructionServiceInterface
     public function storeInstruction(array $data):Instruction;
     public function editInstruction(Instruction $instruction, array $data):Instruction;
     public function deleteInstruction(Instruction $instruction):bool;
-    public function forwardInstruction(Instruction $instruction, array $data);
 }

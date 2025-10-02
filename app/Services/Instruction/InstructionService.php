@@ -31,8 +31,4 @@ class InstructionService implements InstructionServiceInterface{
         return $this->instructionRepository->deleteInstruction($instruction);
     }
 
-    public function forwardInstruction(Instruction $instruction, array $data){
-        return $this->instructionRepository->forwardInstruction($instruction, $data);
-    }
-
 }

@@ -11,5 +11,4 @@ interface CoordinationRepositoryInterface
     public function storeCoordination(array $data);
     public function editCoordination(Coordination $coordination, array $data);
     public function deleteCoordination(Coordination $coordination): bool;
-    public function forwarCoordination(Coordination $coordination, array $data);
 }

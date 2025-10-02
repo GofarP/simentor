@@ -80,17 +80,5 @@ class CoordinationRepository implements CoordinationRepositoryInterface
         return $coordination->delete();
     }
 
-    public function forwarCoordination(Coordination $coordination, array $data)
-    {
-        $forwardedRecords=[];
-        foreach($data['forwarded_to'] as $receiverId){
-            $forwardedRecords[]=ForwardCoordination::create([
-                'instruction_id'=>$coordination->id,
-                'forwarded_by'=>Auth::id(),
-                'forwarded_to'=>$receiverId,
-            ]);
-        }
 
-        return $forwardedRecords;
-    }
 }

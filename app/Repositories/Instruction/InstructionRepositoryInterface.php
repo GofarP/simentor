@@ -12,6 +12,5 @@ interface InstructionRepositoryInterface
 
     public function deleteInstruction(Instruction $instruction):bool;
 
-    public function forwardInstruction(Instruction $instruction, array $data);
-    
+
 }

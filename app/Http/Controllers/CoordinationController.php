@@ -77,7 +77,7 @@ class CoordinationController extends Controller
     public function destroy(Coordination $coordination)
     {
         $this->authorize('delete', $coordination);
-        $this->instructionService->deleteInstruction($coordination);
+        $this->coordinationService->deleteCoordination($coordination);
         return redirect()->route('instruction.index')->with('success', 'Sukses menghapus instruction');
     }
 }

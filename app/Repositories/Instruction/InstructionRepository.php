@@ -83,18 +83,4 @@ class InstructionRepository implements InstructionRepositoryInterface
         return $instruction->delete();
     }
 
-    public function forwardInstruction(Instruction $instruction, array $data)
-    {
-        $forwardedRecords = [];
-
-        foreach ($data['forwarded_to'] as $receiverId) {
-            $forwardedRecords[] = ForwardInstruction::create([
-                'instruction_id' => $instruction->id,
-                'forwarded_by' => Auth::id(),
-                'forwarded_to' => $receiverId,
-            ]);
-        }
-
-        return $forwardedRecords;
-    }
 }
