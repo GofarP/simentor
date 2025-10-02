@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 py-12 w-full mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 w-full">
-            <h2 class="text-2xl font-bold text-violet-600 mb-6">Add Instruction</h2>
+            <h2 class="text-2xl font-bold text-violet-600 mb-6">Tambahkan Instruksi</h2>
 
             <form method="POST" action="{{ route('instruction.store') }}" enctype="multipart/form-data">
                 @csrf

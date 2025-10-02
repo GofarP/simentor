@@ -11,7 +11,7 @@ class Index extends Component
 {
     use WithPagination;
 
-    public $string = "";
+    public $search = "";
 
     public string $messageType = "received";
 
@@ -19,7 +19,7 @@ class Index extends Component
 
     public function boot(CoordinationServiceInterface $coordinationService)
     {
-        $this->$coordinationService = $coordinationService;
+        $this->coordinationService = $coordinationService;
     }
 
     public function updatingSearch()
@@ -36,5 +36,5 @@ class Index extends Component
         ]);
     }
 
-    
+
 }

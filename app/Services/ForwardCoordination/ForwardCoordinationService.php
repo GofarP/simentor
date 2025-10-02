@@ -12,7 +12,7 @@ class ForwardCoordinationService implements ForwardCoordinationServiceInterface
     private ForwardCoordinationRepositoryInterface $forwardCoordinationRepository;
 
     public function __construct(ForwardCoordinationRepositoryInterface $forwardCoordinationRepository) {
-        $this->$forwardCoordinationRepository = $forwardCoordinationRepository;
+        $this->forwardCoordinationRepository = $forwardCoordinationRepository;
     }
 
     public function forwardCoordination(Coordination $coordination, array $data)

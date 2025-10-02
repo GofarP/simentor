@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Instruction;
+namespace App\Repositories\forwardCoordination;
 
 use App\Enums\MessageType;
 use App\Models\Coordination;
@@ -11,7 +11,7 @@ use App\Repositories\ForwardCoordination\ForwardCoordinationRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
-class InstructionRepository implements ForwardCoordinationRepositoryInterface
+class ForwardCoordinationRepository implements ForwardCoordinationRepositoryInterface
 {
     public function forwardCoordination(Coordination $coordination, array $data)
     {

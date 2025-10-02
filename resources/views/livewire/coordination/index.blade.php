@@ -108,7 +108,7 @@
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                                 <span
                                     class="px-2 py-1 bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 rounded-full text-xs">{{ $coordination->receiver->name }}</span>
-                            </td>   
+                            </td>
                         @endif
 
                         <!-- Diteruskan Oleh -->
@@ -193,7 +193,7 @@
                     <tr>
                         <td colspan="{{ $colspanNumber }}"
                             class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                            Data instruction tidak ditemukan</td>
+                            Data koordinasi tidak ditemukan</td>
                     </tr>
                 @endforelse
             </tbody>

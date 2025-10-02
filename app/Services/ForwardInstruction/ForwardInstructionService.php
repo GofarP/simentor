@@ -2,7 +2,6 @@
 
 namespace App\Services\ForwardInstruction;
 
-use App\Models\ForwardInstruction;
 use App\Models\Instruction;
 use App\Repositories\ForwardInstruction\ForwardInstructionRepositoryInterface;
 
@@ -10,8 +9,9 @@ class ForwardInstructionService implements ForwardInstructionServiceInterface
 {
     private ForwardInstructionRepositoryInterface $forwardInstructionRepository;
 
-    public function __construct(ForwardInstructionRepositoryInterface $forwardInstructionRepository) {
-        $this->$forwardInstructionRepository = $forwardInstructionRepository;
+    public function __construct(ForwardInstructionRepositoryInterface $forwardInstructionRepository)
+    {
+        $this->forwardInstructionRepository = $forwardInstructionRepository;
     }
 
     public function forwardInstruction(Instruction $instruction, array $data)
@@ -21,6 +21,6 @@ class ForwardInstructionService implements ForwardInstructionServiceInterface
 
     public function deleteForwardInstruction(Instruction $instruction): bool
     {
-        return $this->deleteForwardInstruction($instruction);
+        return $this->forwardInstructionRepository->deleteForwardInstruction($instruction);
     }
 }
