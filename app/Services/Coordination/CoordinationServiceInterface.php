@@ -4,7 +4,7 @@ namespace App\Services\Coordination;
 
 use App\Models\Coordination;
 
-interface PermissionServiceInterface
+interface CoordinationServiceInterface
 {
     public function getAllCoordination($search = null, int $perPage = 10, bool $eager = false);
     public function storeCoordination(array $data): Coordination;

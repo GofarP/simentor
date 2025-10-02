@@ -3,7 +3,7 @@
 namespace App\Livewire\Instruction;
 
 use Livewire\Component;
-use App\Enums\InstructionType;
+use App\Enums\MessageType;
 use Livewire\WithPagination;
 use App\Services\Instruction\InstructionServiceInterface;
 
@@ -26,7 +26,7 @@ public string $search="";
 
     public function render()
     {
-        $jenisPesanEnum=InstructionType::from($this->messageType);
+        $jenisPesanEnum=MessageType::from($this->messageType);
         $instructions=$this->instruksiService->getAllInstruction($this->search,10,$jenisPesanEnum);
 
         return view('livewire.instruction.index',[

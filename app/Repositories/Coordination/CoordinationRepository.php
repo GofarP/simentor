@@ -1,6 +1,6 @@
 <?php
 namespace App\Repositories\Coordination;
-use App\Enums\InstructionType;
+use App\Enums\MessageType;
 use App\Models\Coordination;
 use App\Models\ForwardInstruction;
 use App\Models\Instruction;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class CoordinationRepository implements CoordinationRepositoryInterface{
-    public function getAll(?string $search = null, int $perPage = 10, InstructionType $coordinationType, bool $eager = false)
+    public function getAll(?string $search = null, int $perPage = 10, MessageType $coordinationType, bool $eager = false)
     {
 
     }

@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Instruction;
 
-use App\Enums\InstructionType;
+use App\Enums\MessageType;
 use App\Models\ForwardInstruction;
 use App\Models\Instruction;
 use Illuminate\Support\Facades\Auth;
@@ -11,23 +11,23 @@ use Illuminate\Support\Facades\Storage;
 class InstructionRepository implements InstructionRepositoryInterface
 {
 
-    public function getAll(?string $search = '', int $perPage = 10, InstructionType $instructionType, bool $eager = false)
+    public function getAll(?string $search = '', int $perPage = 10, MessageType $messageType, bool $eager = false)
     {
         $userId = Auth::id();
 
         $query = Instruction::with(['sender', 'receiver', 'forwards.forwarder', 'forwards.receiver'])
-            ->where(function ($q) use ($userId, $instructionType) {
-                switch ($instructionType) {
-                    case InstructionType::Sent:
+            ->where(function ($q) use ($userId, $messageType) {
+                switch ($messageType) {
+                    case MessageType::Sent:
                         $q->where('sender_id', $userId);
                         break;
 
-                    case InstructionType::Received:
+                    case MessageType::Received:
                         $q->where('receiver_id', $userId)
                             ->orWhereHas('forwards', fn($sub) => $sub->where('forwarded_to', $userId));
                         break;
 
-                    case InstructionType::All:
+                    case MessageType::All:
                     default:
                         $q->where('sender_id', $userId)
                             ->orWhere('receiver_id', $userId)

@@ -1,6 +1,6 @@
 <?php
 namespace App\Services\Instruction;
-use App\Enums\InstructionType;
+use App\Enums\MessageType;
 use App\Repositories\Instruction\InstructionRepositoryInterface;
 use App\Models\Instruction;
 
@@ -12,7 +12,7 @@ class InstructionService implements InstructionServiceInterface{
     }
 
 
-    public function getAllInstruction($search = null, int $perPage = 10, InstructionType $messageType ,bool $eager = false){
+    public function getAllInstruction($search = null, int $perPage = 10, MessageType $messageType ,bool $eager = false){
         return $this->instructionRepository->getAll($search, $perPage,$messageType, $eager);
     }
 

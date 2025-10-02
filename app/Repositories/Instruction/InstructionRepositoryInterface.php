@@ -1,11 +1,11 @@
 <?php
 namespace App\Repositories\Instruction;
-use App\Enums\InstructionType;
+use App\Enums\MessageType;
 use App\Models\Instruction;
 
 interface InstructionRepositoryInterface
 {
-    public function getAll(? string $search=null, int $perPage=10, InstructionType $instructionType  ,bool $eager=false);
+    public function getAll(? string $search=null, int $perPage=10, MessageType $messageType  ,bool $eager=false);
     public function storeInstruction(array $data);
 
     public function editInstruction(Instruction $instruction, array $data);
