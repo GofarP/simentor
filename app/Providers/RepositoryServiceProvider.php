@@ -34,6 +34,14 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Services\Instruction\InstructionService::class
         );
 
+        $this->app->bind(
+            \App\Services\Coordination\CoordinationServiceInterface::class,
+            \App\Services\Coordination\CoordinationService::class
+        );
+
+
+
+
         // Repository
         $this->app->bind(
             \App\Repositories\Permission\PermissionRepositoryInterface::class,
@@ -52,6 +60,10 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             \App\Repositories\Instruction\InstructionRepositoryInterface::class,
             \App\Repositories\Instruction\InstructionRepository::class
+        );
+        $this->app->bind(
+            \App\Repositories\Coordination\CoordinationRepositoryInterface::class,
+            \App\Repositories\Coordination\CoordinationRepository::class
         );
     }
 

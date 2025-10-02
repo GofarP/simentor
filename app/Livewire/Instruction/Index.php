@@ -11,7 +11,7 @@ class Index extends Component
 {
     use WithPagination;
 
-public string $search="";
+    public string $search="";
     public string $messageType="received";
 
     protected InstructionServiceInterface $instruksiService;

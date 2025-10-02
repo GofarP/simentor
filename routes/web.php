@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CoordinationController;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\InstruksiController;
 use App\Http\Controllers\UserController;
@@ -39,6 +40,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('permission',PermissionController::class);
     Route::resource('role',RoleController::class);
     Route::resource('user',UserController::class);
-    Route::resource('instruction',InstructionController::class)->names('instruction');
+    Route::resource('instruction',InstructionController::class);
+    Route::resource('coordination',CoordinationController::class);
 
 });

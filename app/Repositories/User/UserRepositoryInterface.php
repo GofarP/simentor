@@ -1,8 +1,8 @@
 <?php
 namespace App\Repositories\User;
 
+use App\Enums\OrderType;
 use App\Models\User;
-use Illuminate\Support\Collection;
 
 
 interface UserRepositoryInterface
