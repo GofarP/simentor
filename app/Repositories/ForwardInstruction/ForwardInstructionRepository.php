@@ -30,6 +30,6 @@ class ForwardInstructionRepository implements ForwardInstructionRepositoryInterf
 
     public function deleteForwardInstruction(Instruction $instruction): bool
     {
-        return ForwardInstruction::where('id',$instruction->id)->delete();
+        return ForwardInstruction::where('instruction_id',$instruction->id)->delete();
     }
 }

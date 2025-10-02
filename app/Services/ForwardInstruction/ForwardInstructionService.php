@@ -10,7 +10,7 @@ class ForwardInstructionService implements ForwardInstructionServiceInterface
 {
     private ForwardInstructionRepositoryInterface $forwardInstructionRepository;
 
-    public function __construct(ForwardInstructionService $forwardInstructionRepository) {
+    public function __construct(ForwardInstructionRepositoryInterface $forwardInstructionRepository) {
         $this->$forwardInstructionRepository = $forwardInstructionRepository;
     }
 

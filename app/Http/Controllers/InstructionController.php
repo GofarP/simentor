@@ -8,7 +8,6 @@ use App\Models\Instruction;
 use App\Services\ForwardInstruction\ForwardInstructionServiceInterface;
 use App\Services\Instruction\InstructionServiceInterface;
 use App\Services\User\UserServiceInterface;
-use Illuminate\Http\Request;
 
 class InstructionController extends Controller
 {
@@ -91,6 +90,7 @@ class InstructionController extends Controller
     {
         $this->authorize('delete',$instruction);
         $this->instructionService->deleteInstruction($instruction);
+        $this->forwardInstructionService->deleteForwardInstruction($instruction);
         return redirect()->route('instruction.index')->with('success', 'Sukses menghapus instruction');
     }
 

@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CoordinationRequest;
+use App\Models\Instruction;
 use App\Models\Coordination;
-use App\Services\Coordination\CoordinationServiceInterface;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\ForwardRequest;
+use App\Http\Requests\CoordinationRequest;
 use App\Services\User\UserServiceInterface;
-use Illuminate\Http\Request;
+use App\Services\Coordination\CoordinationServiceInterface;
+use App\Services\ForwardCoordination\ForwardCoordinationService;
 
 class CoordinationController extends Controller
 {
@@ -14,10 +17,17 @@ class CoordinationController extends Controller
 
     private UserServiceInterface $userService;
 
-    public function __construct(CoordinationServiceInterface $coordinationService, UserServiceInterface $userService)
-    {
+    private ForwardCoordinationService $forwardCoordinationService;
+
+
+    public function __construct(
+        CoordinationServiceInterface $coordinationService,
+        UserServiceInterface $userService,
+        ForwardCoordinationService $forwardCoordinationService
+    ) {
         $this->coordinationService = $coordinationService;
         $this->userService = $userService;
+        $this->forwardCoordinationService = $forwardCoordinationService;
     }
     /**
      * Display a listing of the resource.
@@ -51,7 +61,7 @@ class CoordinationController extends Controller
     public function show(Coordination $coordination)
     {
         $this->authorize('view', $coordination);
-
+        return view('coordination.show', compact('coordination'));
     }
 
     /**
@@ -60,6 +70,8 @@ class CoordinationController extends Controller
     public function edit(Coordination $coordination)
     {
         $this->authorize('update', $coordination);
+        $users = $this->userService->getReceiver();
+        return view('coordination.edit', compact('coordination'));
     }
 
     /**
@@ -68,7 +80,8 @@ class CoordinationController extends Controller
     public function update(CoordinationRequest $request, Coordination $coordination)
     {
         $this->authorize('update', $coordination);
-
+        $this->coordinationService->editCoordination($coordination, $request->all());
+        return redirect()->route('coordination.index')->with('success', 'Sukses Mengubah Koordinasi');
     }
 
     /**
@@ -78,6 +91,21 @@ class CoordinationController extends Controller
     {
         $this->authorize('delete', $coordination);
         $this->coordinationService->deleteCoordination($coordination);
-        return redirect()->route('instruction.index')->with('success', 'Sukses menghapus instruction');
+        $this->forwardCoordinationService->deleteForwardCoordination($coordination);
+        return redirect()->route('instruction.index')->with('success', 'Sukses menghapus koordinasi');
+    }
+
+    public function forward(Coordination $coordination)
+    {
+        $this->authorize('forward', $coordination);
+        $users = $this->userService->getReceiver();
+        return view('coordination.forward', compact('coordination', 'users'));
+    }
+
+    public function forwardCoordination(ForwardRequest $request, Coordination $coordination)
+    {
+        $this->authorize('forward', $coordination);
+        $this->forwardCoordinationService->forwardCoordination($coordination, $request->all());
+        return redirect()->route('coordination.index')->with('success', 'Sukses meneruskan koordinasi');
     }
 }

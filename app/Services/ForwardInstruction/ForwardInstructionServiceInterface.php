@@ -9,5 +9,5 @@ interface ForwardInstructionServiceInterface
 {
     public function forwardInstruction(Instruction $instruction, array $data);
 
-    public function deleteForwardInstruction(Instruction $forwardInstruction):bool;
+    public function deleteForwardInstruction(Instruction $instruction):bool;
 }

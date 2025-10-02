@@ -2,9 +2,7 @@
 
 namespace App\Repositories\ForwardInstruction;
 
-use App\Enums\MessageType;
 use App\Models\Instruction;
-use App\Models\ForwardInstruction;
 
 interface ForwardInstructionRepositoryInterface
 {
