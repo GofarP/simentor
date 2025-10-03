@@ -8,6 +8,8 @@ class FollowupInstruction extends Model
 {
     protected $fillable=[
         "instruction_id",
+        "sender_id",
+        "receiver_id",
         "proof",
         "attachment",
         "description"

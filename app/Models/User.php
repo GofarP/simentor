@@ -69,6 +69,10 @@ class User extends Authenticatable
         return $this->hasMany(Coordination::class, 'sender_id');
     }
 
+    public function sentFollowupInstruction(){
+        return $this->hasMany(FollowupInstruction::class,'sender_id');
+    }
+
     public function receivedInstructions()
     {
         return $this->hasMany(Instruction::class, 'receiver_id');
@@ -78,6 +82,10 @@ class User extends Authenticatable
     public function receivedCoordination()
     {
         return $this->hasMany(Coordination::class,'receiver_id');
+    }
+
+    public function receivedFollowupInstructions(){
+        return $this->hasMany(FollowupInstruction::class, 'receiver_id');
     }
 
     public function forwardedInstructions()
@@ -90,6 +98,12 @@ class User extends Authenticatable
     public function forwardedCoordinations()
     {
         return $this->belongsToMany(Coordination::class, 'forward_coordinations','forwarded_to','instruction_id')
+        ->withPivot('forwarded_by')
+        ->withTimestamps();
+    }
+
+    public function forwardedFollowupInstructions(){
+        return $this->belongsToMany(FollowupInstruction::class, 'forward_followup_instructions','forwarded_to','followup_instruction_id')
         ->withPivot('forwarded_by')
         ->withTimestamps();
     }
