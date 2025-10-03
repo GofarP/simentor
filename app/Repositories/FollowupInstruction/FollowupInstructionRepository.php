@@ -36,7 +36,22 @@ class FollowupInstructionRepository implements FollowupInstructionRepositoryInte
             }
         });
 
-        
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('sender', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('receiver', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
+                    ->orWhere('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        $query->orderByDesc('created_at');
+
+        return $eager
+            ? $query->get()
+            : $query->paginate($perPage)->onEachSide(1);
+
+
 
     }
 
