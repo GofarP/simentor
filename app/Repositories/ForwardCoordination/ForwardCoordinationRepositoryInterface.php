@@ -10,4 +10,6 @@ interface ForwardCoordinationRepositoryInterface
 {
     public function forwardCoordination(Coordination $coordination, array $data);
     public function deleteForwardCoordination(Coordination $forwardCoordination):bool;
+
+    public function getForwardCoordination(Coordination $forwardCoordination);
 }

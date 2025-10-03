@@ -60,7 +60,7 @@
                     @if ($messageType == 'sent' || $messageType == 'all')
                         <th
                             class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                            Penerima</th>
+                            Penerima Asli</th>
                     @endif
 
                     <th
@@ -161,7 +161,7 @@
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
                             @can('forward', $instruction)
-                                <a href="{{ route('instruction.forward', $instruction) }}"
+                                <a href="{{ route('forwardinstruction.forward', $instruction) }}"
                                     class="px-3 py-1 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition">
                                     Forward
                                 </a>

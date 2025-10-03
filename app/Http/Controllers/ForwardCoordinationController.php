@@ -2,64 +2,45 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ForwardRequest;
+use App\Models\Coordination;
 use App\Models\ForwardCoordination;
+use App\Services\ForwardCoordination\ForwardCoordinationServiceInterface;
+use App\Services\User\UserServiceInterface;
 use Illuminate\Http\Request;
 
 class ForwardCoordinationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
+    private ForwardCoordinationServiceInterface $forwardCoordinationService;
+    private UserServiceInterface $userService;
+
+
+    public function __construct(
+        UserServiceInterface $userService,
+        ForwardCoordinationServiceInterface $forwardCoordinationService
+    ) {
+        $this->userService = $userService;
+        $this->forwardCoordinationService = $forwardCoordinationService;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+
+    public function forward(Coordination $coordination)
     {
-        //
+        $this->authorize('forward',$coordination);
+        $users=$this->userService->getReceiver();
+        $forwardCoordination=$this->forwardCoordinationService
+        ->getForwardCoordination($coordination)
+        ->pluck('forwarded_to')
+        ->toArray();
+
+        return view('coordination.index',compact('coordination','users','forwardCoordination'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function forwardCoordination(ForwardRequest $request, Coordination $coordination)
     {
-        //
-    }
+        $this->authorize('forward', $coordination);
+        $this->forwardCoordinationService->forwardCoordination($coordination, $request->all());
+        return redirect()->route('coordination.index')->with('success', 'Sukses meneruskan instruksi');
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(ForwardCoordination $forwardCoordination)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(ForwardCoordination $forwardCoordination)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, ForwardCoordination $forwardCoordination)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(ForwardCoordination $forwardCoordination)
-    {
-        //
     }
 }

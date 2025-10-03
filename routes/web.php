@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\CoordinationController;
+use App\Http\Controllers\ForwardInstructionController;
 use App\Http\Controllers\InstructionController;
 use App\Http\Controllers\InstruksiController;
 use App\Http\Controllers\UserController;
+use App\Models\ForwardInstruction;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DataFeedController;
 use App\Http\Controllers\DashboardController;
@@ -33,9 +35,11 @@ Route::redirect('/', 'login');
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/teruskan/{instruction}', [InstructionController::class, 'forward'])->name('instruction.forward');
+    Route::get('/teruskaninstruksi/{instruction}', [ForwardInstructionController::class, 'forward'])->name('forwardinstruction.forward');
+    Route::get('/teruskankoordinasi/{coordination}', [CoordinationController::class, 'forward'])->name('coordination.forward');
 
-    Route::post('/teruskan/{instruction}',[InstructionController::class,'forwardInstruction'])->name('instruction.forwardinstruction');
+    Route::post('/teruskaninstruksi/{instruction}',[InstructionController::class,'forwardInstruction'])->name('forwardinstruction.forwardinstruction');
+    Route::post('/teruskankoordinasi/{coordination}',[CoordinationController::class,'forwardCoordination'])->name('coordination.forwardcoordination');
 
     Route::resource('permission',PermissionController::class);
     Route::resource('role',RoleController::class);

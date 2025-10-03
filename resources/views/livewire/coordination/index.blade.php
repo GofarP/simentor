@@ -161,23 +161,23 @@
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
                             @can('forward', $coordination)
-                                <a href="{{ route('instruction.forward', $coordination) }}"
+                                <a href="{{ route('coordination.forward', $coordination) }}"
                                     class="px-3 py-1 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition">
                                     Forward
                                 </a>
                             @endcan
 
-                            <a href="{{ route('instruction.show', $coordination) }}"
+                            <a href="{{ route('coordination.show', $coordination) }}"
                                 class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">Show</a>
 
                             @can('update', $coordination)
-                                <a href="{{ route('instruction.edit', $coordination) }}"
+                                <a href="{{ route('coordination.edit', $coordination) }}"
                                     class="px-3 py-1 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition">Edit</a>
                             @endcan
 
                             @can('delete', $coordination)
-                                <form action="{{ route('instruction.destroy', $coordination) }}" method="POST"
-                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus instruction ini?')">
+                                <form action="{{ route('coordination.destroy', $coordination) }}" method="POST"
+                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus coordination ini?')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"

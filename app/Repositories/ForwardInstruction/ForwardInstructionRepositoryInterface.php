@@ -6,6 +6,8 @@ use App\Models\Instruction;
 
 interface ForwardInstructionRepositoryInterface
 {
-    public function forwardInstruction(Instruction $forwardInstruction, array $data);
-    public function deleteForwardInstruction(Instruction $forwardInstruction):bool;
+    public function forwardInstruction(Instruction $instruction, array $data);
+    public function deleteForwardInstruction(Instruction $instruction):bool;
+
+    public function getForwardInstruction(Instruction $instruction);
 }

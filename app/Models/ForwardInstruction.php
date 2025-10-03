@@ -12,8 +12,6 @@ class ForwardInstruction extends Model
         "forwarded_to"
     ];
 
-    // Instruksi yang dikirim user
-
     public function instruction()
     {
         return $this->belongsTo(Instruction::class, 'instruction_id');
@@ -21,14 +19,11 @@ class ForwardInstruction extends Model
 
     public function forwarder()
     {
-        return $this->belongsTo(User::class, 'forwarded_by','id');
+        return $this->belongsTo(User::class, 'forwarded_by');
     }
 
-    // User penerima forward
     public function receiver()
     {
-        return $this->belongsTo(User::class, 'forwarded_to','id');
+        return $this->belongsTo(User::class, 'forwarded_to');
     }
-
-
 }

@@ -37,7 +37,6 @@ class UserRepository implements UserRepositoryInterface
 
     public function storeUser(array $data)
     {
-        // Simpan user
         $user = User::create([
             'name' => $data['name'],
             'email' => $data['email'],
@@ -45,7 +44,6 @@ class UserRepository implements UserRepositoryInterface
             'telp' => $data['telp'] ?? null,
         ]);
 
-        // Assign role
         if (!empty($data['role_id'])) {
             $role = Role::find($data['role_id']);
             if ($role) {

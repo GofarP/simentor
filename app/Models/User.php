@@ -65,21 +65,33 @@ class User extends Authenticatable
         return $this->hasMany(Instruction::class, 'sender_id');
     }
 
-    // Instruksi yang diterima user
+    public function sentCoordination(){
+        return $this->hasMany(Coordination::class, 'sender_id');
+    }
+
     public function receivedInstructions()
     {
         return $this->hasMany(Instruction::class, 'receiver_id');
     }
 
-    // Forward yang dilakukan user
-    public function forwardsMade()
+
+    public function receivedCoordination()
     {
-        return $this->hasMany(ForwardInstruction::class, 'forwarded_by');
+        return $this->hasMany(Coordination::class,'receiver_id');
     }
 
-    // Forward yang diterima user
-    public function forwardsReceived()
+    public function forwardedInstructions()
     {
-        return $this->hasMany(ForwardInstruction::class, 'forwarded_to');
+        return $this->belongsToMany(Instruction::class, 'forward_instructions', 'forwarded_to', 'instruction_id')
+            ->withPivot('forwarded_by')
+            ->withTimestamps();
+    }
+
+    public function forwardedCoordinations()
+    {
+        return $this->belongsToMany(Coordination::class, 'forward_coordinations','forwarded_to','instruction_id')
+        ->withPivot('forwarded_by')
+        ->withTimestamps();
     }
 }
+

@@ -4,7 +4,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 w-full">
             <h2 class="text-2xl font-bold text-violet-600 mb-6">Edit Instruksi</h2>
 
-            <form method="POST" action="{{ route('instruction.update', ['instruksi' => $instruction->id]) }}"
+            <form method="POST" action="{{ route('instruction.update', $instruction->id) }}"
                 enctype="multipart/form-data">
 
                 @csrf
@@ -72,7 +72,7 @@
                         End Time
                     </label>
                     <input type="date" name="end_time" id="end_time"
-                        value="{{ old('end_time', $instruction->batas_waktu ? \Carbon\Carbon::parse($instruction->end_tine)->format('Y-m-d') : '') }}"
+                        value="{{ old('end_time', isset($instruction->end_time) ? \Carbon\Carbon::parse($instruction->end_time)->format('Y-m-d') : '') }}"
                         class="form-input w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                     @error('end_time')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>

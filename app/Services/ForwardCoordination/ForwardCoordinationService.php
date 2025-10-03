@@ -3,9 +3,8 @@
 namespace App\Services\ForwardCoordination;
 
 use App\Models\Coordination;
-use App\Models\ForwardInstruction;
+use App\Models\ForwardCoordination;
 use App\Repositories\ForwardCoordination\ForwardCoordinationRepositoryInterface;
-use Faker\Core\Coordinates;
 
 class ForwardCoordinationService implements ForwardCoordinationServiceInterface
 {
@@ -23,5 +22,9 @@ class ForwardCoordinationService implements ForwardCoordinationServiceInterface
     public function deleteForwardCoordination(Coordination $coordination): bool
     {
         return $this->deleteForwardCoordination($coordination);
+    }
+
+    public function getForwardCoordination(Coordination $coordination){
+        return $this->getForwardCoordination($coordination);
     }
 }

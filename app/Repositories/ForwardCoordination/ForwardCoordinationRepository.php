@@ -32,4 +32,9 @@ class ForwardCoordinationRepository implements ForwardCoordinationRepositoryInte
     {
         return ForwardCoordination::where('coordination_id', $coordination->id)->delete();
     }
+
+
+    public function getForwardCoordination(Coordination $coordination){
+        return ForwardCoordination::where('coordination_id',$coordination->id);
+    }
 }

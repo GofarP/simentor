@@ -3,7 +3,6 @@
 namespace App\Repositories\Instruction;
 
 use App\Enums\MessageType;
-use App\Models\ForwardInstruction;
 use App\Models\Instruction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -15,27 +14,38 @@ class InstructionRepository implements InstructionRepositoryInterface
     {
         $userId = Auth::id();
 
-        $query = Instruction::with(['sender', 'receiver', 'forwards.forwarder', 'forwards.receiver'])
-            ->where(function ($q) use ($userId, $messageType) {
-                switch ($messageType) {
-                    case MessageType::Sent:
-                        $q->where('sender_id', $userId);
-                        break;
+        $query = Instruction::with([
+            'sender',
+            'receiver',
+            'forwardedUsers' => function ($q) {
+                $q->withPivot('forwarded_by')->withTimestamps();
+            },
+            'forwards.forwarder',  
+            'forwards.receiver'     
+        ])->where(function ($q) use ($userId, $messageType) {
+            switch ($messageType) {
+                case MessageType::Sent:
+                    // instruksi yang dikirim user
+                    $q->where('sender_id', $userId);
+                    break;
 
-                    case MessageType::Received:
-                        $q->where('receiver_id', $userId)
-                            ->orWhereHas('forwards', fn($sub) => $sub->where('forwarded_to', $userId));
-                        break;
+                case MessageType::Received:
+                    // instruksi yang diterima user langsung / lewat forward
+                    $q->where('receiver_id', $userId)
+                        ->orWhereHas('forwardedUsers', fn($sub) => $sub->where('users.id', $userId));
+                    break;
 
-                    case MessageType::All:
-                    default:
-                        $q->where('sender_id', $userId)
-                            ->orWhere('receiver_id', $userId)
-                            ->orWhereHas('forwards', fn($sub) => $sub->where('forwarded_to', $userId));
-                        break;
-                }
-            });
+                case MessageType::All:
+                default:
+                    // semua instruksi terkait user (sebagai sender, receiver, atau penerima forward)
+                    $q->where('sender_id', $userId)
+                        ->orWhere('receiver_id', $userId)
+                        ->orWhereHas('forwardedUsers', fn($sub) => $sub->where('users.id', $userId));
+                    break;
+            }
+        });
 
+        // filter search
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
                 $q->whereHas('sender', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
@@ -47,8 +57,11 @@ class InstructionRepository implements InstructionRepositoryInterface
 
         $query->orderByDesc('created_at');
 
-        return $eager ? $query->get() : $query->paginate($perPage)->onEachSide(1);
+        return $eager
+            ? $query->get()
+            : $query->paginate($perPage)->onEachSide(1);
     }
+
 
     public function storeInstruction(array $data)
     {

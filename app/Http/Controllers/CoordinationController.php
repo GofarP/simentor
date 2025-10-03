@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Instruction;
 use App\Models\Coordination;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ForwardRequest;
@@ -52,7 +51,7 @@ class CoordinationController extends Controller
     public function store(CoordinationRequest $request)
     {
         $this->coordinationService->storeCoordination($request->all());
-        return redirect()->route('instruction.index')->with('success', 'Sukses menambah koordinasi');
+        return redirect()->route('coordination.index')->with('success', 'Sukses menambah koordinasi');
     }
 
     /**
@@ -92,20 +91,8 @@ class CoordinationController extends Controller
         $this->authorize('delete', $coordination);
         $this->coordinationService->deleteCoordination($coordination);
         $this->forwardCoordinationService->deleteForwardCoordination($coordination);
-        return redirect()->route('instruction.index')->with('success', 'Sukses menghapus koordinasi');
+        return redirect()->route('coordination.index')->with('success', 'Sukses menghapus koordinasi');
     }
 
-    public function forward(Coordination $coordination)
-    {
-        $this->authorize('forward', $coordination);
-        $users = $this->userService->getReceiver();
-        return view('coordination.forward', compact('coordination', 'users'));
-    }
 
-    public function forwardCoordination(ForwardRequest $request, Coordination $coordination)
-    {
-        $this->authorize('forward', $coordination);
-        $this->forwardCoordinationService->forwardCoordination($coordination, $request->all());
-        return redirect()->route('coordination.index')->with('success', 'Sukses meneruskan koordinasi');
-    }
 }
