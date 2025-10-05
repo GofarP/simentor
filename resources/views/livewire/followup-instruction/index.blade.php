@@ -19,8 +19,7 @@
 
             <div class="flex flex-col items-end gap-2">
 
-                <input type="text" name="search" wire:model.live.debounce.500ms="search"
-                    placeholder="cari..."
+                <input type="text" name="search" wire:model.live.debounce.500ms="search" placeholder="cari..."
                     class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
               focus:ring-2 focus:ring-violet-500 focus:border-violet-500
               dark:bg-gray-800 dark:text-gray-200" />
@@ -86,6 +85,9 @@
                         Lampiran</th>
                     <th
                         class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                        Bukti</th>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         Aksi</th>
                 </tr>
             </thead>
@@ -145,10 +147,10 @@
                         </td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ \Carbon\Carbon::parse($followupInstruction->start_time)->format('d-m-Y') }}</td>
+                            {{ \Carbon\Carbon::parse($followupInstruction->instruction->start_time)->format('d-m-Y') }}</td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ \Carbon\Carbon::parse($followupInstruction->end_time)->format('d-m-Y') }}</td>
+                            {{ \Carbon\Carbon::parse($followupInstruction->instruction->end_time)->format('d-m-Y') }}</td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                             @if ($followupInstruction->attachment)
@@ -156,6 +158,15 @@
                                     class="text-blue-600 dark:text-blue-400 underline">Lihat Lampiran</a>
                             @else
                                 <span class="text-gray-400">Tidak Ada Lampiran</span>
+                            @endif
+                        </td>
+
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                            @if ($followupInstruction->proof)
+                                <a href="{{ Storage::url($followupInstruction->proof) }}" target="_blank"
+                                    class="text-blue-600 dark:text-blue-400 underline">Lihat Bukti</a>
+                            @else
+                                <span class="text-gray-400">Tidak Ada Bukti</span>
                             @endif
                         </td>
 
@@ -176,7 +187,8 @@
                             @endcan
 
                             @can('delete', $followupInstruction)
-                                <form action="{{ route('followupinstruction.destroy', $followupInstruction) }}" method="POST"
+                                <form action="{{ route('followupinstruction.destroy', $followupInstruction) }}"
+                                    method="POST"
                                     onsubmit="return confirm('Apakah Anda yakin ingin menghapus instruction ini?')">
                                     @csrf
                                     @method('DELETE')
@@ -193,7 +205,7 @@
                     <tr>
                         <td colspan="{{ $colspanNumber }}"
                             class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                            Data instruction tidak ditemukan</td>
+                            Data followup instruction tidak ditemukan</td>
                     </tr>
                 @endforelse
             </tbody>
