@@ -73,6 +73,7 @@ class FollowupInstructionRepository implements FollowupInstructionRepositoryInte
 
     public function editFollowupInstruction(FollowupInstruction $followupInstruction, array $data)
     {
+        // Handle attachment
         if (request()->hasFile('attachment')) {
             if ($followupInstruction->attachment && Storage::disk('public')->exists($followupInstruction->attachment)) {
                 Storage::disk('public')->delete($followupInstruction->attachment);
@@ -80,13 +81,20 @@ class FollowupInstructionRepository implements FollowupInstructionRepositoryInte
             $data['attachment'] = request()->file('attachment')->store('attachment', 'public');
         }
 
+        // Handle proof
         if (request()->hasFile('proof')) {
-            if ($followupInstruction->attachment && Storage::disk('proof')->exists($followupInstruction->attachment)) {
-                Storage::disk('public')->delete($followupInstruction->attachment);
+            if ($followupInstruction->proof && Storage::disk('public')->exists($followupInstruction->proof)) {
+                Storage::disk('public')->delete($followupInstruction->proof);
             }
             $data['proof'] = request()->file('proof')->store('proof', 'public');
         }
+
+        // Update data ke database
+        $followupInstruction->update($data);
+
+        return $followupInstruction;
     }
+
 
 
     public function deleteFollowupInstruction(FollowupInstruction $followupInstruction): bool

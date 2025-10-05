@@ -100,38 +100,7 @@
             });
         </script>
 
-        <script>
-            document.addEventListener("trix-initialize", function(event) {
-                const toolbar = event.target.toolbarElement;
-                if (toolbar) {
-                    toolbar.querySelectorAll(
-                            "button[data-trix-attribute='bullet'], button[data-trix-attribute='number']")
-                        .forEach(btn => btn.removeAttribute("disabled"));
-                }
-                Trix.config.blockAttributes.heading1 = {
-                    tagName: "h1",
-                    terminal: true,
-                    breakOnReturn: true,
-                    group: false
-                };
-
-                // Register code
-                Trix.config.blockAttributes.code = {
-                    tagName: "pre",
-                    terminal: true,
-                    breakOnReturn: true,
-                    group: false
-                };
-
-                // Register quote
-                Trix.config.blockAttributes.quote = {
-                    tagName: "blockquote",
-                    terminal: true,
-                    breakOnReturn: true,
-                    group: false
-                };
-            });
-        </script>
+       
     @endpush
 
 

@@ -91,7 +91,7 @@
             </thead>
 
             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                @forelse($followupInstructions as $index => $instructions)
+                @forelse($followupInstructions as $index => $followupInstruction)
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                             {{ $index + 1 }}
@@ -100,21 +100,21 @@
                         @if ($messageType == 'received' || $messageType == 'all')
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                                 <span
-                                    class="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded-full text-xs">{{ $instructions->sender->name }}</span>
+                                    class="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded-full text-xs">{{ $followupInstruction->sender->name }}</span>
                             </td>
                         @endif
 
                         @if ($messageType == 'sent' || $messageType == 'all')
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
                                 <span
-                                    class="px-2 py-1 bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 rounded-full text-xs">{{ $instructions->receiver->name }}</span>
+                                    class="px-2 py-1 bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 rounded-full text-xs">{{ $followupInstruction->receiver->name }}</span>
                             </td>
                         @endif
 
                         <!-- Diteruskan Oleh -->
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            @if ($instructions->forwards->isNotEmpty())
-                                @foreach ($instructions->forwards->unique('forwarded_by') as $forward)
+                            @if ($followupInstruction->forwards->isNotEmpty())
+                                @foreach ($followupInstruction->forwards->unique('forwarded_by') as $forward)
                                     <span
                                         class="px-2 py-1 bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-100 rounded-full text-xs inline-block mb-1">{{ $forward->forwarder->name ?? '-' }}</span>
                                 @endforeach
@@ -125,8 +125,8 @@
 
                         <!-- Penerima Forward -->
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            @if ($instructions->forwards->isNotEmpty())
-                                @foreach ($instructions->forwards as $forward)
+                            @if ($followupInstruction->forwards->isNotEmpty())
+                                @foreach ($followupInstruction->forwards as $forward)
                                     <span
                                         class="px-2 py-1 bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 rounded-full text-xs inline-block mb-1">{{ $forward->receiver->name ?? '-' }}</span>
                                 @endforeach
@@ -136,23 +136,23 @@
                         </td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $instructions->title }}</td>
+                            {{ $followupInstruction->instruction->title }}</td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            <div class="truncate max-w-xs" title="{{ strip_tags($instructions->description) }}">
-                                {!! $instructions->description !!}
+                            <div class="truncate max-w-xs" title="{{ strip_tags($followupInstruction->description) }}">
+                                {!! $followupInstruction->description !!}
                             </div>
                         </td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ \Carbon\Carbon::parse($instructions->start_time)->format('d-m-Y') }}</td>
+                            {{ \Carbon\Carbon::parse($followupInstruction->start_time)->format('d-m-Y') }}</td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ \Carbon\Carbon::parse($instructions->end_time)->format('d-m-Y') }}</td>
+                            {{ \Carbon\Carbon::parse($followupInstruction->end_time)->format('d-m-Y') }}</td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            @if ($instructions->attachment)
-                                <a href="{{ Storage::url($instructions->attachment) }}" target="_blank"
+                            @if ($followupInstruction->attachment)
+                                <a href="{{ Storage::url($followupInstruction->attachment) }}" target="_blank"
                                     class="text-blue-600 dark:text-blue-400 underline">Lihat Lampiran</a>
                             @else
                                 <span class="text-gray-400">Tidak Ada Lampiran</span>
@@ -160,23 +160,23 @@
                         </td>
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
-                            @can('forward', $instructions)
-                                <a href="{{ route('forwardinstruction.forward', $instructions) }}"
+                            @can('forward', $followupInstruction)
+                                <a href="{{ route('followupinstruction.forward', $followupInstruction) }}"
                                     class="px-3 py-1 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition">
                                     Forward
                                 </a>
                             @endcan
 
-                            <a href="{{ route('instruction.show', $instructions) }}"
+                            <a href="{{ route('followupinstruction.show', $followupInstruction) }}"
                                 class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">Show</a>
 
-                            @can('update', $instructions)
-                                <a href="{{ route('instruction.edit', $instructions) }}"
+                            @can('update', $followupInstruction)
+                                <a href="{{ route('followupinstruction.edit', $followupInstruction) }}"
                                     class="px-3 py-1 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition">Edit</a>
                             @endcan
 
-                            @can('delete', $instructions)
-                                <form action="{{ route('instruction.destroy', $instructions) }}" method="POST"
+                            @can('delete', $followupInstruction)
+                                <form action="{{ route('followupinstruction.destroy', $followupInstruction) }}" method="POST"
                                     onsubmit="return confirm('Apakah Anda yakin ingin menghapus instruction ini?')">
                                     @csrf
                                     @method('DELETE')

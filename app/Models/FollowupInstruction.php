@@ -15,30 +15,34 @@ class FollowupInstruction extends Model
         "description"
     ];
 
+    // Relasi ke instruksi induk
     public function instruction()
     {
-        return $this->hasMany(Instruction::class, 'instruction_id');
+        return $this->belongsTo(Instruction::class, 'instruction_id');
     }
 
+    // User pengirim tindak lanjut
     public function sender()
     {
         return $this->belongsTo(User::class, 'sender_id');
     }
 
+    // User penerima tindak lanjut
     public function receiver()
     {
-        return $this->belongsTo(User::class, 'sender_id');
+        return $this->belongsTo(User::class, 'receiver_id');
     }
 
+    // Forward (tindak lanjut diteruskan)
     public function forwardedUsers()
     {
-        return $this->belongsToMany(User::class, 'forward_instructions', 'instruction_id', 'forwarded_to')
+        return $this->belongsToMany(User::class, 'forward_followup_instructions', 'followup_instruction_id', 'forwarded_to')
             ->withPivot('forwarded_by')
             ->withTimestamps();
     }
 
-    public function forward()
+    public function forwards()
     {
-        return $this->hasMany(ForwardInstruction::class, 'instruction_id');
+        return $this->hasMany(ForwardFollowupInstruction::class, 'followup_instruction_id');
     }
 }

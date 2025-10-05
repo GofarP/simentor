@@ -64,7 +64,7 @@ class FollowupInstructionController extends Controller
     {
         return view('followupinstruction.show', compact('followupinstruction'));
     }
-
+    
     /**
      * Show the form for editing the specified resource.
      */

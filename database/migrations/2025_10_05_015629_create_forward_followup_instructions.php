@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('forward_followup_instructions', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('forward_followup_instruction_id');
+            $table->bigInteger('followup_instruction_id');
             $table->bigInteger('forwarded_by');
             $table->bigInteger('forwarded_to');
+            $table->timestamps();
         });
     }
 
