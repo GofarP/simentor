@@ -1,9 +1,11 @@
 <?php
+
 namespace App\Repositories\FollowupInstruction;
 
 use App\Enums\MessageType;
 use App\Models\FollowupInstruction;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class FollowupInstructionRepository implements FollowupInstructionRepositoryInterface
 {
@@ -50,25 +52,53 @@ class FollowupInstructionRepository implements FollowupInstructionRepositoryInte
         return $eager
             ? $query->get()
             : $query->paginate($perPage)->onEachSide(1);
-
-
-
     }
 
 
     public function storeFollowupInstruction(array $data)
     {
+        if (request()->hasFile('attachment')) {
+            $data['attachment'] = request()->file('attachment')->store('attachment', 'public');
+        }
 
+        if (request()->hasFile('proof')) {
+            $data['proof'] = request()->file('proof')->store('proof', 'public');
+        }
+
+        $data['sender_id'] = Auth::user()->id;
+
+
+        return FollowupInstruction::create($data);
     }
 
-    public function editFollowupInstruction(array $data)
+    public function editFollowupInstruction(FollowupInstruction $followupInstruction, array $data)
     {
+        if (request()->hasFile('attachment')) {
+            if ($followupInstruction->attachment && Storage::disk('public')->exists($followupInstruction->attachment)) {
+                Storage::disk('public')->delete($followupInstruction->attachment);
+            }
+            $data['attachment'] = request()->file('attachment')->store('attachment', 'public');
+        }
 
+        if (request()->hasFile('proof')) {
+            if ($followupInstruction->attachment && Storage::disk('proof')->exists($followupInstruction->attachment)) {
+                Storage::disk('public')->delete($followupInstruction->attachment);
+            }
+            $data['proof'] = request()->file('proof')->store('proof', 'public');
+        }
     }
 
 
-    public function deleteFollowupInstruction(array $data): bool
+    public function deleteFollowupInstruction(FollowupInstruction $followupInstruction): bool
     {
-        return false;
+        if ($followupInstruction->attachment && Storage::disk('public')->exists($followupInstruction->attachment)) {
+            Storage::disk('public')->delete($followupInstruction->attachment);
+        }
+
+        if ($followupInstruction->proof && Storage::disk('public')->exists($followupInstruction->followupInstruction)) {
+            Storage::disk('public')->delete($followupInstruction->proof);
+        }
+
+        return  $followupInstruction->delete();
     }
 }

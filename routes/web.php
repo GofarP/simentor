@@ -16,8 +16,10 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\FollowupInstructionController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
+use App\Models\FollowupInstruction;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,5 +48,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('user',UserController::class);
     Route::resource('instruction',InstructionController::class);
     Route::resource('coordination',CoordinationController::class);
+    Route::resource('followupinstruction',FollowupInstructionController::class);
+
 
 });

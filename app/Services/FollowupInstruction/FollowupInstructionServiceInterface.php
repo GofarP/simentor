@@ -1,10 +1,11 @@
 <?php
 namespace App\Services\FollowupInstruction;
 
+use App\Enums\MessageType;
 use App\Models\FollowupInstruction;
 
 interface FollowupInstructionServiceInterface{
-    public function getAll(? string $search=null, int $perPage, bool $eager=false);
+    public function getAll(? string $search=null,MessageType $messageType, int $perPage, bool $eager=false);
 
     public function storeFollowupInstruction(array $data);
 

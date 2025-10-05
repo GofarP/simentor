@@ -2,15 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MessageType;
+use App\Http\Requests\FollowupInstructionRequest;
+use App\Models\FollowupInstruction;
+use App\Services\FollowupInstruction\FollowupInstructionService;
+use App\Services\Instruction\InstructionService;
 use Illuminate\Http\Request;
 
 class FollowupInstructionController extends Controller
 {
+    private FollowupInstructionService $followupInstructionService;
+    private InstructionService $instructionService;
+
+
+    public function __construct(FollowupInstructionService $followupInstructionService, InstructionService $instructionService)
+    {
+        $this->followupInstructionService = $followupInstructionService;
+        $this->instructionService = $instructionService;
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        return view('followupinstruction.index');
     }
 
     /**
@@ -18,46 +33,62 @@ class FollowupInstructionController extends Controller
      */
     public function create()
     {
-        //
+        $instructions = $this->instructionService->getAllInstruction(null, 10, MessageType::All, false);
+        return view('followupinstruction.create', compact('instructions'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly pcreated resource in storage.
      */
-    public function store(Request $request)
+    public function store(FollowupInstructionRequest $request)
     {
-        //
+        $data = $request->validated(); // hanya ambil data yang lolos validasi
+
+        // Ambil receiver_id dari instruction_id lewat service
+        $data['receiver_id'] = $this->instructionService->getSenderIdByInstruction($data['instruction_id']);
+
+        // Simpan tindak lanjut instruksi via service
+        $this->followupInstructionService->storeFollowupInstruction($data);
+
+        return redirect()
+            ->route('followupinstruction.index')
+            ->with('success', 'Sukses menambah tindak lanjut instruksi');
     }
+
+
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(FollowupInstruction $followupinstruction)
     {
-        //
+        return view('followupinstruction.show', compact('followupinstruction'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(FollowupInstruction $followupinstruction)
     {
-        //
+        $instructions = $this->instructionService->getAllInstruction(null, 10, MessageType::All, false);
+        return view('followupinstruction.edit', compact('followupinstruction', 'instructions'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(FollowupInstructionRequest $request, FollowupInstruction $followupinstruction)
     {
-        //
+        $this->followupInstructionService->editFollowupInstruction($followupinstruction, $request->all());
+        return redirect()->route('followupinstruction.index')->with('success', 'Sukses mengubah tindak lanjut instruksi');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(FollowupInstruction $followupinstruction)
     {
-        //
+        $this->followupInstructionService->deleteFollowupInstruction($followupinstruction);
+        return redirect()->route('instruction.index')->with('success', 'Sukses menghapus instruction');
     }
 }

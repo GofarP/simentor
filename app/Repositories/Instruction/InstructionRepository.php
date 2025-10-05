@@ -20,8 +20,8 @@ class InstructionRepository implements InstructionRepositoryInterface
             'forwardedUsers' => function ($q) {
                 $q->withPivot('forwarded_by')->withTimestamps();
             },
-            'forwards.forwarder',  
-            'forwards.receiver'     
+            'forwards.forwarder',
+            'forwards.receiver'
         ])->where(function ($q) use ($userId, $messageType) {
             switch ($messageType) {
                 case MessageType::Sent:
@@ -94,6 +94,11 @@ class InstructionRepository implements InstructionRepositoryInterface
         }
 
         return $instruction->delete();
+    }
+
+    public function getSenderIdByInstruction(int $instructionId): ?int
+    {
+        return Instruction::where('id',$instructionId)->value('sender_id');
     }
 
 }

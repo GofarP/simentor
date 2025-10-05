@@ -12,5 +12,7 @@ interface InstructionRepositoryInterface
 
     public function deleteInstruction(Instruction $instruction):bool;
 
+    public function getSenderIdByInstruction(int $instructionId):?int;
+
 
 }

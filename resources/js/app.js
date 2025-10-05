@@ -1,8 +1,9 @@
 import { Livewire } from '../../vendor/livewire/livewire/dist/livewire.esm';
- 
+
 Livewire.start()
 
 import './bootstrap';
+import  './trix';
 
 
 // Import Chart.js
@@ -10,6 +11,7 @@ import { Chart } from 'chart.js';
 
 // Import flatpickr
 import flatpickr from 'flatpickr';
+
 
 // import component from './components/component';
 import dashboardCard01 from './components/dashboard-card-01';

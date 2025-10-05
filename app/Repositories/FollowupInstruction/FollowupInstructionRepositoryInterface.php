@@ -2,13 +2,15 @@
 namespace App\Repositories\FollowupInstruction;
 
 use App\Enums\MessageType;
+use App\Models\FollowupInstruction;
 
 interface FollowupInstructionRepositoryInterface{
     public function getAll(? string $search=null, int $perPage=10,MessageType $messageType ,bool $eager=false);
+
     public function storeFollowupInstruction(array $data);
 
-    public function editFollowupInstruction(array $data);
+    public function editFollowupInstruction(FollowupInstruction $followupInstruction,array $data);
 
-    public function deleteFollowupInstruction(array $data):bool;
+    public function deleteFollowupInstruction(FollowupInstruction $followupInstruction):bool;
 }
 

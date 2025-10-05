@@ -26,8 +26,8 @@ class Index extends Component
 
     public function render()
     {
-        $jenisPesanEnum=MessageType::from($this->messageType);
-        $instructions=$this->instruksiService->getAllInstruction($this->search,10,$jenisPesanEnum);
+        $messageTypeEnum=MessageType::from($this->messageType);
+        $instructions=$this->instruksiService->getAllInstruction($this->search,10,$messageTypeEnum);
 
         return view('livewire.instruction.index',[
             'instructions'=>$instructions

@@ -48,6 +48,10 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Services\ForwardCoordination\ForwardCoordinationServiceInterface::class,
             \App\Services\ForwardCoordination\ForwardCoordinationService::class
         );
+        $this->app->bind(
+            \App\Services\FollowupInstruction\FollowupInstructionServiceInterface::class,
+            \App\Services\FollowupInstruction\FollowupInstructionService::class
+        );
 
 
 
@@ -83,6 +87,11 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             \App\Repositories\ForwardCoordination\ForwardCoordinationRepositoryInterface::class,
             \App\Repositories\ForwardCoordination\ForwardCoordinationRepository::class,
+        );
+        $this->app->bind(
+            \App\Repositories\FollowupInstruction\FollowupInstructionRepositoryInterface::class,
+            \App\Repositories\FollowupInstruction\FollowupInstructionRepository::class,
+
         );
     }
 

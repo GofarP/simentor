@@ -94,16 +94,5 @@ class InstructionController extends Controller
         return redirect()->route('instruction.index')->with('success', 'Sukses menghapus instruction');
     }
 
-    public function forward(Instruction $instruction){
-        $this->authorize('forward',$instruction);
-        $users=$this->userService->getReceiver();
-        return view('instruction.forward',compact('instruction','users'));
-    }
 
-
-    public function forwardInstruction(ForwardRequest $request, Instruction $instruction){
-        $this->authorize('forward',$instruction);
-        $this->forwardInstructionService->forwardInstruction($instruction,$request->all());
-        return redirect()->route('instruction.index')->with('success','Sukses meneruskan instruksi');
-    }
 }

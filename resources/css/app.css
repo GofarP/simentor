@@ -1,6 +1,8 @@
 @import 'tailwindcss';
 @import './additional-styles/flatpickr.css';
 @import './additional-styles/utility-patterns.css' layer(components);
+@import "./trix.css";
+@import "./select2.css";
 
 @plugin "@tailwindcss/forms" {
   strategy: base;

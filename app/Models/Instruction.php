@@ -17,19 +17,16 @@ class Instruction extends Model
         "attachment"
     ];
 
-    // Pengirim
     public function sender()
     {
         return $this->belongsTo(User::class, 'sender_id');
     }
 
-    // Penerima
     public function receiver()
     {
         return $this->belongsTo(User::class, 'receiver_id');
     }
 
-    // RELASI: users yang di-forward (pivot forward_instructions)
     public function forwardedUsers()
     {
         return $this->belongsToMany(User::class, 'forward_instructions', 'instruction_id', 'forwarded_to')
