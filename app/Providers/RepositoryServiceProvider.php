@@ -52,6 +52,10 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Services\FollowupInstruction\FollowupInstructionServiceInterface::class,
             \App\Services\FollowupInstruction\FollowupInstructionService::class
         );
+        $this->app->bind(
+            \App\Services\ForwardFollowupInstruction\ForwardFollowupInstructionServiceInterface::class,
+            \App\Services\ForwardFollowupInstruction\ForwardFollowupInstructionService::class            
+        );
 
 
 
@@ -91,7 +95,10 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             \App\Repositories\FollowupInstruction\FollowupInstructionRepositoryInterface::class,
             \App\Repositories\FollowupInstruction\FollowupInstructionRepository::class,
-
+        );
+        $this->app->bind(
+            \App\Repositories\ForwardFollowupInstruction\ForwardFollowupInstructionRepositoryInterface::class,
+            \App\Repositories\ForwardFollowupInstruction\ForwardFollowupInstructionRepository::class,
         );
     }
 
