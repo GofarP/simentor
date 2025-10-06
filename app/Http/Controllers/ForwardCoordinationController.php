@@ -14,7 +14,6 @@ class ForwardCoordinationController extends Controller
     private ForwardCoordinationServiceInterface $forwardCoordinationService;
     private UserServiceInterface $userService;
 
-
     public function __construct(
         UserServiceInterface $userService,
         ForwardCoordinationServiceInterface $forwardCoordinationService
