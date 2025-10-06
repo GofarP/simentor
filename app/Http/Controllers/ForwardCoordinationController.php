@@ -24,7 +24,7 @@ class ForwardCoordinationController extends Controller
     }
 
 
-    public function forward(Coordination $coordination)
+    public function showForm(Coordination $coordination)
     {
         $this->authorize('forward',$coordination);
         $users=$this->userService->getReceiver();
@@ -36,7 +36,7 @@ class ForwardCoordinationController extends Controller
         return view('coordination.index',compact('coordination','users','forwardCoordination'));
     }
 
-    public function forwardCoordination(ForwardRequest $request, Coordination $coordination)
+    public function submit(ForwardRequest $request, Coordination $coordination)
     {
         $this->authorize('forward', $coordination);
         $this->forwardCoordinationService->forwardCoordination($coordination, $request->all());

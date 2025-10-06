@@ -23,7 +23,7 @@ class ForwardInstructionController extends Controller
         $this->forwardInstructionService = $forwardInstructionService;
     }
 
-    public function forward(Instruction $instruction)
+    public function showForm(Instruction $instruction)
     {
         $this->authorize('forward', $instruction);
         $users = $this->userService->getReceiver();
@@ -35,7 +35,7 @@ class ForwardInstructionController extends Controller
     }
 
 
-    public function forwardInstruction(ForwardRequest $request, Instruction $instruction)
+    public function submit(ForwardRequest $request, Instruction $instruction)
     {
         $this->authorize('forward', $instruction);
         $this->forwardInstructionService->forwardInstruction($instruction, $request->all());

@@ -2,11 +2,10 @@
     <div class="px-4 sm:px-6 lg:px-8 py-12 w-full mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
 
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 w-full">
-            <h2 class="text-2xl font-bold text-violet-600 mb-6">Teruskan Instruksi</h2>
+            <h2 class="text-2xl font-bold text-violet-600 mb-6">Teruskan Tindak Lanjut Instruksi</h2>
 
-            <form method="POST" action="{{ route('forward.instruction.submit', $instruction->id) }}">
+            <form method="POST" action="{{ route('forward.followupinstruction.submit',$coordination->id) }}">
                 @csrf
-
                 {{-- Penerima --}}
                 <div class="mb-4">
                     <label for="forwarded_to" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
@@ -17,7 +16,7 @@
                         multiple="true">
                         <option value="">Pilih Penerima</option>
                         @foreach ($users as $user)
-                            <option value="{{ $user->id }}" @if (in_array($user->id, old('forwarded_to', $forwardInstruction ?? []))) selected @endif>
+                            <option value="{{ $user->id }}" {{ old('forwarded_to', $coordination->forwarded_to) == $user->id ? 'selected' : '' }}>
                                 {{ $user->name }}
                             </option>
                         @endforeach
@@ -30,7 +29,7 @@
 
                 {{-- Tombol --}}
                 <div class="mt-6 flex justify-end gap-3">
-                    <a href="{{ route('instruction.index') }}"
+                    <a href="{{ route('coordination.index') }}"
                         class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">Batal</a>
                     <button type="submit"
                         class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition">Teruskan</button>
@@ -43,25 +42,7 @@
     @push('css')
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://unpkg.com/trix@2.1.0/dist/trix.css">
-        <style>
-            .select2-container--default .select2-selection--multiple {
-                @apply bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm;
-                padding: 0.5rem;
-            }
-
-            .select2-container--default .select2-selection--single {
-                @apply bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm;
-                height: 2.5rem;
-            }
-
-            .select2-container--default .select2-selection__rendered {
-                line-height: 1.5rem;
-            }
-
-            .select2-container--default .select2-selection__arrow {
-                height: 2.5rem;
-            }
-        </style>
+       
 
     @endpush
 

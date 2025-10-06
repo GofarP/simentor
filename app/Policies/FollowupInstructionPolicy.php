@@ -64,4 +64,8 @@ class FollowupInstructionPolicy
     {
         return false;
     }
+
+    public function forward(User $user, FollowupInstruction $followupInstruction){
+        return $user->id== $followupInstruction->sender_id || $user->id== $followupInstruction->receiver_id;
+    }
 }

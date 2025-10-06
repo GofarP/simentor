@@ -172,7 +172,7 @@
 
                         <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
                             @can('forward', $followupInstruction)
-                                <a href="{{ route('followupinstruction.forward', $followupInstruction) }}"
+                                <a href="{{ route('forward.followupinstruction.form', $followupInstruction) }}"
                                     class="px-3 py-1 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition">
                                     Forward
                                 </a>
