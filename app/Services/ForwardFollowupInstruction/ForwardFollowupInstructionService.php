@@ -11,7 +11,7 @@ class ForwardFollowupInstructionService implements ForwardFollowupInstructionSer
 
     public function __construct(ForwardFollowupInstructionRepository $forwardFollowupInstruction)
     {
-        $this->$forwardFollowupInstruction = $forwardFollowupInstruction;
+        $this->forwardFollowupInstruction = $forwardFollowupInstruction;
     }
 
     public function forwardFollowupInstruction(FollowupInstruction $followupInstruction, array $data)
@@ -27,7 +27,6 @@ class ForwardFollowupInstructionService implements ForwardFollowupInstructionSer
     public function getForwardFollowupInstruction(FollowupInstruction $followupInstruction)
     {
         return $this->forwardFollowupInstruction->getForwardFollowupInstruction($followupInstruction);
-
     }
 
 }
