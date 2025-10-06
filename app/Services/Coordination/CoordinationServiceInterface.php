@@ -11,5 +11,6 @@ interface CoordinationServiceInterface
     public function storeCoordination(array $data): Coordination;
     public function editCoordination(Coordination $coordination, array $data): Coordination;
     public function deleteCoordination(Coordination $coordination): bool;
-    public function forwardCoordination(Coordination $coordination, array $data);
+    public function getSenderIdByCoordination(int $instructionId):?int;
+
 }

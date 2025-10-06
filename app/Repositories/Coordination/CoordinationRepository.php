@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Repositories\Coordination;
+
 use App\Enums\MessageType;
 use App\Models\Coordination;
 use App\Models\ForwardCoordination;
@@ -57,7 +59,6 @@ class CoordinationRepository implements CoordinationRepositoryInterface
         $data['sender_id'] = Auth::user()->id;
 
         return Coordination::create($data);
-
     }
 
 
@@ -80,5 +81,8 @@ class CoordinationRepository implements CoordinationRepositoryInterface
         return $coordination->delete();
     }
 
-
+    public function getSenderIdByCoordination(int $id): int
+    {
+        return Coordination::where('id', $id)->value('sender_id');
+    }
 }

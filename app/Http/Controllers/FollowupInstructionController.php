@@ -3,22 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Enums\MessageType;
-use App\Http\Requests\FollowupInstructionRequest;
 use App\Models\FollowupInstruction;
-use App\Services\FollowupInstruction\FollowupInstructionService;
-use App\Services\Instruction\InstructionService;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\FollowupInstructionRequest;
+use App\Services\Instruction\InstructionServiceInterface;
+use App\Services\FollowupCoordination\FollowupCoordinationServiceInterface;
+use App\Services\FollowupInstruction\FollowupInstructionServiceInterface;
 
 class FollowupInstructionController extends Controller
 {
-    private FollowupInstructionService $followupInstructionService;
-    private InstructionService $instructionService;
+    private FollowupInstructionServiceInterface $followupInstructionServiceInterface;
+    private InstructionServiceInterface $InstructionServiceInterface;
 
 
-    public function __construct(FollowupInstructionService $followupInstructionService, InstructionService $instructionService)
+    public function __construct(FollowupInstructionServiceInterface $FollowupInstructionServiceInterfaceInterface, InstructionServiceInterface $InstructionServiceInterface)
     {
-        $this->followupInstructionService = $followupInstructionService;
-        $this->instructionService = $instructionService;
+        $this->followupInstructionServiceInterface = $FollowupInstructionServiceInterfaceInterface;
+        $this->InstructionServiceInterface = $InstructionServiceInterface;
     }
     /**
      * Display a listing of the resource.
@@ -33,7 +34,7 @@ class FollowupInstructionController extends Controller
      */
     public function create()
     {
-        $instructions = $this->instructionService->getAllInstruction(null, 10, MessageType::All, false);
+        $instructions = $this->InstructionServiceInterface->getAllInstruction(null, 10, MessageType::All, false);
         return view('followupinstruction.create', compact('instructions'));
     }
 
@@ -45,10 +46,10 @@ class FollowupInstructionController extends Controller
         $data = $request->validated(); // hanya ambil data yang lolos validasi
 
         // Ambil receiver_id dari instruction_id lewat service
-        $data['receiver_id'] = $this->instructionService->getSenderIdByInstruction($data['instruction_id']);
+        $data['receiver_id'] = $this->InstructionServiceInterface->getSenderIdByInstruction($data['instruction_id']);
 
         // Simpan tindak lanjut instruksi via service
-        $this->followupInstructionService->storeFollowupInstruction($data);
+        $this->followupInstructionServiceInterface->storeFollowupInstruction($data);
 
         return redirect()
             ->route('followupinstruction.index')
@@ -70,7 +71,7 @@ class FollowupInstructionController extends Controller
      */
     public function edit(FollowupInstruction $followupinstruction)
     {
-        $instructions = $this->instructionService->getAllInstruction(null, 10, MessageType::All, false);
+        $instructions = $this->InstructionServiceInterface->getAllInstruction(null, 10, MessageType::All, false);
         return view('followupinstruction.edit', compact('followupinstruction', 'instructions'));
     }
 
@@ -79,7 +80,7 @@ class FollowupInstructionController extends Controller
      */
     public function update(FollowupInstructionRequest $request, FollowupInstruction $followupinstruction)
     {
-        $this->followupInstructionService->editFollowupInstruction($followupinstruction, $request->all());
+        $this->followupInstructionServiceInterface->editFollowupInstruction($followupinstruction, $request->all());
         return redirect()->route('followupinstruction.index')->with('success', 'Sukses mengubah tindak lanjut instruksi');
     }
 
@@ -88,7 +89,7 @@ class FollowupInstructionController extends Controller
      */
     public function destroy(FollowupInstruction $followupinstruction)
     {
-        $this->followupInstructionService->deleteFollowupInstruction($followupinstruction);
+        $this->followupInstructionServiceInterface->deleteFollowupInstruction($followupinstruction);
         return redirect()->route('instruction.index')->with('success', 'Sukses menghapus instruction');
     }
 }

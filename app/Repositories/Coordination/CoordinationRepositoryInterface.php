@@ -11,4 +11,5 @@ interface CoordinationRepositoryInterface
     public function storeCoordination(array $data);
     public function editCoordination(Coordination $coordination, array $data);
     public function deleteCoordination(Coordination $coordination): bool;
+    public function getSenderIdByCoordination(int $id):int;
 }

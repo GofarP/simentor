@@ -34,9 +34,9 @@ class CoordinationService implements CoordinationServiceInterface
     }
 
 
-    public function forwardCoordination(Coordination $coordination, array $data)
-    {
-        return $this->coordinationRepository->forwarCoordination($coordination, $data);
-    }
+   public function getSenderIdByCoordination(int $id): ?int
+   {
+        return $this->coordinationRepository->getSenderIdByCoordination($id);
+   }
 
 }
