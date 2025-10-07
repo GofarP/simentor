@@ -54,7 +54,7 @@ class RepositoryServiceProvider extends ServiceProvider
         );
         $this->app->bind(
             \App\Services\ForwardFollowupInstruction\ForwardFollowupInstructionServiceInterface::class,
-            \App\Services\ForwardFollowupInstruction\ForwardFollowupInstructionService::class            
+            \App\Services\ForwardFollowupInstruction\ForwardFollowupCoordinationService::class            
         );
 
 
