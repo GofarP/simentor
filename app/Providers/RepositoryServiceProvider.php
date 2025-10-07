@@ -68,6 +68,11 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Services\ForwardFollowupCoordination\ForwardFollowupCoordinationServiceInterface::class,
         );
 
+        $this->app->bind(
+            \App\Services\InstructionScore\InstructionScoreServiceInterface::class,
+            \App\Services\InstructionScore\InstructionScoreService::class
+        );
+
 
 
         // Repository
@@ -119,6 +124,11 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(
             \App\Repositories\ForwardFollowupInstruction\ForwardFollowupInstructionRepositoryInterface::class,
             \App\Repositories\ForwardFollowupInstruction\ForwardFollowupInstructionRepository::class,
+        );
+
+        $this->app->bind(
+            \App\Repositories\InstructionScore\InstructionScoreRepositoryInterface::class,
+            \App\Repositories\InstructionScore\InstructionScoreRepository::class
         );
     }
 

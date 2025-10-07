@@ -41,6 +41,6 @@ class FollowupCoordination extends Model
 
     public function forwards()
     {
-        return $this->hasMany(ForwardFollowupCoordination::class, 'followup_instruction_id');
+        return $this->hasMany(ForwardFollowupCoordination::class, 'followup_coordination_id');
     }
 }

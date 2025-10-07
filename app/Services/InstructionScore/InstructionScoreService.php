@@ -1,4 +1,5 @@
 <?php
+namespace App\Services\InstructionScore;
 use App\Repositories\InstructionScore\InstructionScoreRepositoryInterface;
 use App\Services\InstructionScore\InstructionScoreServiceInterface;
 use App\Models\InstructionScore;

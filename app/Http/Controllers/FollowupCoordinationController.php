@@ -44,7 +44,7 @@ class FollowupCoordinationController extends Controller
     public function store(FollowupCoordinationRequest $request)
     {
         $data = $request->validated();
-        $data['receiver_id'] = $this->coordinationService->getSenderIdByCoordination($data['instruction_id']);
+        $data['receiver_id'] = $this->coordinationService->getSenderIdByCoordination($data['coordination_id']);
 
         $this->followupCoordinationService->storeFollowupCoordination($data);
 
@@ -66,8 +66,8 @@ class FollowupCoordinationController extends Controller
      */
     public function edit(FollowupCoordination $followupcoordination)
     {
-        $coordinations = $this->coordinationService->getAllCoordination(null, 10, MessageType::All, false);
-        return view('followupcoordination.edit', compact('followupcoordination', 'coordinations'));
+        $coordinationTitle = $followupcoordination->coordination->title;
+        return view('followupcoordination.edit', compact('followupcoordination', 'coordinationTitle'));
     }
 
     /**

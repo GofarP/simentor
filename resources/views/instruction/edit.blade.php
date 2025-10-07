@@ -117,76 +117,7 @@
     @push('css')
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://unpkg.com/trix@2.1.0/dist/trix.css">
-        <style>
-            /* Dark mode untuk Trix */
-            .dark trix-editor {
-                background-color: #1f2937;
-                color: #e5e7eb;
-                border-color: #374151;
-            }
 
-            .dark trix-editor:focus {
-                border-color: #8b5cf6;
-                box-shadow: 0 0 0 1px #8b5cf6;
-            }
-
-            .dark .trix-button-group {
-                background-color: #1f2937;
-                border-color: #374151;
-            }
-
-            .dark .trix-button {
-                background-color: #374151;
-                color: #fff !important;
-            }
-
-            .dark .trix-button:hover {
-                background-color: #4b5563;
-            }
-
-            .dark .trix-button.trix-active {
-                background-color: #8b5cf6;
-                color: #fff !important;
-            }
-
-            trix-editor ul {
-                list-style-type: disc !important;
-                margin-left: 1.5rem;
-            }
-
-            trix-editor ol {
-                list-style-type: decimal !important;
-                margin-left: 1.5rem;
-            }
-
-            /* Heading */
-            trix-editor h1 {
-                font-size: 1.5rem;
-                font-weight: bold;
-                margin: 1rem 0;
-            }
-
-            /* Code */
-            trix-editor pre {
-                background: #1e1e2e;
-                color: #f8f8f2;
-                padding: 0.5rem;
-                border-radius: 6px;
-                font-family: monospace;
-                overflow-x: auto;
-            }
-
-            /* Quote */
-            trix-editor blockquote {
-                border-left: 4px solid #8b5cf6;
-                /* violet */
-                padding-left: 1rem;
-                color: #6b7280;
-                /* gray-500 */
-                margin: 1rem 0;
-                font-style: italic;
-            }
-        </style>
     @endpush
 
     @push('js')
@@ -200,37 +131,6 @@
                 });
             });
         </script>
-        <script>
-            document.addEventListener("trix-initialize", function (event) {
-                const toolbar = event.target.toolbarElement;
-                if (toolbar) {
-                    toolbar.querySelectorAll(
-                        "button[data-trix-attribute='bullet'], button[data-trix-attribute='number']")
-                        .forEach(btn => btn.removeAttribute("disabled"));
-                }
-                Trix.config.blockAttributes.heading1 = {
-                    tagName: "h1",
-                    terminal: true,
-                    breakOnReturn: true,
-                    group: false
-                };
 
-                // Register code
-                Trix.config.blockAttributes.code = {
-                    tagName: "pre",
-                    terminal: true,
-                    breakOnReturn: true,
-                    group: false
-                };
-
-                // Register quote
-                Trix.config.blockAttributes.quote = {
-                    tagName: "blockquote",
-                    terminal: true,
-                    breakOnReturn: true,
-                    group: false
-                };
-            });
-        </script>
     @endpush
 </x-app-layout>

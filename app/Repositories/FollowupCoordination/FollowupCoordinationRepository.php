@@ -100,7 +100,7 @@ class FollowupCoordinationRepository implements FollowupCoordinationRepositoryIn
             Storage::disk('public')->delete($followupCoordination->attachment);
         }
 
-        if ($followupCoordination->proof && Storage::disk('public')->exists($followupCoordination->followupInstruction)) {
+        if ($followupCoordination->proof && Storage::disk('public')->exists($followupCoordination->proof)) {
             Storage::disk('public')->delete($followupCoordination->proof);
         }
 

@@ -100,7 +100,7 @@ class CoordinationController extends Controller
     public function fetchCoordination(Request $request){
         $search=$request->input('search','');
         $messageType=MessageType::All;
-        
+
         $coordinations=$this->coordinationService->getAllCoordination(
             $search,
             10,
@@ -111,7 +111,7 @@ class CoordinationController extends Controller
         $results=$coordinations->map(function($coordination){
             return[
                 'id'=>$coordination->id,
-                'title'=>$coordination
+                'title'=>$coordination->title
             ];
         });
 

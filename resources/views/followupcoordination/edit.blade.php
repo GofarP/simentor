@@ -9,22 +9,16 @@
                 @csrf
                 @method('PUT')
 
-               
+
 
                 {{-- Instruksi --}}
                 <div class="mb-4">
                     <label for="coordination_id"
                         class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Koordinasi</label>
                     <select name="coordination_id" id="coordination_id" class="js-example-basic-single w-full">
-                        <option value="">Pilih Koordinasi</option>
-                        @foreach ($coordinations as $coordination)
-                           <option value="{{ $coordination->id }}" {{ $coordination->id === $followupcoordination->coordination_id ? 'selected' : 
-                            }}>
-                            {{ $coordination->title }}    
-                        </option>
-                        @endforeach
+
                     </select>
-                    @error('instruction_id')
+                    @error('coordination_id')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
@@ -34,9 +28,9 @@
                     <label for="proof" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
                         Bukti
                     </label>
-                    @if ($followupinstruction->proof)
+                    @if ($followupcoordination->proof)
                         <p class="mb-2 text-sm text-gray-500">
-                            File lama: <a href="{{ Storage::url($followupinstruction->proof) }}" target="_blank"
+                            File lama: <a href="{{ Storage::url($followupcoordination->proof) }}" target="_blank"
                                 class="text-violet-600 underline">Lihat</a>
                         </p>
                     @endif
@@ -53,9 +47,9 @@
                     <label for="attachment" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
                         Lampiran
                     </label>
-                    @if ($followupinstruction->attachment)
+                    @if ($followupcoordination->attachment)
                         <p class="mb-2 text-sm text-gray-500">
-                            File lama: <a href="{{ Storage::url($followupinstruction->attachment) }}" target="_blank"
+                            File lama: <a href="{{ Storage::url($followupcoordination->attachment) }}" target="_blank"
                                 class="text-violet-600 underline">Lihat</a>
                         </p>
                     @endif
@@ -71,7 +65,7 @@
                     <label for="description"
                         class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Deskripsi</label>
                     <input id="description" type="hidden" name="description"
-                        value="{{ old('description', $followupinstruction->description) }}">
+                        value="{{ old('description', $followupcoordination->description) }}">
                     <trix-editor input="description" class="border rounded-lg"></trix-editor>
 
                     @error('description')
@@ -80,7 +74,7 @@
                 </div>
 
                 <div class="mt-6 flex justify-end gap-3">
-                    <a href="{{ route('followupinstruction.index') }}"
+                    <a href="{{ route('followupcoordination.index') }}"
                         class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">Batal</a>
                     <button type="submit"
                         class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition">Update</button>
@@ -102,10 +96,41 @@
 
         <script>
             $(document).ready(function() {
-                $('.js-example-basic-single').select2({
-                    minimumResultsForSearch: 0, // selalu tampilkan search
-                    width: '100%' // biar full width
+                const $coordinationSelect = $('#coordination_id');
+
+                $coordinationSelect.select2({
+                    placeholder: 'Cari Koordinasi...',
+                    ajax: {
+                        url: '{{ route('coordinations.search') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: data.results.map(item => ({
+                                    id: item.id,
+                                    text: item.title
+                                }))
+                            };
+                        },
+                        cache: true
+                    },
+                    minimumInputLength: 1,
+                    width: '100%'
                 });
+
+                // Set nilai lama untuk edit
+                const oldId = "{{ old('coordination_id', $followupcoordination->coordination_id) }}";
+                const oldText = "{{ old('coordination_title', $coordinationTitle) }}";
+
+                if (oldId) {
+                    const option = new Option(oldText, oldId, true, true);
+                    $coordinationSelect.append(option).trigger('change');
+                }
             });
         </script>
     @endpush

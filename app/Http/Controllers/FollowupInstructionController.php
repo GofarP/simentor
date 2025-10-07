@@ -72,8 +72,8 @@ class FollowupInstructionController extends Controller
      */
     public function edit(FollowupInstruction $followupinstruction)
     {
-        $instructions = $this->InstructionServiceInterface->getAllInstruction(null, 10, MessageType::All, false);
-        return view('followupinstruction.edit', compact('followupinstruction', 'instructions'));
+        $instructionTitle = $followupinstruction->instruction->title ?? '';
+        return view('followupinstruction.edit', compact('followupinstruction', 'instructionTitle'));
     }
 
     /**
@@ -93,6 +93,4 @@ class FollowupInstructionController extends Controller
         $this->followupInstructionServiceInterface->deleteFollowupInstruction($followupinstruction);
         return redirect()->route('instruction.index')->with('success', 'Sukses menghapus instruction');
     }
-
-
 }

@@ -23,14 +23,8 @@
                 <div class="mb-4">
                     <label for="instruction_id"
                         class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Instruksi</label>
-                    <select name="instruction_id" id="instruction_id" class="js-example-basic-single w-full">
-                        <option value="">Pilih Instruksi</option>
-                        @foreach ($instructions as $instruction)
-                           <option value="{{ $instruction->id }}" {{ $instruction->id === $followupinstruction->instruction_id ? 'selected' : '' }}>
-                            {{ $instruction->title }}
-                           </option>
-                        @endforeach
-                    </select>
+                    <select name="instruction_id" id="instruction_id" class="js-example-basic-single w-full"></select>
+
                     @error('instruction_id')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
@@ -109,10 +103,41 @@
 
         <script>
             $(document).ready(function() {
-                $('.js-example-basic-single').select2({
-                    minimumResultsForSearch: 0, // selalu tampilkan search
-                    width: '100%' // biar full width
+                const $instructionSelect = $('#instruction_id');
+
+                $instructionSelect.select2({
+                    placeholder: 'Cari instruksi...',
+                    ajax: {
+                        url: '{{ route('instructions.search') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: data.results.map(item => ({
+                                    id: item.id,
+                                    text: item.title
+                                }))
+                            };
+                        },
+                        cache: true
+                    },
+                    minimumInputLength: 1,
+                    width: '100%'
                 });
+
+                // Set nilai lama untuk edit
+                const oldId = "{{ old('instruction_id', $followupinstruction->instruction_id) }}";
+                const oldText = "{{ old('instruction_title', $instructionTitle) }}";
+
+                if (oldId) {
+                    const option = new Option(oldText, oldId, true, true);
+                    $instructionSelect.append(option).trigger('change');
+                }
             });
         </script>
     @endpush

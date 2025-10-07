@@ -52,7 +52,6 @@
     @push('css')
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://unpkg.com/trix@2.1.0/dist/trix.css">
-
     @endpush
 
     @push('js')
@@ -60,12 +59,38 @@
         <script src="https://unpkg.com/trix@2.1.0/dist/trix.umd.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script>
-            $(function () {
-                $('.js-example-basic-single').select2({
-                    width: '100%'
+            $(document).ready(function() {
+                const $instructionSelect = $('#instruction_id');
+
+                // Inisialisasi Select2 dengan AJAX
+                $instructionSelect.select2({
+                    placeholder: 'Cari instruksi...',
+                    ajax: {
+                        url: '{{ route('instructions.search') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            }; // ambil input pencarian
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: data.results.map(item => ({
+                                    id: item.id,
+                                    text: item.title // gunakan title untuk teks select2
+                                }))
+                            };
+                        },
+                        cache: true
+                    },
+                    minimumInputLength: 1,
+                    width: '100%',
+                    language: "id"
                 });
+
+
             });
         </script>
-
     @endpush
 </x-app-layout>

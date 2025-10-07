@@ -2,7 +2,7 @@
     <div class="px-4 sm:px-6 lg:px-8 py-12 w-full mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
 
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 w-full">
-            <h2 class="text-2xl font-bold text-violet-600 mb-6">Tambah Tindak Lanjut Instruksi</h2>
+            <h2 class="text-2xl font-bold text-violet-600 mb-6">Tambah Tindak Lanjut Koordinasi</h2>
 
             <form method="POST" action="{{ route('followupcoordination.store') }}" enctype="multipart/form-data">
                 @csrf
@@ -11,12 +11,14 @@
                     <label for="coordination_id"
                         class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Koordinasi</label>
                     @php
-                        $oldCoordination = old('coordination_id') ? \App\Models\Coordination::find(old('instruction_id')) : null;
+                        $oldCoordination = old('coordination_id')
+                            ? \App\Models\Coordination::find(old('instruction_id'))
+                            : null;
                     @endphp
-                    <select name="instruction_id" id="instruction_id" class="w-full">
-                        @if ($oldInstruction)
-                            <option value="{{ $oldInstruction->id }}" selected>
-                                {{ $oldInstruction->title }}
+                    <select name="coordination_id" id="coordination_id" class="w-full">
+                        @if ($oldCoordination)
+                            <option value="{{ $oldCoordination->id }}" selected>
+                                {{ $oldCoordination->title }}
                             </option>
                         @endif
                     </select>
@@ -29,7 +31,8 @@
                     <label for="proof" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
                         Bukti
                     </label>
-                    <input type="file" name="proof" id="proof" class="form-input w-full rounded border-gray-300 dark:border-gray-600
+                    <input type="file" name="proof" id="proof"
+                        class="form-input w-full rounded border-gray-300 dark:border-gray-600
                                dark:bg-gray-700 dark:text-gray-200">
                     @error('proof')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
@@ -83,17 +86,20 @@
         <script src="https://unpkg.com/trix@2.1.0/dist/trix.umd.min.js"></script>
 
         <script>
-            $(document).ready(function () {
+            $(document).ready(function() {
                 $('#coordination_id').select2({
                     placeholder: 'Cari Koordinasi...',
                     ajax: {
                         url: '{{ route('coordinations.search') }}',
                         dataType: 'json',
                         delay: 250,
-                        data: function (params) {
-                            return { search: params.term }; // ambil input pencarian
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            }; // ambil input pencarian
                         },
-                        processResults: function (data) {
+                        processResults: function(data) {
+                            console.log(data);
                             return {
                                 results: data.results.map(item => ({
                                     id: item.id,
@@ -109,8 +115,6 @@
                 });
             });
         </script>
-
-
     @endpush
 
 
