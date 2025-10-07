@@ -26,10 +26,9 @@
                     <select name="instruction_id" id="instruction_id" class="js-example-basic-single w-full">
                         <option value="">Pilih Instruksi</option>
                         @foreach ($instructions as $instruction)
-                            <option value="{{ $instruction->id }}"
-                                {{ old('instruction_id', $followupinstruction->instruction_id) == $instruction->id ? 'selected' : '' }}>
-                                {{ $instruction->title }}
-                            </option>
+                           <option value="{{ $instruction->id }}" {{ $instruction->id === $followupinstruction->instruction_id ? 'selected' : '' }}>
+                            {{ $instruction->title }}
+                           </option>
                         @endforeach
                     </select>
                     @error('instruction_id')
