@@ -6,19 +6,18 @@
             <form method="POST" action="{{ route('instructionscore.store') }}">
                 @csrf
 
-                {{-- Penerima --}}
+                {{-- Pilihan Instruksi --}}
                 <div class="mb-4">
                     <label for="instruction_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
                         Instruksi
                     </label>
-                    <select name="instruction_id" id="receiver_id" class="form-control js-example-basic-single w-full">
-
-                    </select>
+                    <select name="instruction_id" id="instruction_id" class="form-control js-example-basic-single w-full"></select>
                     @error('instruction_id')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
 
+                {{-- Penilaian --}}
                 <div class="mb-4">
                     <label for="score" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
                         Penilaian
@@ -33,15 +32,14 @@
                     @enderror
                 </div>
 
-
                 {{-- Action --}}
                 <div class="mt-6 flex justify-end gap-3">
                     <a href="{{ route('instructionscore.index') }}"
-                        class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
+                       class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
                         Batal
                     </a>
                     <button type="submit"
-                        class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition">
+                            class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition">
                         Simpan
                     </button>
                 </div>
@@ -60,25 +58,21 @@
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script>
             $(document).ready(function() {
-                const $instructionSelect = $('#instruction_id');
-
                 // Inisialisasi Select2 dengan AJAX
-                $instructionSelect.select2({
+                $('#instruction_id').select2({
                     placeholder: 'Cari instruksi...',
                     ajax: {
                         url: '{{ route('instructions.search') }}',
                         dataType: 'json',
                         delay: 250,
                         data: function(params) {
-                            return {
-                                search: params.term
-                            }; // ambil input pencarian
+                            return { search: params.term };
                         },
                         processResults: function(data) {
                             return {
                                 results: data.results.map(item => ({
                                     id: item.id,
-                                    text: item.title // gunakan title untuk teks select2
+                                    text: item.title
                                 }))
                             };
                         },
@@ -88,8 +82,6 @@
                     width: '100%',
                     language: "id"
                 });
-
-
             });
         </script>
     @endpush
