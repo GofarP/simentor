@@ -10,7 +10,7 @@
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
             <div>
                 <p class="text-3xl md:text-4xl font-extrabold text-violet-600 mb-2">
-                    Nilai Instruksi
+                    Nilai Instruksi.
                 </p>
                 <p class="text-gray-700 dark:text-gray-300 text-base md:text-lg">
                     Kelola Nilai Instruksi.
