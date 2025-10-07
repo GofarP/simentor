@@ -52,11 +52,21 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Services\FollowupInstruction\FollowupInstructionServiceInterface::class,
             \App\Services\FollowupInstruction\FollowupInstructionService::class
         );
+
         $this->app->bind(
-            \App\Services\ForwardFollowupInstruction\ForwardFollowupInstructionServiceInterface::class,
-            \App\Services\ForwardFollowupInstruction\ForwardFollowupCoordinationService::class            
+            \App\Services\FollowupCoordination\FollowupCoordinationServiceInterface::class,
+            \App\Services\FollowupCoordination\FollowupCoordinationService::class
         );
 
+        $this->app->bind(
+            \App\Services\ForwardFollowupInstruction\ForwardFollowupInstructionServiceInterface::class,
+            \App\Services\ForwardFollowupInstruction\ForwardFollowupInstructionServiceInterface::class,
+        );
+
+        $this->app->bind(
+            \App\Services\ForwardFollowupCoordination\ForwardFollowupCoordinationServiceInterface::class,
+            \App\Services\ForwardFollowupCoordination\ForwardFollowupCoordinationServiceInterface::class,
+        );
 
 
 
@@ -96,6 +106,16 @@ class RepositoryServiceProvider extends ServiceProvider
             \App\Repositories\FollowupInstruction\FollowupInstructionRepositoryInterface::class,
             \App\Repositories\FollowupInstruction\FollowupInstructionRepository::class,
         );
+        $this->app->bind(
+            \App\Repositories\FollowupCoordination\FollowupCoordinationRepositoryInterface::class,
+            \App\Repositories\FollowupCoordination\FollowupCoordinationRepository::class,
+        );
+
+        $this->app->bind(
+            \App\Repositories\ForwardFollowupCoordination\ForwardFollowupCoordinationRepositoryInterface::class,
+            \App\Repositories\ForwardFollowupCoordination\ForwardFollowupCoordinationRepository::class,
+        );
+
         $this->app->bind(
             \App\Repositories\ForwardFollowupInstruction\ForwardFollowupInstructionRepositoryInterface::class,
             \App\Repositories\ForwardFollowupInstruction\ForwardFollowupInstructionRepository::class,
