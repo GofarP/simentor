@@ -9,6 +9,8 @@ use App\Http\Requests\CoordinationRequest;
 use App\Services\User\UserServiceInterface;
 use App\Services\Coordination\CoordinationServiceInterface;
 use App\Services\ForwardCoordination\ForwardCoordinationService;
+use Illuminate\Http\Request;
+use App\Enums\MessageType;
 
 class CoordinationController extends Controller
 {
@@ -94,5 +96,26 @@ class CoordinationController extends Controller
         return redirect()->route('coordination.index')->with('success', 'Sukses menghapus koordinasi');
     }
 
+
+    public function fetchCoordination(Request $request){
+        $search=$request->input('search','');
+        $messageType=MessageType::All;
+        
+        $coordinations=$this->coordinationService->getAllCoordination(
+            $search,
+            10,
+            $messageType,
+            false
+        );
+
+        $results=$coordinations->map(function($coordination){
+            return[
+                'id'=>$coordination->id,
+                'title'=>$coordination
+            ];
+        });
+
+        return response()->json(['results'=>$results]);
+    }
 
 }

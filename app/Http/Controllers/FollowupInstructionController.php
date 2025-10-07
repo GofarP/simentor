@@ -9,6 +9,7 @@ use App\Http\Requests\FollowupInstructionRequest;
 use App\Services\Instruction\InstructionServiceInterface;
 use App\Services\FollowupCoordination\FollowupCoordinationServiceInterface;
 use App\Services\FollowupInstruction\FollowupInstructionServiceInterface;
+use Illuminate\Support\Facades\Request;
 
 class FollowupInstructionController extends Controller
 {
@@ -92,4 +93,6 @@ class FollowupInstructionController extends Controller
         $this->followupInstructionServiceInterface->deleteFollowupInstruction($followupinstruction);
         return redirect()->route('instruction.index')->with('success', 'Sukses menghapus instruction');
     }
+
+
 }

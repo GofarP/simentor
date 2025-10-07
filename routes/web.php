@@ -7,6 +7,7 @@ use App\Http\Controllers\ForwardFollowupCoordinationController;
 use App\Http\Controllers\ForwardFollowupInstructionController;
 use App\Http\Controllers\ForwardInstructionController;
 use App\Http\Controllers\InstructionController;
+use App\Http\Controllers\InstructionScoreController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
@@ -40,7 +41,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('forward.followupinstruction.form');
     Route::get('/forward/followupcoordination/{coordination}', [ForwardFollowupCoordinationController::class, 'showForm'])
         ->name('forward.followupcoordination.form');
-
+    Route::get('/instructions/search', [InstructionController::class, 'fetchInstruction'])
+        ->name('instructions.search');
+    Route::get('/coordinations/search', [CoordinationController::class, 'fetchCoordination'])
+        ->name('coordinations.search');
 
     Route::post('/forward/instruction/{instruction}', [ForwardInstructionController::class, 'submit'])
         ->name('forward.instruction.submit');
@@ -50,13 +54,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('forward.followupinstruction.submit');
     Route::post('/forward/followup/{followupcoordination}', [ForwardFollowupCoordinationController::class, 'submit'])
         ->name('forward.followupcoordination.submit');
-    
+
     Route::resource('permission', PermissionController::class);
     Route::resource('role', RoleController::class);
     Route::resource('user', UserController::class);
     Route::resource('instruction', InstructionController::class);
     Route::resource('coordination', CoordinationController::class);
     Route::resource('followupinstruction', FollowupInstructionController::class);
-    Route::resource('followupcoordination', FollowupCoordinationController::class);
+    Route::resource('instructionscore', InstructionScoreController::class);
 
 });

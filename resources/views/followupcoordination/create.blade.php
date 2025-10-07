@@ -6,18 +6,19 @@
 
             <form method="POST" action="{{ route('followupcoordination.store') }}" enctype="multipart/form-data">
                 @csrf
-               
+
                 <div class="mb-4">
                     <label for="coordination_id"
                         class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Koordinasi</label>
-                    <select name="coordination_id" id="coordination_id" class="js-example-basic-single w-full">
-                        <option value="">Pilih Koordinasi</option>
-                        @foreach ($coordinations as $coordination)
-                            <option value="{{ $coordination->id }}"
-                                {{ old('coordination_id') == $coordination->id ? 'selected' : '' }}>
-                                {{ $coordination->title }}
+                    @php
+                        $oldCoordination = old('coordination_id') ? \App\Models\Coordination::find(old('instruction_id')) : null;
+                    @endphp
+                    <select name="instruction_id" id="instruction_id" class="w-full">
+                        @if ($oldInstruction)
+                            <option value="{{ $oldInstruction->id }}" selected>
+                                {{ $oldInstruction->title }}
                             </option>
-                        @endforeach
+                        @endif
                     </select>
                     @error('coordination_id')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
@@ -28,8 +29,7 @@
                     <label for="proof" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
                         Bukti
                     </label>
-                    <input type="file" name="proof" id="proof"
-                        class="form-input w-full rounded border-gray-300 dark:border-gray-600
+                    <input type="file" name="proof" id="proof" class="form-input w-full rounded border-gray-300 dark:border-gray-600
                                dark:bg-gray-700 dark:text-gray-200">
                     @error('proof')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
@@ -83,15 +83,34 @@
         <script src="https://unpkg.com/trix@2.1.0/dist/trix.umd.min.js"></script>
 
         <script>
-            $(document).ready(function() {
-                $('.js-example-basic-single').select2({
-                    minimumResultsForSearch: 0, // selalu tampilkan search
-                    width: '100%' // biar full width
+            $(document).ready(function () {
+                $('#coordination_id').select2({
+                    placeholder: 'Cari Koordinasi...',
+                    ajax: {
+                        url: '{{ route('coordinations.search') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function (params) {
+                            return { search: params.term }; // ambil input pencarian
+                        },
+                        processResults: function (data) {
+                            return {
+                                results: data.results.map(item => ({
+                                    id: item.id,
+                                    text: item.title // gunakan title untuk teks select2
+                                }))
+                            };
+                        },
+                        cache: true
+                    },
+                    minimumInputLength: 1,
+                    width: '100%',
+                    language: "id"
                 });
             });
         </script>
 
-       
+
     @endpush
 
 

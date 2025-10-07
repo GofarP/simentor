@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ForwardRequest;
 use App\Http\Requests\InstructionRequest;
 use App\Models\Instruction;
 use App\Services\ForwardInstruction\ForwardInstructionServiceInterface;
 use App\Services\Instruction\InstructionServiceInterface;
 use App\Services\User\UserServiceInterface;
+use App\Enums\MessageType;
+use Illuminate\Http\Request;
+
 
 class InstructionController extends Controller
 {
@@ -22,9 +24,9 @@ class InstructionController extends Controller
         UserServiceInterface $userService,
         ForwardInstructionServiceInterface $forwardInstructionService
     ) {
-        $this->instructionService=$instructionService;
-        $this->userService=$userService;
-        $this->forwardInstructionService=$forwardInstructionService;
+        $this->instructionService = $instructionService;
+        $this->userService = $userService;
+        $this->forwardInstructionService = $forwardInstructionService;
     }
     /**
      * Display a listing of the resource.
@@ -39,7 +41,6 @@ class InstructionController extends Controller
      */
     public function create()
     {
-        $users = $this->userService->getReceiver();
         return view('instruction.create', compact('users'));
     }
 
@@ -88,10 +89,35 @@ class InstructionController extends Controller
      */
     public function destroy(Instruction $instruction)
     {
-        $this->authorize('delete',$instruction);
+        $this->authorize('delete', $instruction);
         $this->instructionService->deleteInstruction($instruction);
         $this->forwardInstructionService->deleteForwardInstruction($instruction);
         return redirect()->route('instruction.index')->with('success', 'Sukses menghapus instruction');
+    }
+
+
+    public function fetchInstruction(Request $request)
+    {
+        $search = $request->input('search', '');
+        $messageType = MessageType::All;
+
+        // Panggil service yang ujungnya akan pakai repository
+        $instructions = $this->instructionService->getAllInstruction(
+            $search,
+            10,
+            $messageType,
+            false
+        );
+
+        // Format hasil untuk Select2
+        $results = $instructions->map(function ($instruction) {
+            return [
+                'id' => $instruction->id,
+                'title' => $instruction->title,
+            ];
+        });
+
+        return response()->json(['results' => $results]);
     }
 
 

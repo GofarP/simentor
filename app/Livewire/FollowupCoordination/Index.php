@@ -12,13 +12,13 @@ class Index extends Component
 {
     use WithPagination;
 
-    protected string $search = "";
-    public string $messageType = "received";
+    public string $search = "";
+    public string $messageType= "received";
 
-    protected FollowupCoordinationServiceInterface $followupInstructionService;
+    protected FollowupCoordinationServiceInterface $followupCoordinationService;
 
-    public function boot(FollowupCoordinationServiceInterface $followupInstructionService){
-        $this->followupInstructionService = $followupInstructionService;
+    public function boot(FollowupCoordinationServiceInterface $followupCoordinationService){
+        $this->followupCoordinationService = $followupCoordinationService;
     }
 
     public function updatingSearch(){
@@ -27,10 +27,10 @@ class Index extends Component
 
     public function render()
     {
-        $messageEnum=MessageType::from($this->messageType);
-        $followupCoordination=$this->followupInstructionService->getAll($this->search, $messageEnum, 10);
+        $messageTypeEnum=MessageType::from($this->messageType);
+        $followupCoordination=$this->followupCoordinationService->getAll($this->search, $messageTypeEnum, 10);
         return view('livewire.followup-coordination.index',[
-            'followupcoordinations'=>$followupCoordination
+            'followupCoordinations'=>$followupCoordination
         ]);
     }
 }

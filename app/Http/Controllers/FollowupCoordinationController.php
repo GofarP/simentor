@@ -35,7 +35,7 @@ class FollowupCoordinationController extends Controller
     public function create()
     {
         $coordinations = $this->coordinationService->getAllCoordination(null, 10, MessageType::All, false);
-        return view('followupcordination.create', compact('coordinations'));
+        return view('followupcoordination.create', compact('coordinations'));
     }
 
     /**

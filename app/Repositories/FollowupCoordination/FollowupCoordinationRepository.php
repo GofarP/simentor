@@ -3,7 +3,6 @@
 namespace App\Repositories\FollowupCoordination;
 
 use App\Enums\MessageType;
-use App\Models\FollowupInstruction;
 use App\Models\FollowupCoordination;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
