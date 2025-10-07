@@ -5,8 +5,6 @@ namespace App\Livewire\FollowupInstruction;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Enums\MessageType;
-use App\Models\FollowupInstruction;
-use App\Services\FollowupInstruction\FollowupInstructionService;
 use App\Services\FollowupInstruction\FollowupInstructionServiceInterface;
 
 class Index extends Component
