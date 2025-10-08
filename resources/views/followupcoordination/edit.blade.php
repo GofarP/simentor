@@ -101,8 +101,7 @@
             $coordinationSelect.select2({
                 placeholder: 'Cari Koordinasi...',
                 ajax: {
-                    url: '{{ route('
-                    coordinations.search ') }}',
+                    url: '{{ route('coordinations.search') }}',
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
