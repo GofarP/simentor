@@ -16,31 +16,33 @@ class ForwardFollowupInstructionController extends Controller
     private UserServiceInterface $userService;
 
     public function __construct(
-        ForwardFollowupInstructionServiceInterface $forwardFollowupInstructionService, 
+        ForwardFollowupInstructionServiceInterface $forwardFollowupInstructionService,
         UserServiceInterface $userService
-    ){
+    ) {
         $this->forwardFollowupInstructionService = $forwardFollowupInstructionService;
-        $this->userService=$userService;
+        $this->userService = $userService;
+
+        $this->middleware('permission:showform.forwardfollowupcoordination')->only('showform');
+        $this->middleware('permission:submit.forwardfollowupcoordination')->only('submit');
     }
 
     public function showForm(FollowupInstruction $followupInstruction)
     {
-        $this->authorize('forward',$followupInstruction);
-        $users=$this->userService->getReceiver();
-        $forwardFollowupInstruction=$this->forwardFollowupInstructionService
-        ->getForwardFollowupInstruction($followupInstruction)
-        ->pluck('forwarded_to')
-        ->toArray();
+        $this->authorize('forward', $followupInstruction);
+        $users = $this->userService->getReceiver();
+        $forwardFollowupInstruction = $this->forwardFollowupInstructionService
+            ->getForwardFollowupInstruction($followupInstruction)
+            ->pluck('forwarded_to')
+            ->toArray();
 
-        return view('followupinstruction.forward',compact('forwardFollowupInstruction','users'));
+        return view('followupinstruction.forward', compact('forwardFollowupInstruction', 'users'));
     }
 
 
-    public function submit(ForwardRequest $request, FollowupInstruction $followupInstruction){
-        $this->authorize('forward',$followupInstruction);
+    public function submit(ForwardRequest $request, FollowupInstruction $followupInstruction)
+    {
+        $this->authorize('forward', $followupInstruction);
         $this->forwardFollowupInstructionService->forwardFollowupInstruction($followupInstruction, $request->all());
-        return redirect()->route('followupinstruction.index')->with('success','Sukses meneruskan tindak lanjut instruksi');
+        return redirect()->route('followupinstruction.index')->with('success', 'Sukses meneruskan tindak lanjut instruksi');
     }
-
-
 }

@@ -21,17 +21,19 @@ class ForwardInstructionController extends Controller
     ) {
         $this->userService = $userService;
         $this->forwardInstructionService = $forwardInstructionService;
+        $this->middleware('permission:showform.forwardinstruction')->only('showform');
+        $this->middleware('permission:submit.forwardinstruction')->only('submit');
     }
 
     public function showForm(Instruction $instruction)
     {
         $this->authorize('forward', $instruction);
         $users = $this->userService->getReceiver();
-        $forwardInstruction=$this->forwardInstructionService
-        ->getForwardInstruction($instruction)
-        ->pluck('forwarded_to')
-        ->toArray();
-        return view('instruction.forward', compact('instruction', 'users','forwardInstruction'));
+        $forwardInstruction = $this->forwardInstructionService
+            ->getForwardInstruction($instruction)
+            ->pluck('forwarded_to')
+            ->toArray();
+        return view('instruction.forward', compact('instruction', 'users', 'forwardInstruction'));
     }
 
 

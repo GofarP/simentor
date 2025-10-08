@@ -20,6 +20,9 @@ class ForwardCoordinationController extends Controller
     ) {
         $this->userService = $userService;
         $this->forwardCoordinationService = $forwardCoordinationService;
+
+        $this->middleware('permission:showform.forwardcoordination')->only('showform');
+        $this->middleware('permission:submit.forwardcoordination')->only('submit');
     }
 
 

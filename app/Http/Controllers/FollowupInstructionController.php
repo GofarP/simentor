@@ -21,6 +21,12 @@ class FollowupInstructionController extends Controller
     {
         $this->followupInstructionServiceInterface = $FollowupInstructionServiceInterfaceInterface;
         $this->InstructionServiceInterface = $InstructionServiceInterface;
+
+        $this->middleware('permission:view.followupinstruction')->only('index');
+        $this->middleware('permission:create.followupinstruction')->only(['create', 'store']);
+        $this->middleware('permission:show.followupinstruction')->only('show');
+        $this->middleware('permission:edit.followupinstruction')->only(['edit', 'update']);
+        $this->middleware('permission:delete.followupinstruction')->only('destroy');
     }
     /**
      * Display a listing of the resource.

@@ -12,8 +12,14 @@ class InstructionScoreController extends Controller
 {
     private InstructionScoreServiceInterface $instructionScoreService;
 
-    public function __construct(InstructionScoreServiceInterface $instructionScoreService) {
+    public function __construct(InstructionScoreServiceInterface $instructionScoreService)
+    {
         $this->instructionScoreService = $instructionScoreService;
+
+        $this->middleware('permission:view.instructionscore')->only('index');
+        $this->middleware('permission:create.instructionscore')->only(['create', 'store']);
+        $this->middleware('permission:edit.instructionscore')->only(['edit', 'update']);
+        $this->middleware('permission:delete.instructionscore')->only('destroy');
     }
 
     /**
@@ -38,7 +44,7 @@ class InstructionScoreController extends Controller
     public function store(InstructionScoreRequest $request)
     {
         $this->instructionScoreService->storeInstructionScore($request->validated());
-        return redirect()->route('instructionscore.index')->with('success','Sukses menambah penilaian instruksi');
+        return redirect()->route('instructionscore.index')->with('success', 'Sukses menambah penilaian instruksi');
     }
 
     /**
@@ -54,8 +60,8 @@ class InstructionScoreController extends Controller
      */
     public function edit(InstructionScore $instructionscore)
     {
-        $instructionTitle=$instructionscore->instruction->title;
-        return view('instructionscore.edit',compact('instructionscore','instructionTitle'));
+        $instructionTitle = $instructionscore->instruction->title;
+        return view('instructionscore.edit', compact('instructionscore', 'instructionTitle'));
     }
 
     /**
@@ -65,7 +71,7 @@ class InstructionScoreController extends Controller
     {
         $this->instructionScoreService->editInstructionScore($instructionscore, $request->validated());
 
-        return redirect()->route('instructionscore.index')->with('success','Sukses mengubah nilai instruksi');
+        return redirect()->route('instructionscore.index')->with('success', 'Sukses mengubah nilai instruksi');
     }
 
     /**
@@ -75,6 +81,6 @@ class InstructionScoreController extends Controller
     {
         $this->instructionScoreService->deleteInstructionScore($instructionScore);
 
-        return redirect('instructionscore.index')->with('success','Sukses menghapus nilai instruksi');
+        return redirect('instructionscore.index')->with('success', 'Sukses menghapus nilai instruksi');
     }
 }

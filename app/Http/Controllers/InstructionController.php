@@ -30,6 +30,14 @@ class InstructionController extends Controller
         $this->instructionService = $instructionService;
         $this->userService = $userService;
         $this->forwardInstructionService = $forwardInstructionService;
+
+        $this->middleware('permission:view.instruction')->only('index');
+        $this->middleware('permission:create.instruction')->only(['create', 'store']);
+        $this->middleware('permission:edit.instruction')->only(['edit', 'update']);
+        $this->middleware('permission:show.instruction')->only('show');
+        $this->middleware('permission:delete.instruction')->only('destroy');
+        $this->middleware('permission:fetch.instruction')->only('fetchInstruction');
+
     }
     /**
      * Display a listing of the resource.
@@ -104,7 +112,7 @@ class InstructionController extends Controller
     {
         $search = $request->input('search', '');
         $messageType = MessageType::All;
-        $userId=Auth::id();
+        $userId = Auth::id();
 
         $instructions = $this->instructionService->getAllInstruction(
             $search,

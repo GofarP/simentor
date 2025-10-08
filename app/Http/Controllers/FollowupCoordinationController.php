@@ -20,6 +20,13 @@ class FollowupCoordinationController extends Controller
     {
         $this->followupCoordinationService = $followupCoordinationService;
         $this->coordinationService = $coordinationService;
+
+        $this->middleware('permission:view.followupcoordination')->only('index');
+        $this->middleware('permission:create.followupcoordination')->only(['create', 'store']);
+        $this->middleware('permission:show.followupcoordination')->only('show');
+        $this->middleware('permission:edit.followupcoordination')->only(['edit', 'update']);
+        $this->middleware('permission:delete.followupcoordination')->only('destroy');
+
     }
     /**
      * Display a listing of the resource.
