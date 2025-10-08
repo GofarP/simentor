@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use App\Enums\MessageType;
 use App\Models\Instruction;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\InstructionRequest;
 use App\Services\User\UserServiceInterface;
 use App\Services\Instruction\InstructionServiceInterface;
