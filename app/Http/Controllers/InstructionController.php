@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\InstructionRequest;
-use App\Models\Instruction;
-use App\Services\ForwardInstruction\ForwardInstructionServiceInterface;
-use App\Services\Instruction\InstructionServiceInterface;
-use App\Services\User\UserServiceInterface;
+use Carbon\Carbon;
 use App\Enums\MessageType;
+use App\Models\Instruction;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use App\Http\Requests\InstructionRequest;
+use App\Services\User\UserServiceInterface;
+use App\Services\Instruction\InstructionServiceInterface;
+use App\Services\ForwardInstruction\ForwardInstructionServiceInterface;
 
 
 class InstructionController extends Controller
@@ -109,16 +111,23 @@ class InstructionController extends Controller
             false
         );
 
-        // Format hasil untuk Select2
         $results = $instructions->map(function ($instruction) {
+            $isExpired = false;
+            if ($instruction->end_time) {
+                try {
+                    $isExpired = Carbon::parse($instruction->end_time)->isPast();
+                } catch (\Exception $e) {
+                }
+            }
+
             return [
                 'id' => $instruction->id,
                 'title' => $instruction->title,
+                'end_time' => $instruction->end_time,
+                'is_expired' => $isExpired,
             ];
         });
 
         return response()->json(['results' => $results]);
     }
-
-
 }
