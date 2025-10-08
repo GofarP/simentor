@@ -1,9 +1,9 @@
 <div class="px-4 sm:px-6 lg:px-8 py-12 w-full max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
     @if (session('success'))
-        <div
-            class="mb-4 px-4 py-3 rounded-lg bg-green-100 border border-green-300 text-green-800 dark:bg-green-800 dark:text-green-100 dark:border-green-700">
-            {{ session('success') }}
-        </div>
+    <div
+        class="mb-4 px-4 py-3 rounded-lg bg-green-100 border border-green-300 text-green-800 dark:bg-green-800 dark:text-green-100 dark:border-green-700">
+        {{ session('success') }}
+    </div>
     @endif
 
     <div class="mb-6">
@@ -48,6 +48,9 @@
                         Deskripsi</th>
                     <th
                         class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                        Pemberi Nilai</th>
+                    <th
+                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         Penilaian</th>
                     <th
                         class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
@@ -55,42 +58,49 @@
                 </tr>
             </thead>
             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                @forelse($instructionScores as $index => $instructionScores)
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $index + 1 }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $instructionScores->instruction->title }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $permission->guard_name }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $permission->guard_name }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
-                            <a href="{{ route('permission.edit', $permission) }}"
-                                class="px-3 py-1 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition">
-                                Edit
-                            </a>
-                            <form action="{{ route('permission.destroy', $permission) }}" method="POST"
-                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus permission ini?')">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit"
-                                    class="px-3 py-1 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition">
-                                    Hapus
-                                </button>
+                @forelse($instructionScores as $index => $instructionScore)
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                        {{ $index + 1 }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                        {{ $instructionScore->instruction->title }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                        {!! $instructionScore->instruction->description !!}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                        {!! $instructionScore->user->name !!}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                        @if ($instructionScore->score===1)
+                        <img src="{{ asset('images/thumbsup.svg') }}" alt="Thumbs Up" width="24" height="24">
+                        @elseif($instructionScore->score===0)
+                        <img src="{{ asset('images/thumbsdown.svg') }}" alt="Thumbs Up" width="24" height="24">
+                        @endif
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
+                        <a href="{{ route('instructionscore.edit', $instructionScore) }}"
+                            class="px-3 py-1 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition">
+                            Edit
+                        </a>
+                        <form action="{{ route('instructionscore.destroy', $instructionScore) }}" method="POST"
+                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus permission ini?')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit"
+                                class="px-3 py-1 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition">
+                                Hapus
+                            </button>
                         </form>
-                        </td>
-                    </tr>
+                    </td>
+                </tr>
                 @empty
-                    <tr>
-                        <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                            Data penilaian instruksi tidak ditemukan
-                        </td>
-                    </tr>
+                <tr>
+                    <td colspan="4" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                        Data penilaian instruksi tidak ditemukan
+                    </td>
+                </tr>
                 @endforelse
             </tbody>
         </table>
