@@ -37,7 +37,7 @@ class InstructionScoreController extends Controller
      */
     public function store(InstructionScoreRequest $request)
     {
-        $this->instructionScoreService->storeInstructionScore($request->validate());
+        $this->instructionScoreService->storeInstructionScore($request->validated());
         return redirect()->route('instructionscore.index')->with('success','Sukses menambah penilaian instruksi');
     }
 
@@ -52,18 +52,18 @@ class InstructionScoreController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(InstructionScore $instructionScore)
+    public function edit(InstructionScore $instructionscore)
     {
-        $instructionTitle=$instructionScore->instruction->title;
-        return view('instructionscore.edit',compact('instructionScore','instructionTitle'));
+        $instructionTitle=$instructionscore->instruction->title;
+        return view('instructionscore.edit',compact('instructionscore','instructionTitle'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(InstructionScoreRequest $request, InstructionScore $instructionScore)
+    public function update(InstructionScoreRequest $request, InstructionScore $instructionscore)
     {
-        $this->instructionScoreService->editInstructionScore($instructionScore, $request->validated());
+        $this->instructionScoreService->editInstructionScore($instructionscore, $request->validated());
 
         return redirect()->route('instructionscore.index')->with('success','Sukses mengubah nilai instruksi');
     }
