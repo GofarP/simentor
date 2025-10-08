@@ -43,6 +43,7 @@ class InstructionController extends Controller
      */
     public function create()
     {
+        $users=$this->userService->getReceiver();
         return view('instruction.create', compact('users'));
     }
 
