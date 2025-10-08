@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\User;
+use App\Models\ForwardCoordination;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Coordination extends Model
 {
-    
+
 
     protected $fillable = [
         "sender_id",
@@ -17,6 +20,33 @@ class Coordination extends Model
         "end_time",
         "attachment",
     ];
+
+    protected static function booted()
+    {
+        static::deleting(function ($coordination) {
+            if ($coordination->attachment) {
+                Storage::delete($coordination->attachment);
+            }
+
+            $coordination->forwards()->delete();
+
+            $coordination->followups->each(function($followup){
+                if($followup->attachment) {
+                    Storage::delete($followup->attachment);
+                }
+
+                if($followup->proof){
+                    Storage::delete($followup->proof);
+                }
+
+                $followup->forwards()->delete();
+
+                $followup->delete();
+            });
+
+
+        });
+    }
 
     public function sender()
     {
@@ -47,6 +77,4 @@ class Coordination extends Model
             'forwarded_to'
         );
     }
-
-
 }

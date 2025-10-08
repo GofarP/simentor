@@ -12,6 +12,7 @@ use App\Http\Requests\CoordinationRequest;
 use App\Services\User\UserServiceInterface;
 use App\Services\Coordination\CoordinationServiceInterface;
 use App\Services\ForwardCoordination\ForwardCoordinationService;
+use Illuminate\Support\Facades\Auth;
 
 class CoordinationController extends Controller
 {
@@ -102,13 +103,19 @@ class CoordinationController extends Controller
     {
         $search = $request->input('search', '');
         $messageType = MessageType::All;
+        $userId = Auth::id();
+
 
         $coordinations = $this->coordinationService->getAllCoordination(
             $search,
             10,
             $messageType,
             false
-        );
+        )->filter(function ($coordination) use ($userId) {
+            return $coordination->sender_id == $userId
+                || $coordination->receiver_id == $userId
+                || $coordination->forwardedUsers->contains('id', $userId);
+        });
 
         $results = $coordinations->map(function ($instruction) {
             $isExpired = false;

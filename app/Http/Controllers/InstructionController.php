@@ -7,6 +7,7 @@ use App\Enums\MessageType;
 use App\Models\Instruction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\InstructionRequest;
 use App\Services\User\UserServiceInterface;
 use App\Services\Instruction\InstructionServiceInterface;
@@ -43,7 +44,7 @@ class InstructionController extends Controller
      */
     public function create()
     {
-        $users=$this->userService->getReceiver();
+        $users = $this->userService->getReceiver();
         return view('instruction.create', compact('users'));
     }
 
@@ -103,14 +104,18 @@ class InstructionController extends Controller
     {
         $search = $request->input('search', '');
         $messageType = MessageType::All;
+        $userId=Auth::id();
 
-        // Panggil service yang ujungnya akan pakai repository
         $instructions = $this->instructionService->getAllInstruction(
             $search,
             10,
             $messageType,
             false
-        );
+        )->filter(function ($instruction) use ($userId) {
+            return $instruction->sender_id == $userId
+                || $instruction->receiver_id == $userId
+                || $instruction->forwardedUsers->contains('id', $userId);
+        });
 
         $results = $instructions->map(function ($instruction) {
             $isExpired = false;

@@ -11,26 +11,39 @@ class Index extends Component
 {
     use WithPagination;
 
-    public string $search="";
-    public $messageType="received";
+    public string $search = "";
+    public $messageType = "received";
+
+    public array $expanded = [];
 
     protected FollowupInstructionServiceInterface $followupInstructionService;
 
-    public function boot(FollowupInstructionServiceInterface $followupInstructionService){
-        $this->followupInstructionService=$followupInstructionService;
+    public function boot(FollowupInstructionServiceInterface $followupInstructionService)
+    {
+        $this->followupInstructionService = $followupInstructionService;
     }
 
 
-    public function updatingSearch(){
+    public function updatingSearch()
+    {
         $this->resetPage();
+    }
+
+    public function toggleFollowups(int $instructionId)
+    {
+        if (in_array($instructionId, $this->expanded)) {
+            $this->expanded = array_diff($this->expanded, [$instructionId]);
+        }else{
+            $this->expanded[] = $instructionId;
+        }
     }
 
     public function render()
     {
-        $messageTypeEnum=MessageType::from($this->messageType);
-        $followupInstruction=$this->followupInstructionService->getAll($this->search,$messageTypeEnum,10);
-        return view('livewire.followup-instruction.index',[
-            'followupInstructions'=>$followupInstruction
+        $messageTypeEnum = MessageType::from($this->messageType);
+        $followupInstruction = $this->followupInstructionService->getAll($this->search, $messageTypeEnum, 10);
+        return view('livewire.followup-instruction.index', [
+            'followupInstructions' => $followupInstruction
         ]);
     }
 }
