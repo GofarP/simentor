@@ -1,6 +1,8 @@
 <?php
 namespace App\Repositories\InstructionScore;
 use App\Models\InstructionScore;
+use Illuminate\Support\Facades\Auth;
+
 
 class InstructionScoreRepository implements InstructionScoreRepositoryInterface
 {
@@ -28,6 +30,7 @@ class InstructionScoreRepository implements InstructionScoreRepositoryInterface
 
     public function storeInstructionScore(array $data)
     {
+        $data['user_id']=Auth::user()->id;
         return InstructionScore::create($data);
     }
 
