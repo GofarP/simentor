@@ -22,12 +22,14 @@ class PermissionSeeder extends Seeder
             ['name' => 'view.instruction', 'guard_name' => 'web'],
             ['name' => 'create.instruction', 'guard_name' => 'web'],
             ['name' => 'edit.instruction', 'guard_name' => 'web'],
+            ['name' => 'show.instruction', 'guard_name' => 'web'],
             ['name' => 'delete.instruction', 'guard_name' => 'web'],
             ['name' => 'fetch.instruction', 'guard_name' => 'web'],
 
             ['name' => 'view.coordination', 'guard_name' => 'web'],
             ['name' => 'create.coordination', 'guard_name' => 'web'],
             ['name' => 'edit.coordination', 'guard_name' => 'web'],
+            ['name' => 'show.instruction', 'guard_name' => 'web'],
             ['name' => 'delete.coordination', 'guard_name' => 'web'],
             ['name' => 'fetch.coordination', 'guard_name' => 'web'],
 
@@ -39,27 +41,36 @@ class PermissionSeeder extends Seeder
             ['name' => 'view.followupinstruction', 'guard_name' => 'web'],
             ['name' => 'create.followupinstruction', 'guard_name' => 'web'],
             ['name' => 'edit.followupinstruction', 'guard_name' => 'web'],
+            ['name' => 'show.followupinstruction', 'guard_name' => 'web'],
             ['name' => 'delete.followupinstruction', 'guard_name' => 'web'],
 
             ['name' => 'view.followupcoordination', 'guard_name' => 'web'],
             ['name' => 'create.followupcoordination', 'guard_name' => 'web'],
             ['name' => 'edit.followupcoordination', 'guard_name' => 'web'],
+            ['name' => 'show.followupcoordination', 'guard_name' => 'web'],
             ['name' => 'delete.followupcoordination', 'guard_name' => 'web'],
 
-            ['name' => 'view.forwardinstruction', 'guard_name' => 'web'],
-            ['name' => 'create.forwardinstruction', 'guard_name' => 'web'],
-            ['name' => 'edit.forwardinstruction', 'guard_name' => 'web'],
-            ['name' => 'delete.forwardinstruction', 'guard_name' => 'web'],
+            ['name' => 'showform.forwardinstruction', 'guard_name' => 'web'],
+            ['name' => 'submit.forwardinstruction', 'guard_name' => 'web'],
 
-            ['name' => 'view.forwardcoordination', 'guard_name' => 'web'],
-            ['name' => 'create.forwardcoordination', 'guard_name' => 'web'],
-            ['name' => 'edit.forwardcoordination', 'guard_name' => 'web'],
-            ['name' => 'delete.forwardcoordination', 'guard_name' => 'web'],
+            ['name' => 'showform.forwardcoordination', 'guard_name' => 'web'],
+            ['name' => 'submit.forwardcoordination', 'guard_name' => 'web'],
 
-            ['name' => 'view.forwardfollowupcoordination', 'guard_name' => 'web'],
-            ['name' => 'create.forwardfollowupcoordination', 'guard_name' => 'web'],
-            ['name' => 'edit.forwardfollowupcoordination', 'guard_name' => 'web'],
-            ['name' => 'delete.forwardfollowupcoordination', 'guard_name' => 'web'],
+            ['name' => 'showform.forwardfollowupcoordination', 'guard_name' => 'web'],
+            ['name' => 'submit.forwardfollowupcoordination', 'guard_name' => 'web'],
+
+            ['name' => 'showform.forwardfollowupInstruction', 'guard_name' => 'web'],
+            ['name' => 'submit.forwardfollowupInstruction', 'guard_name' => 'web'],
+
+            ['name' => 'view.user', 'guard_name' => 'web'],
+            ['name' => 'create.user', 'guard_name' => 'web'],
+            ['name' => 'edit.user', 'guard_name' => 'web'],
+            ['name' => 'delete.user', 'guard_name' => 'web'],
+
+            ['name' => 'view.permission', 'guard_name' => 'web'],
+            ['name' => 'create.permission', 'guard_name' => 'web'],
+            ['name' => 'edit.permission', 'guard_name' => 'web'],
+            ['name' => 'delete.permission', 'guard_name' => 'web'],
         ]);
     }
 }
