@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MessageType;
 use App\Models\Coordination;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ForwardRequest;
 use App\Http\Requests\CoordinationRequest;
 use App\Services\User\UserServiceInterface;
 use App\Services\Coordination\CoordinationServiceInterface;
 use App\Services\ForwardCoordination\ForwardCoordinationService;
-use Illuminate\Http\Request;
-use App\Enums\MessageType;
 
 class CoordinationController extends Controller
 {
@@ -97,25 +98,35 @@ class CoordinationController extends Controller
     }
 
 
-    public function fetchCoordination(Request $request){
-        $search=$request->input('search','');
-        $messageType=MessageType::All;
+    public function fetchCoordination(Request $request)
+    {
+        $search = $request->input('search', '');
+        $messageType = MessageType::All;
 
-        $coordinations=$this->coordinationService->getAllCoordination(
+        $coordinations = $this->coordinationService->getAllCoordination(
             $search,
             10,
             $messageType,
             false
         );
 
-        $results=$coordinations->map(function($coordination){
-            return[
-                'id'=>$coordination->id,
-                'title'=>$coordination->title
+        $results = $coordinations->map(function ($instruction) {
+            $isExpired = false;
+            if ($instruction->end_time) {
+                try {
+                    $isExpired = Carbon::parse($instruction->end_time)->isPast();
+                } catch (\Exception $e) {
+                }
+            }
+
+            return [
+                'id' => $instruction->id,
+                'title' => $instruction->title,
+                'end_time' => $instruction->end_time,
+                'is_expired' => $isExpired,
             ];
         });
 
-        return response()->json(['results'=>$results]);
+        return response()->json(['results' => $results]);
     }
-
 }
