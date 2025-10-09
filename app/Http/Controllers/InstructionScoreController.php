@@ -16,10 +16,10 @@ class InstructionScoreController extends Controller
     {
         $this->instructionScoreService = $instructionScoreService;
 
-        $this->middleware('permission:view.instructionscore')->only('index');
-        $this->middleware('permission:create.instructionscore')->only(['create', 'store']);
-        $this->middleware('permission:edit.instructionscore')->only(['edit', 'update']);
-        $this->middleware('permission:delete.instructionscore')->only('destroy');
+        // $this->middleware('permission:view.instructionscore')->only('index');
+        // $this->middleware('permission:create.instructionscore')->only(['create', 'store']);
+        // $this->middleware('permission:edit.instructionscore')->only(['edit', 'update']);
+        // $this->middleware('permission:delete.instructionscore')->only('destroy');
     }
 
     /**

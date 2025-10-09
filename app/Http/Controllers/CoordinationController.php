@@ -32,11 +32,11 @@ class CoordinationController extends Controller
         $this->userService = $userService;
         $this->forwardCoordinationService = $forwardCoordinationService;
 
-        $this->middleware('permission:view.coordination')->only('index');
-        $this->middleware('permission:create.coordination')->only(['create', 'store']);
-        $this->middleware('permission:edit.coordination')->only(['edit', 'update']);
-        $this->middleware('permission:delete.coordination')->only('destroy');
-        $this->middleware('permission:fetch.coordination')->only('fetchCoordination');
+        // $this->middleware('permission:view.coordination')->only('index');
+        // $this->middleware('permission:create.coordination')->only(['create', 'store']);
+        // $this->middleware('permission:edit.coordination')->only(['edit', 'update']);
+        // $this->middleware('permission:delete.coordination')->only('destroy');
+        // $this->middleware('permission:fetch.coordination')->only('fetchCoordination');
     }
     /**
      * Display a listing of the resource.

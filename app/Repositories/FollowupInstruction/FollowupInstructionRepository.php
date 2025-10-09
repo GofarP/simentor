@@ -13,6 +13,7 @@ class FollowupInstructionRepository implements FollowupInstructionRepositoryInte
     {
         $userId = Auth::id();
         $query = FollowupInstruction::with([
+            'instruction',
             'sender',
             'receiver',
             'forwardedUsers' => function ($q) {
