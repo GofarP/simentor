@@ -1,5 +1,5 @@
 <?php
-namespace App\Services\ForwardFollowupInstruction;
+namespace App\Services\ForwardFollowupCoordination;
 
 use App\Models\FollowupCoordination;
 use App\Services\ForwardFollowupCoordination\ForwardFollowupCoordinationServiceInterface;
@@ -26,5 +26,5 @@ class ForwardFollowupCoordinationService implements ForwardFollowupCoordinationS
         return $this->forwardFollowupCoordinationService->deleteForwardFollowupCoordination($followupCoordination);
     }
 
-    
+
 }

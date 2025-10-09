@@ -60,12 +60,12 @@ class RepositoryServiceProvider extends ServiceProvider
 
         $this->app->bind(
             \App\Services\ForwardFollowupInstruction\ForwardFollowupInstructionServiceInterface::class,
-            \App\Services\ForwardFollowupInstruction\ForwardFollowupInstructionServiceInterface::class,
+            \App\Services\ForwardFollowupInstruction\ForwardFollowupInstructionService::class,
         );
 
         $this->app->bind(
             \App\Services\ForwardFollowupCoordination\ForwardFollowupCoordinationServiceInterface::class,
-            \App\Services\ForwardFollowupCoordination\ForwardFollowupCoordinationServiceInterface::class,
+            \App\Services\ForwardFollowupCoordination\ForwardFollowupCoordinationService::class,
         );
 
         $this->app->bind(

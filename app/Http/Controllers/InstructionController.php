@@ -31,12 +31,12 @@ class InstructionController extends Controller
         $this->userService = $userService;
         $this->forwardInstructionService = $forwardInstructionService;
 
-        $this->middleware('permission:view.instruction')->only('index');
-        $this->middleware('permission:create.instruction')->only(['create', 'store']);
-        $this->middleware('permission:edit.instruction')->only(['edit', 'update']);
-        $this->middleware('permission:show.instruction')->only('show');
-        $this->middleware('permission:delete.instruction')->only('destroy');
-        $this->middleware('permission:fetch.instruction')->only('fetchInstruction');
+        // $this->middleware('permission:view.instruction')->only('index');
+        // $this->middleware('permission:create.instruction')->only(['create', 'store']);
+        // $this->middleware('permission:edit.instruction')->only(['edit', 'update']);
+        // $this->middleware('permission:show.instruction')->only('show');
+        // $this->middleware('permission:delete.instruction')->only('destroy');
+        // $this->middleware('permission:fetch.instruction')->only('fetchInstruction');
 
     }
     /**
