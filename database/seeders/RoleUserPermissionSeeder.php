@@ -96,6 +96,13 @@ class RoleUserPermissionSeeder extends Seeder
             'submit.forwardinstruction',
             'view.instructionscore',
             'create.instructionscore',
+            'view.user',
+            'show.user',
+            'create.user',
+            'edit.user',
+            'delete.user',
+            
+
         ]);
 
         // === ROLE KASUBBAG ===
@@ -124,19 +131,19 @@ class RoleUserPermissionSeeder extends Seeder
 
         $kasekUser = User::firstOrCreate(
             ['email' => 'kasek@example.com'],
-            ['name' => 'Kepala Seksi', 'password' => Hash::make('password')]
+            ['name' => 'Kepala Seksi','telp'=>"0819291891829891" ,'password' => Hash::make('password')]
         );
         $kasekUser->assignRole($kasek);
 
         $kasubbagUser = User::firstOrCreate(
             ['email' => 'kasubbag@example.com'],
-            ['name' => 'Kasubbag User', 'password' => Hash::make('password')]
+            ['name' => 'Kasubbag User', 'telp'=>"08019019912090" ,'password' => Hash::make('password')]
         );
         $kasubbagUser->assignRole($kasubbag);
 
         $staffUser = User::firstOrCreate(
             ['email' => 'staff@example.com'],
-            ['name' => 'Staff User', 'password' => Hash::make('password')]
+            ['name' => 'Staff User','telp'=>"2119019209021" ,'password' => Hash::make('password')]
         );
         $staffUser->assignRole($staff);
 

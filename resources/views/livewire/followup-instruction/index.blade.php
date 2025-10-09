@@ -13,12 +13,11 @@
                     Tindak Lanjut Instruksi
                 </p>
                 <p class="text-gray-700 dark:text-gray-300 text-base md:text-lg">
-                    Kelola Tindak Lanjut Insruksi.
+                    Kelola Tindak Lanjut Instruksi.
                 </p>
             </div>
 
             <div class="flex flex-col items-end gap-2">
-
                 <input type="text" name="search" wire:model.live.debounce.500ms="search" placeholder="cari..."
                     class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
               focus:ring-2 focus:ring-violet-500 focus:border-violet-500
@@ -29,6 +28,7 @@
                     + Tambah
                 </a>
 
+                @if($switch === 'followupInstructionMode')
                 <div>
                     <select id="message_type" class="form-control js-example-basic-single w-full"
                         wire:model.live='messageType'>
@@ -37,201 +37,122 @@
                         <option value="all">Semua</option>
                     </select>
                 </div>
-
+                @endif
             </div>
         </div>
     </div>
 
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-            <thead class="bg-gray-100 dark:bg-gray-700">
-                <tr>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        #</th>
-
-                    @if ($messageType == 'received' || $messageType == 'all')
-                        <th
-                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                            Pengirim</th>
-                    @endif
-
-                    @if ($messageType == 'sent' || $messageType == 'all')
-                        <th
-                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                            Penerima Asli</th>
-                    @endif
-
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Diteruskan Oleh</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Penerima Forward</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Judul</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Deskripsi</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Waktu mulai</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Batas waktu</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Lampiran</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Bukti</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Aksi</th>
-                </tr>
-            </thead>
-
-            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                @forelse($followupInstructions as $index => $followupInstruction)
+        @if($switch === 'instructionMode')
+            <!-- STATE 1: Instruction summary -->
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-100 dark:bg-gray-700">
                     <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $index + 1 }}
-                        </td>
-
-                        @if ($messageType == 'received' || $messageType == 'all')
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                <span
-                                    class="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded-full text-xs">{{ $followupInstruction->sender->name }}</span>
-                            </td>
-                        @endif
-
-                        @if ($messageType == 'sent' || $messageType == 'all')
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                <span
-                                    class="px-2 py-1 bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 rounded-full text-xs">{{ $followupInstruction->receiver->name }}</span>
-                            </td>
-                        @endif
-
-                        <!-- Diteruskan Oleh -->
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            @if ($followupInstruction->forwards->isNotEmpty())
-                                @foreach ($followupInstruction->forwards->unique('forwarded_by') as $forward)
-                                    <span
-                                        class="px-2 py-1 bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-100 rounded-full text-xs inline-block mb-1">{{ $forward->forwarder->name ?? '-' }}</span>
-                                @endforeach
-                            @else
-                                <span class="text-gray-400">-</span>
-                            @endif
-                        </td>
-
-                        <!-- Penerima Forward -->
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            @if ($followupInstruction->forwards->isNotEmpty())
-                                @foreach ($followupInstruction->forwards as $forward)
-                                    <span
-                                        class="px-2 py-1 bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 rounded-full text-xs inline-block mb-1">{{ $forward->receiver->name ?? '-' }}</span>
-                                @endforeach
-                            @else
-                                <span class="text-gray-400">-</span>
-                            @endif
-                        </td>
-
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $followupInstruction->instruction->title }}</td>
-
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            <div class="truncate max-w-xs" title="{{ strip_tags($followupInstruction->description) }}">
-                                {!! $followupInstruction->description !!}
-                            </div>
-                        </td>
-
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ \Carbon\Carbon::parse($followupInstruction->instruction->start_time)->format('d-m-Y') }}</td>
-
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ \Carbon\Carbon::parse($followupInstruction->instruction->end_time)->format('d-m-Y') }}</td>
-
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            @if ($followupInstruction->attachment)
-                                <a href="{{ Storage::url($followupInstruction->attachment) }}" target="_blank"
-                                    class="text-blue-600 dark:text-blue-400 underline">Lihat Lampiran</a>
-                            @else
-                                <span class="text-gray-400">Tidak Ada Lampiran</span>
-                            @endif
-                        </td>
-
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            @if ($followupInstruction->proof)
-                                <a href="{{ Storage::url($followupInstruction->proof) }}" target="_blank"
-                                    class="text-blue-600 dark:text-blue-400 underline">Lihat Bukti</a>
-                            @else
-                                <span class="text-gray-400">Tidak Ada Bukti</span>
-                            @endif
-                        </td>
-
-                        <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
-                            @can('forward', $followupInstruction)
-                                <a href="{{ route('forward.followupinstruction.form', $followupInstruction) }}"
-                                    class="px-3 py-1 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition">
-                                    Forward
-                                </a>
-                            @endcan
-
-                            <a href="{{ route('followupinstruction.show', $followupInstruction) }}"
-                                class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">Show</a>
-
-                            @can('update', $followupInstruction)
-                                <a href="{{ route('followupinstruction.edit', $followupInstruction) }}"
-                                    class="px-3 py-1 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition">Edit</a>
-                            @endcan
-
-                            @can('delete', $followupInstruction)
-                                <form action="{{ route('followupinstruction.destroy', $followupInstruction) }}"
-                                    method="POST"
-                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus instruction ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                        class="px-3 py-1 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition">Hapus</button>
-                                </form>
-                            @endcan
-                        </td>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">#</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Title</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Deskripsi</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Jumlah Followup</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Detail</th>
                     </tr>
-                @empty
-                    @php
-                        $colspanNumber = $messageType == 'sent' || $messageType == 'received' ? 10 : 8;
-                    @endphp
+                </thead>
+                <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    @forelse($instructions as $index => $instruction)
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{{ $index + 1 }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{{ $instruction->title }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{{ Str::limit(strip_tags($instruction->description), 50) }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">{{ $instruction->followups_count }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                                <button wire:click="switchClick({{ $instruction->id }})" 
+                                    class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">
+                                    Detail
+                                </button>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">Data instruction tidak ditemukan</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+            <div class="mt-4 flex justify-end">
+                {{ $instructions->links('vendor.pagination.tailwind') }}
+            </div>
+        @else
+            <!-- STATE 2: Followup instruction detail -->
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                <thead class="bg-gray-100 dark:bg-gray-700">
                     <tr>
-                        <td colspan="{{ $colspanNumber }}"
-                            class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                            Data followup instruction tidak ditemukan</td>
+                        <th>#</th>
+                        @if ($messageType == 'received' || $messageType == 'all')<th>Pengirim</th>@endif
+                        @if ($messageType == 'sent' || $messageType == 'all')<th>Penerima Asli</th>@endif
+                        <th>Diteruskan Oleh</th>
+                        <th>Penerima Forward</th>
+                        <th>Judul</th>
+                        <th>Deskripsi</th>
+                        <th>Waktu Mulai</th>
+                        <th>Batas Waktu</th>
+                        <th>Lampiran</th>
+                        <th>Bukti</th>
+                        <th>Aksi</th>
                     </tr>
-                @endforelse
-            </tbody>
-        </table>
-
+                </thead>
+                <tbody>
+                    @forelse($followupInstructions as $index => $followupInstruction)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            @if ($messageType == 'received' || $messageType == 'all')
+                                <td>{{ $followupInstruction->sender->name }}</td>
+                            @endif
+                            @if ($messageType == 'sent' || $messageType == 'all')
+                                <td>{{ $followupInstruction->receiver->name }}</td>
+                            @endif
+                            <td>
+                                @foreach($followupInstruction->forwards->unique('forwarded_by') as $forward)
+                                    {{ $forward->forwarder->name ?? '-' }}<br>
+                                @endforeach
+                            </td>
+                            <td>
+                                @foreach($followupInstruction->forwards as $forward)
+                                    {{ $forward->receiver->name ?? '-' }}<br>
+                                @endforeach
+                            </td>
+                            <td>{{ $followupInstruction->instruction->title }}</td>
+                            <td>{{ Str::limit(strip_tags($followupInstruction->description), 50) }}</td>
+                            <td>{{ \Carbon\Carbon::parse($followupInstruction->instruction->start_time)->format('d-m-Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($followupInstruction->instruction->end_time)->format('d-m-Y') }}</td>
+                            <td>
+                                @if($followupInstruction->attachment)
+                                    <a href="{{ Storage::url($followupInstruction->attachment) }}" target="_blank" class="text-blue-600 dark:text-blue-400 underline">Lihat Lampiran</a>
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td>
+                                @if($followupInstruction->proof)
+                                    <a href="{{ Storage::url($followupInstruction->proof) }}" target="_blank" class="text-blue-600 dark:text-blue-400 underline">Lihat Bukti</a>
+                                @else
+                                    -
+                                @endif
+                            </td>
+                            <td>
+                                <a href="{{ route('followupinstruction.show', $followupInstruction) }}" class="px-2 py-1 bg-blue-600 text-white rounded">Show</a>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="11" class="text-center">Data followup instruction tidak ditemukan</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+            <div class="mt-4 flex justify-end">
+                {{ $followupInstructions->withQueryString()->links('vendor.pagination.tailwind') }}
+            </div>
+            <div class="mt-4">
+                <button wire:click="switchClick" class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">Kembali</button>
+            </div>
+        @endif
     </div>
-
-    <!-- Pagination -->
-    <div class="mt-4 flex justify-end">
-        {{ $followupInstructions->withQueryString()->links('vendor.pagination.tailwind') }}
-    </div>
-    @push('css')
-        <style>
-            td ol {
-                list-style: decimal;
-                padding-left: 1.5rem;
-                /* biar agak masuk ke dalam */
-            }
-
-            td ul {
-                list-style: disc;
-                padding-left: 1.5rem;
-            }
-        </style>
-    @endpush
-
-
-
 </div>
