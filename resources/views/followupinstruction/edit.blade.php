@@ -9,21 +9,15 @@
                 @csrf
                 @method('PUT')
 
-                @if ($errors->any())
-                <div class="bg-red-100 text-red-600 p-2 rounded mb-4">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-                @endif
-
                 {{-- Instruksi --}}
                 <div class="mb-4">
                     <label for="instruction_id"
                         class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Instruksi</label>
-                    <select name="instruction_id" id="instruction_id" class="js-example-basic-single w-full"></select>
+                    <select name="instruction_id" id="instruction_id" class="w-full pointer-events-none bg-white border rounded-md p-2">
+                        @foreach ($instructions as $instruction )
+                            <option value="{{ $instruction->id }}" {{ $instruction->id ==$followupinstruction->instruction_id ? 'selected' : '' }}>{{ $instruction->title }}</option>
+                        @endforeach
+                    </select>
 
                     @error('instruction_id')
                     <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
@@ -101,7 +95,7 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://unpkg.com/trix@2.1.0/dist/trix.umd.min.js"></script>
 
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             const $instructionSelect = $('#instruction_id');
 
@@ -145,7 +139,7 @@
                 $instructionSelect.append(option).trigger('change');
             }
         });
-    </script>
+    </script> --}}
 
     @endpush
 </x-app-layout>
