@@ -43,7 +43,7 @@ class Index extends Component
 
 
     public function goToCreate(){
-        session(['selectedInstructionId'=>$this->selectedInstructionId]);
+        session(key: ['selectedInstructionId'=>$this->selectedInstructionId]);
 
         return redirect()->route('followupinstruction.create');
     }
