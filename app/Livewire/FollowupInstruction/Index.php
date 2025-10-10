@@ -30,6 +30,7 @@ class Index extends Component
     {
         $this->switch = 'followupInstructionMode';
         $this->selectedInstructionId = $instructionId;
+        $this->search="";
         $this->resetPage();
     }
 
