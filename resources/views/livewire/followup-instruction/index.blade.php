@@ -1,5 +1,10 @@
 <div class="px-4 sm:px-6 lg:px-8 py-12 w-full max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
-
+    @if (session('success'))
+        <div
+            class="mb-4 px-4 py-3 rounded-lg bg-green-100 border border-green-300 text-green-800 dark:bg-green-800 dark:text-green-100 dark:border-green-700">
+            {{ session('success') }}
+        </div>
+    @endif
     {{-- Header --}}
     <div class="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
         <div>
@@ -15,8 +20,7 @@
             <input type="text" placeholder="Cari..." wire:model.live.debounce.500ms="search"
                 class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-violet-500 dark:bg-gray-800 dark:text-gray-200">
             @if ($switch === 'followupInstructionMode')
-                <select wire:model.live="messageType"
-                    class="form-control w-full mt-2">
+                <select wire:model.live="messageType" class="form-control w-full mt-2">
                     <option value="sent">Terkirim</option>
                     <option value="received">Diterima</option>
                     <option value="all">Semua</option>
@@ -69,10 +73,20 @@
                 {{ $instructions->links() }}
             </div>
 
-        {{-- FollowupInstruction Mode --}}
+            {{-- FollowupInstruction Mode --}}
         @elseif($switch === 'followupInstructionMode')
-            <button wire:click="backToInstructions"
-                class="mb-4 mt-3 ml-3 px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">Kembali</button>
+            <div class="flex justify-between items-center mb-4 mt-3 px-3">
+                <!-- Tombol kiri -->
+                <button wire:click="backToInstructions" class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                    Kembali
+                </button>
+
+                <!-- Tombol kanan -->
+                <button wire:click="goToCreate" class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Tambah Followup
+                </button>
+
+            </div>
 
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-100 dark:bg-gray-700">
@@ -115,14 +129,16 @@
                             </td>
                             <td class="px-6 py-4">
                                 @if ($f->attachment)
-                                    <a class="text-blue-600 text-underline" href="{{ Storage::url($f->attachment) }}" target="_blank">Lihat Lampiran</a>
+                                    <a class="text-blue-600 text-underline" href="{{ Storage::url($f->attachment) }}"
+                                        target="_blank">Lihat Lampiran</a>
                                 @else
                                     Tidak ada lampiran ditambahkan
                                 @endif
                             </td>
                             <td class="px-6 py-4">
                                 @if ($f->proof)
-                                    <a class="text-blue-600 text-underline" href="{{ Storage::url($f->proof) }}" target="_blank">Lihat Bukti</a>
+                                    <a class="text-blue-600 text-underline" href="{{ Storage::url($f->proof) }}"
+                                        target="_blank">Lihat Bukti</a>
                                 @else
                                     Tidak ada bukti ditambahkan
                                 @endif
@@ -133,8 +149,8 @@
                                         class="px-3 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Forward</a>
                                 @endcan
                                 @can('view', $f)
-                                <a href="{{ route('followupinstruction.show', $f) }}"
-                                    class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Show</a>
+                                    <a href="{{ route('followupinstruction.show', $f) }}"
+                                        class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Show</a>
                                 @endcan
                                 @can('update', $f)
                                     <a href="{{ route('followupinstruction.edit', $f) }}"

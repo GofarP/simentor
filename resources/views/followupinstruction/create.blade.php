@@ -11,19 +11,18 @@
                     <label for="instruction_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
                         Instruksi
                     </label>
-                    @php
-                    $oldInstruction = old('instruction_id') ? \App\Models\Instruction::find(old('instruction_id')) : null;
-                    @endphp
-                    <select name="instruction_id" id="instruction_id" class="w-full">
-                        @if ($oldInstruction)
-                        <option value="{{ $oldInstruction->id }}" selected>
-                            {{ $oldInstruction->title }}
-                        </option>
-                        @endif
+                    <select id="instruction_id" name="instruction_id"
+                        class="w-full pointer-events-none bg-white border rounded-md p-2">
+                        @foreach ($instructions as $instruction)
+                            <option value="{{ $instruction->id }}" {{ $instruction->id == $instructionId ? 'selected' : '' }}>
+                                {{ $instruction->title }}
+                            </option>
+                        @endforeach
                     </select>
 
+
                     @error('instruction_id')
-                    <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
+                        <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -36,7 +35,7 @@
                     <input type="file" name="proof" id="proof" class="form-input w-full rounded border-gray-300 dark:border-gray-600
                                dark:bg-gray-700 dark:text-gray-200">
                     @error('proof')
-                    <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
+                        <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -47,7 +46,7 @@
                     <input type="file" name="attachment" id="attachment"
                         class="form-input w-full runded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                     @error('attachment')
-                    <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
+                        <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -60,7 +59,7 @@
                     <trix-editor input="description" class="border rounded-lg"></trix-editor>
 
                     @error('description')
-                    <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
+                        <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -76,45 +75,45 @@
     </div>
 
     @push('css')
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://unpkg.com/trix@2.1.0/dist/trix.css">
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://unpkg.com/trix@2.1.0/dist/trix.css">
     @endpush
 
     @push('js')
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://unpkg.com/trix@2.1.0/dist/trix.umd.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script src="https://unpkg.com/trix@2.1.0/dist/trix.umd.min.js"></script>
 
-    <script>
-        $(document).ready(function() {
-            $('#instruction_id').select2({
-                placeholder: 'Cari Instruksi...',
-                ajax: {
-                    url: '{{ route('instructions.search') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: params => ({
-                        search: params.term
-                    }),
-                    processResults: data => ({
-                        results: data.results.map(item => ({
-                            id: item.id,
-                            text: item.is_expired ?
-                                `${item.title} (Tenggat waktu habis)` : item.title,
-                            disabled: item.is_expired
-                        }))
-                    }),
-                    cache: true
-                },
+        <!-- <script>
+                $(document).ready(function() {
+                    $('#instruction_id').select2({
+                        placeholder: 'Cari Instruksi...',
+                        ajax: {
+                            url: '{{ route('instructions.search') }}',
+                            dataType: 'json',
+                            delay: 250,
+                            data: params => ({
+                                search: params.term
+                            }),
+                            processResults: data => ({
+                                results: data.results.map(item => ({
+                                    id: item.id,
+                                    text: item.is_expired ?
+                                        `${item.title} (Tenggat waktu habis)` : item.title,
+                                    disabled: item.is_expired
+                                }))
+                            }),
+                            cache: true
+                        },
 
-                minimumInputLength: 1,
-                width: '100%',
-                language: "id"
-            });
+                        minimumInputLength: 1,
+                        width: '100%',
+                        language: "id"
+                    });
 
-        });
-    </script>
+                });
+            </script> -->
 
 
     @endpush

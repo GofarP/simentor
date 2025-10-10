@@ -41,8 +41,9 @@ class FollowupInstructionController extends Controller
      */
     public function create()
     {
-        $instructions = $this->InstructionServiceInterface->getAllInstruction(null, 10, MessageType::All, false);
-        return view('followupinstruction.create', compact('instructions'));
+        $instructionId = session('selectedInstructionId');
+        $instructions = $this->InstructionServiceInterface->getAllInstruction(null, 10, MessageType::All, true);
+        return view('followupinstruction.create', compact('instructions', 'instructionId'));
     }
 
     /**
@@ -52,11 +53,11 @@ class FollowupInstructionController extends Controller
     {
         $data = $request->validated(); // hanya ambil data yang lolos validasi
 
-        // Ambil receiver_id dari instruction_id lewat service
         $data['receiver_id'] = $this->InstructionServiceInterface->getSenderIdByInstruction($data['instruction_id']);
 
-        // Simpan tindak lanjut instruksi via service
         $this->followupInstructionServiceInterface->storeFollowupInstruction($data);
+
+        session()->forget('selectedInstructionId');
 
         return redirect()
             ->route('followupinstruction.index')
