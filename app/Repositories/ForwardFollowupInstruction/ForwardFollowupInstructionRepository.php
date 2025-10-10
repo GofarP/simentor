@@ -12,23 +12,26 @@ use App\Repositories\FollowupInstruction\FollowupInstructionRepositoryInterface;
 
 class ForwardFollowupInstructionRepository implements ForwardFollowupInstructionRepositoryInterface
 {
-    public function forwardFollowupInstruction(FollowupInstruction $followupInstruction, array $data) {
-        $forwardedTo=$data['forwarded_to'] ?? [];
-        $followupInstruction->forwardedUsers->sync(
-            collect($forwardedTo)->mapWithKeys(function($receiverId){
-                return [$receiverId=>['forwarded_by'=>Auth::id()]];
+    public function forwardFollowupInstruction(FollowupInstruction $followupInstruction, array $data)
+    {
+        $forwardedTo = $data['forwarded_to'] ?? [];
+        $followupInstruction->forwardedUsers()->sync(
+            collect($forwardedTo)->mapWithKeys(function ($receiverId) {
+                return [$receiverId => ['forwarded_by' => Auth::id()]];
             })->toArray()
         );
+
 
         return $followupInstruction->forwardedUsers;
     }
 
     public function deleteForwardFollowupInstruction(FollowupInstruction $followupInstruction)
     {
-        return ForwardFollowupInstruction::where('followup_instruction_id',$followupInstruction->id);
+        return ForwardFollowupInstruction::where('followup_instruction_id', $followupInstruction->id);
     }
 
-    public function getForwardFollowupInstruction(FollowupInstruction $followupInstruction) {
-        return FollowupInstruction::where('followup_instruction_id',$followupInstruction->id);
+    public function getForwardFollowupInstruction(FollowupInstruction $followupInstruction)
+    {
+        return ForwardFollowupInstruction::where('followup_instruction_id', $followupInstruction->id);
     }
 }

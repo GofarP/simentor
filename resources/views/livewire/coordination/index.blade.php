@@ -37,6 +37,7 @@
                         <option value="received">Diterima</option>
                         <option value="all">Semua</option>
                     </select>
+                    
                 </div>
 
             </div>
@@ -202,8 +203,8 @@
     </div>
 
     <!-- Pagination -->
-    <div class="mt-4 flex justify-end">
-        {{ $coordinations->withQueryString()->links('vendor.pagination.tailwind') }}
+    <div class="my-4 mx-4">
+        {{ $coordinations->links() }}
     </div>
     @push('css')
         <style>

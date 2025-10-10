@@ -203,7 +203,7 @@
 
     <!-- Pagination -->
     <div class="mt-4 flex justify-end">
-        {{ $instructions->withQueryString()->links('vendor.pagination.tailwind') }}
+        {{ $instructions->links() }}
     </div>
     @push('css')
         <style>

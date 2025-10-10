@@ -26,23 +26,23 @@ class ForwardFollowupInstructionController extends Controller
         // $this->middleware('permission:submit.forwardfollowupcoordination')->only('submit');
     }
 
-    public function showForm(FollowupInstruction $followupInstruction)
+    public function showForm(FollowupInstruction $followupinstruction)
     {
-        $this->authorize('forward', $followupInstruction);
+        $this->authorize('forward', $followupinstruction);
         $users = $this->userService->getReceiver();
         $forwardFollowupInstruction = $this->forwardFollowupInstructionService
-            ->getForwardFollowupInstruction($followupInstruction)
+            ->getForwardFollowupInstruction($followupinstruction)
             ->pluck('forwarded_to')
             ->toArray();
 
-        return view('followupinstruction.forward', compact('forwardFollowupInstruction', 'users'));
+        return view('followupinstruction.forward', compact("followupinstruction",'forwardFollowupInstruction', 'users'));
     }
 
 
-    public function submit(ForwardRequest $request, FollowupInstruction $followupInstruction)
+    public function submit(ForwardRequest $request, FollowupInstruction $followupinstruction)
     {
-        $this->authorize('forward', $followupInstruction);
-        $this->forwardFollowupInstructionService->forwardFollowupInstruction($followupInstruction, $request->all());
+        $this->authorize('forward', $followupinstruction);
+        $this->forwardFollowupInstructionService->forwardFollowupInstruction($followupinstruction, $request->all());
         return redirect()->route('followupinstruction.index')->with('success', 'Sukses meneruskan tindak lanjut instruksi');
     }
 }
