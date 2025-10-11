@@ -11,7 +11,7 @@ class FollowupInstructionScoreController extends Controller
      */
     public function index()
     {
-        //
+        return view('followupinstruction.index');
     }
 
     /**

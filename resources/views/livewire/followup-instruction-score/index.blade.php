@@ -9,10 +9,10 @@
     <div class="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
         <div>
             <p class="text-3xl md:text-4xl font-extrabold text-violet-600 mb-2">
-                Tindak Lanjut Instruksi
+                Nilai Tindak Lanjut Instruksi
             </p>
             <p class="text-gray-700 dark:text-gray-300 text-base md:text-lg">
-                Kelola Tindak Lanjut Instruksi.
+                Kelola Nilai Tindak Lanjut Instruksi.
             </p>
         </div>
 
@@ -39,7 +39,8 @@
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">#</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Judul</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Deskripsi</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jumlah Tindak Lanjut
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jumlah Tindak
+                            Lanjut
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Aksi</th>
                     </tr>
@@ -75,135 +76,86 @@
             </div>
 
             {{-- FollowupInstruction Mode --}}
-        @elseif($switch === 'followupInstructionMode')
+        @elseif($switch === 'followupInstructionScoreMode')
             <div class="flex justify-between items-center mb-4 mt-3 px-3">
-                <!-- Tombol kiri -->
                 <button wire:click="backToInstructions"
                     class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
                     Kembali
                 </button>
 
-                @if (Auth::user()->id !== optional($followupInstructions->first())->receiver_id)
+                @if (Auth::user()->id !== optional($followupInstructionScores->first()?->followupInstruction)->receiver_id)
                     <button wire:click="goToCreate"
                         class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                         Tambah Followup
                     </button>
                 @endif
-
             </div>
 
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-100 dark:bg-gray-700">
                     <tr>
                         <th class="px-6 py-3">#</th>
-
-                        @if ($messageType === 'received')
-                            <th class="px-6 py-3">Pengirim</th>
-                        @elseif ($messageType === 'sent')
-                            <th class="px-6 py-3">Penerima</th>
-                        @endif
-
-                        <th class="px-6 py-3">Diteruskan Oleh</th>
-                        <th class="px-6 py-3">Penerima Forward</th>
-                        <th class="px-6 py-3">Judul</th>
-                        <th class="px-6 py-3">Deskripsi</th>
-                        <th class="px-6 py-3">Waktu Mulai</th>
-                        <th class="px-6 py-3">Batas Waktu</th>
-                        <th class="px-6 py-3">Lampiran</th>
-                        <th class="px-6 py-3">Bukti</th>
+                        <th class="px-6 py-3">Pengirim</th>
+                        <th class="px-6 py-3">Judul Instruksi</th>
+                        <th class="px-6 py-3">Deskripsi Instruksi</th>
+                        <th class="px-6 py-3">Nilai</th>
                         <th class="px-6 py-3">Aksi</th>
                     </tr>
                 </thead>
 
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                    @forelse($followupInstructions as $index => $f)
+                    @forelse($followupInstructionScores as $index => $score)
                         <tr>
-                            <td class="px-6 py-4">{{ $followupInstructions->firstItem() + $index }}</td>
-
-                            {{-- Tampilkan kolom dinamis berdasarkan jenis pesan --}}
-                            @if ($messageType === 'received')
-                                <td class="px-6 py-4">{{ $f->sender->name ?? '-' }}</td>
-                            @elseif ($messageType === 'sent')
-                                <td class="px-6 py-4">{{ $f->receiver->name ?? '-' }}</td>
-                            @endif
+                            <td class="px-6 py-4">{{ $followupInstructionScores->firstItem() + $index }}</td>
 
                             <td class="px-6 py-4">
-                                @foreach ($f->forwards->unique('forwarded_by') as $forward)
-                                    {{ $forward->forwarder->name ?? '-' }}
-                                @endforeach
+                                {{ $score->followupInstruction->sender->name ?? '-' }}
                             </td>
 
                             <td class="px-6 py-4">
-                                @foreach ($f->forwards as $forward)
-                                    {{ $forward->receiver->name ?? '-' }}
-                                @endforeach
-                            </td>
-
-                            <td class="px-6 py-4">{{ $f->instruction->title ?? '-' }}</td>
-                            <td class="px-6 py-4">{!! $f->description !!}</td>
-
-                            <td class="px-6 py-4">
-                                {{ optional($f->instruction)->start_time ? \Carbon\Carbon::parse($f->instruction->start_time)->format('d-m-Y') : '-' }}
+                                {{ $score->followupInstruction->instruction->title ?? '-' }}
                             </td>
 
                             <td class="px-6 py-4">
-                                {{ optional($f->instruction)->end_time ? \Carbon\Carbon::parse($f->instruction->end_time)->format('d-m-Y') : '-' }}
+                                {!! $score->followupInstruction->instruction->description ?? '-' !!}
                             </td>
 
-                            <td class="px-6 py-4">
-                                @if ($f->attachment)
-                                    <a class="text-blue-600 text-underline" href="{{ Storage::url($f->attachment) }}"
-                                        target="_blank">Lihat Lampiran</a>
-                                @else
-                                    Tidak ada lampiran
-                                @endif
-                            </td>
-
-                            <td class="px-6 py-4">
-                                @if ($f->proof)
-                                    <a class="text-blue-600 text-underline" href="{{ Storage::url($f->proof) }}"
-                                        target="_blank">Lihat Bukti</a>
-                                @else
-                                    Tidak ada bukti
-                                @endif
+                            <td class="px-6 py-4 font-semibold">
+                                {{ $score->score ?? '-' }}
                             </td>
 
                             <td class="px-6 py-4 flex gap-2">
-                                @can('forward', $f)
-                                    <a href="{{ route('forward.followupinstruction.form', $f) }}"
-                                        class="px-3 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Forward</a>
-                                @endcan
-                                @can('view', $f)
-                                    <a href="{{ route('followupinstruction.show', $f) }}"
-                                        class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Show</a>
-                                @endcan
-                                @can('update', $f)
-                                    <a href="{{ route('followupinstruction.edit', $f) }}"
-                                        class="px-3 py-1 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">Edit</a>
-                                @endcan
-                                @can('delete', $f)
-                                    <form action="{{ route('followupinstruction.destroy', $f) }}" method="POST"
-                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus followup ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">Hapus</button>
-                                    </form>
-                                @endcan
+                                <a href="#" class="px-3 py-1 bg-purple-600 text-white  hover:bg-purple-700">
+                                    Forward
+                                </a>
+                                <a href="#" class="px-3 py-1 bg-yellow-600 text-white  hover:bg-yellow-700">
+                                    Edit
+                                </a>
+                                <a href="#" class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                                    Hapus
+                                </a>
+                                {{-- <button wire:click="deleteScore({{ $score->id }})"
+                                    class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                                    Hapus
+                                </button> --}}
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="11" class="px-6 py-4 text-center text-gray-500">Tidak ada data followup</td>
+                            <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                                Tidak ada data nilai followup
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
 
             <div class="mb-3">
-                {{ $followupInstructions->links() }}
+                {{ $followupInstructionScores->links() }}
             </div>
         @endif
+
+
     </div>
 
 </div>

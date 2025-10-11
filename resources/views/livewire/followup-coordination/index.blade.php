@@ -39,7 +39,7 @@
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">#</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Judul</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Deskripsi</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jumlah Followup
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jumlah Tindak Lanjut
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Aksi</th>
                     </tr>

@@ -1,23 +1,21 @@
 <?php
 
-namespace App\Livewire\FollowupInstruction;
+namespace App\Livewire\FollowupInstructionScore;
 
 use Livewire\Component;
-use App\Enums\MessageType;
 use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Models\FollowupInstruction;
 use Illuminate\Support\Facades\Auth;
-use App\Services\FollowupInstruction\FollowupInstructionServiceInterface;
+use App\Models\FollowupInstructionScore;
 
 class Index extends Component
 {
     use WithPagination;
 
     public string $search = '';
-    public string $switch = 'instructionMode';
+    public string $switch = "instructionMode";
     public ?int $selectedInstructionId = null;
-    public string $messageType = 'received';
 
 
     public function updatingSearch()
@@ -27,9 +25,9 @@ class Index extends Component
 
     public function showFollowups($instructionId)
     {
-        $this->switch = 'followupInstructionMode';
+        $this->switch = 'followupInstructionScoreMode';
         $this->selectedInstructionId = $instructionId;
-        $this->search="";
+        $this->search = "";
         $this->resetPage();
     }
 
@@ -40,9 +38,9 @@ class Index extends Component
         $this->resetPage();
     }
 
-
-    public function goToCreate(){
-        session(key: ['selectedInstructionId'=>$this->selectedInstructionId]);
+    public function goToCreate()
+    {
+        session(key: ['selectedInstructionId' => $this->selectedInstructionId]);
 
         return redirect()->route('followupinstruction.create');
     }
@@ -78,23 +76,26 @@ class Index extends Component
                 ->orderByDesc('created_at')
                 ->paginate(10);
 
-            return view('livewire.followup-instruction.index', compact('instructions'));
+            return view('livewire.followup-instruction-score.index', compact('instructions'));
         }
 
-        if ($this->switch === 'followupInstructionMode' && $this->selectedInstructionId) {
+        if ($this->switch === 'followupInstructionScoreMode' && $this->selectedInstructionId) {
             $userId = Auth::id();
-            $followupInstructions = FollowupInstruction::with(['forwards', 'sender', 'receiver', 'instruction'])
+            $followupInstructionScores = FollowupInstructionScore::with([
+                'followupInstruction.instruction',
+                'followupInstruction.sender',
+            ])
                 ->where('instruction_id', $this->selectedInstructionId)
                 ->when($this->search, function ($query) {
-                    $query->where(function ($q) {
-                        $q->Where('description', 'like', '%' . $this->search . '%');
+                    $query->whereHas('followupInstruction.instruction', function ($q) {
+                        $q->where('title', 'like', '%' . $this->search . '%')
+                            ->orWhere('description', 'like', '%' . $this->search . '%');
                     });
                 })
-                ->when($this->messageType === 'sent', fn($q) => $q->where('sender_id', Auth::id()))
-                ->when($this->messageType === 'received', fn($q) => $q->where('receiver_id', Auth::id()))
                 ->orderByDesc('created_at')
                 ->paginate(10);
-            return view('livewire.followup-instruction.index', compact('followupInstructions'));
+
+            return view('livewire.followup-instruction-score.index', compact('followupInstructionScores'));
         }
     }
 }

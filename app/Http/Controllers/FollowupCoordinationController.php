@@ -55,6 +55,7 @@ class FollowupCoordinationController extends Controller
         $data['receiver_id'] = $this->coordinationService->getSenderIdByCoordination($data['coordination_id']);
 
         $this->followupCoordinationService->storeFollowupCoordination($data);
+        session()->forget('selectedCoordinationId');
 
         return redirect()
             ->route('followupcoordination.index')

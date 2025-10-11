@@ -45,4 +45,8 @@ class FollowupInstruction extends Model
     {
         return $this->hasMany(ForwardFollowupInstruction::class, 'followup_instruction_id');
     }
+
+    public function followupInstructionScore(){
+        return $this->hasMany(FollowupInstructionScore::class, 'followup_instruction_id');
+    }
 }
