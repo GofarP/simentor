@@ -38,16 +38,13 @@ use App\Services\FollowupCoordination\FollowupCoordinationServiceInterface;
 //     }
 // }
 
-class index extends Component
+class Index extends Component
 {
     use WithPagination;
 
     public string $search = '';
-
     public string $switch = 'coordinationMode';
-
     public ?int $selectedCoordinationId = null;
-
     public string $messageType = 'received';
 
     protected $updatesQueryString = ['search', 'messageType'];
@@ -56,7 +53,6 @@ class index extends Component
     {
         $this->resetPage();
     }
-
 
     public function showFollowups($coordinationId)
     {
@@ -75,30 +71,23 @@ class index extends Component
 
     public function goToCreate()
     {
-        session(key: ['selectedCoordinationId' => $this->selectedCoordinationId]);
+        session(['selectedCoordinationId' => $this->selectedCoordinationId]);
         return redirect()->route('followupcoordination.create');
     }
 
-
     public function render()
     {
-        if ($this->switch === 'instructionMode') {
-            $userId = Auth::id();
+        $userId = Auth::id();
 
-            $coordinations = Coordination::with('followups')
+        if ($this->switch === 'coordinationMode') {
+            $coordinations = Coordination::withCount('followups')
                 ->where(function ($query) use ($userId) {
                     $query
                         ->where('sender_id', $userId)
                         ->orWhere('receiver_id', $userId)
-                        ->orWhereHas('followups', function ($q) use ($userId) {
-                            $q->where('receiver_id', $userId); // penerima follow-up
-                        })
-                        ->orWhereHas('followups.forwards', function ($q) use ($userId) {
-                            $q->where('forwarded_to', $userId); // penerima forward follow-up
-                        })
-                        ->orWhereHas('forwards', function ($q) use ($userId) {
-                            $q->where('forwarded_to', $userId); // penerima forward instruction
-                        });
+                        ->orWhereHas('followups', fn($q) => $q->where('receiver_id', $userId))
+                        ->orWhereHas('followups.forwards', fn($q) => $q->where('forwarded_to', $userId))
+                        ->orWhereHas('forwards', fn($q) => $q->where('forwarded_to', $userId));
                 })
                 ->when(
                     $this->search,
@@ -110,16 +99,27 @@ class index extends Component
                 )
                 ->orderByDesc('created_at')
                 ->paginate(10);
-            
-            return view('livewire.followup-coordination.index', compact('instructions'));
+
+            return view('livewire.followup-coordination.index', compact('coordinations'));
         }
 
-        if($this->switch==='followupCoordinationMode' && $this->selectedCoordinationId){
-            $userId=Auth::id();
-            $followupCoordinations=FollowupCoordination::with(['forwards', 'sender', 'receiver', 'instruction'])
-            ->when($this->search, function($query){
-                
-            })
+        if ($this->switch === 'followupCoordinationMode' && $this->selectedCoordinationId) {
+            $followupCoordinations = FollowupCoordination::with(['forwards', 'sender', 'receiver', 'coordination'])
+                ->where('coordination_id', $this->selectedCoordinationId)
+                ->when(
+                    $this->search,
+                    fn($q) =>
+                    $q->where('description', 'like', "%{$this->search}%")
+                )
+                ->when($this->messageType === 'sent', fn($q) => $q->where('sender_id', $userId))
+                ->when($this->messageType === 'received', fn($q) => $q->where('receiver_id', $userId))
+                ->orderByDesc('created_at')
+                ->paginate(10);
+
+            return view('livewire.followup-coordination.index', compact('followupCoordinations'));
         }
+
+        // default return
+        return view('livewire.followup-coordination.index');
     }
 }

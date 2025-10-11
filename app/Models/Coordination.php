@@ -30,12 +30,12 @@ class Coordination extends Model
 
             $coordination->forwards()->delete();
 
-            $coordination->followups->each(function($followup){
-                if($followup->attachment) {
+            $coordination->followups->each(function ($followup) {
+                if ($followup->attachment) {
                     Storage::delete($followup->attachment);
                 }
 
-                if($followup->proof){
+                if ($followup->proof) {
                     Storage::delete($followup->proof);
                 }
 
@@ -43,8 +43,6 @@ class Coordination extends Model
 
                 $followup->delete();
             });
-
-
         });
     }
 
@@ -56,6 +54,10 @@ class Coordination extends Model
     public function receiver()
     {
         return $this->belongsTo(User::class, 'receiver_id');
+    }
+    public function followups()
+    {
+        return $this->hasMany(FollowupCoordination::class, 'coordination_id');
     }
 
     public function forwards()

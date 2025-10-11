@@ -11,11 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('instruction_scores', function (Blueprint $table) {
+        Schema::create('followup_instruction_scores', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('instruction_id');
+            $table->bigInteger('followup_instruction_id');
             $table->bigInteger('user_id');
             $table->boolean('score');
+            $table->longText('comment');
             $table->timestamps();
         });
     }
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('instruction_scores');
+        Schema::dropIfExists('followup_instruction_scores');
     }
 };

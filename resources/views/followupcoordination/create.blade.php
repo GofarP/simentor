@@ -8,22 +8,22 @@
                 @csrf
 
                 <div class="mb-4">
-                    <label for="coordination_id"
-                        class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Koordinasi</label>
-                    @php
-                    $oldCoordination = old('coordination_id')
-                    ? \App\Models\Coordination::find(old('instruction_id'))
-                    : null;
-                    @endphp
-                    <select name="coordination_id" id="coordination_id" class="w-full">
-                        @if ($oldCoordination)
-                        <option value="{{ $oldCoordination->id }}" selected>
-                            {{ $oldCoordination->title }}
-                        </option>
-                        @endif
+                    <label for="coordination_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
+                        Coordination
+                    </label>
+                    <select id="coordination_id" name="coordination_id"
+                        class="w-full pointer-events-none bg-white border rounded-md p-2">
+                        @foreach ($coordinations as $coordination)
+                            <option value="{{ $coordination->id }}"
+                                {{ $coordination->id == $coordinationId ? 'selected' : '' }}>
+                                {{ $coordination->title }}
+                            </option>
+                        @endforeach
                     </select>
+
+
                     @error('coordination_id')
-                    <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
+                        <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -35,7 +35,7 @@
                         class="form-input w-full rounded border-gray-300 dark:border-gray-600
                                dark:bg-gray-700 dark:text-gray-200">
                     @error('proof')
-                    <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
+                        <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -46,7 +46,7 @@
                     <input type="file" name="attachment" id="attachment"
                         class="form-input w-full runded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                     @error('attachment')
-                    <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
+                        <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -59,7 +59,7 @@
                     <trix-editor input="description" class="border rounded-lg"></trix-editor>
 
                     @error('description')
-                    <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
+                        <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
                 </div>
 
@@ -75,17 +75,17 @@
     </div>
 
     @push('css')
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://unpkg.com/trix@2.1.0/dist/trix.css">
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://unpkg.com/trix@2.1.0/dist/trix.css">
     @endpush
 
     @push('js')
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
-        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://unpkg.com/trix@2.1.0/dist/trix.umd.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script src="https://unpkg.com/trix@2.1.0/dist/trix.umd.min.js"></script>
 
-    <script>
+        {{-- <script>
         $(document).ready(function() {
             $('#coordination_id').select2({
                 placeholder: 'Cari Koordinasi...',
@@ -112,8 +112,7 @@
                 language: "id"
             });
         });
-    </script>
-
+    </script> --}}
     @endpush
 
 

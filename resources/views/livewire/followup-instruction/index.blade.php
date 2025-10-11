@@ -39,7 +39,8 @@
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">#</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Judul</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Deskripsi</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jumlah Followup</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jumlah Followup
+                        </th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
@@ -77,14 +78,17 @@
         @elseif($switch === 'followupInstructionMode')
             <div class="flex justify-between items-center mb-4 mt-3 px-3">
                 <!-- Tombol kiri -->
-                <button wire:click="backToInstructions" class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                <button wire:click="backToInstructions"
+                    class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
                     Kembali
                 </button>
 
-                <!-- Tombol kanan -->
-                <button wire:click="goToCreate" class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                    Tambah Followup
-                </button>
+                @if (Auth::user()->id !== optional($followupInstructions->first())->receiver_id)
+                    <button wire:click="goToCreate"
+                        class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        Tambah Followup
+                    </button>
+                @endif
 
             </div>
 
@@ -92,7 +96,13 @@
                 <thead class="bg-gray-100 dark:bg-gray-700">
                     <tr>
                         <th class="px-6 py-3">#</th>
-                        <th class="px-6 py-3">Pengirim</th>
+
+                        @if ($messageType === 'received')
+                            <th class="px-6 py-3">Pengirim</th>
+                        @elseif ($messageType === 'sent')
+                            <th class="px-6 py-3">Penerima</th>
+                        @endif
+
                         <th class="px-6 py-3">Diteruskan Oleh</th>
                         <th class="px-6 py-3">Penerima Forward</th>
                         <th class="px-6 py-3">Judul</th>
@@ -104,45 +114,60 @@
                         <th class="px-6 py-3">Aksi</th>
                     </tr>
                 </thead>
+
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($followupInstructions as $index => $f)
                         <tr>
                             <td class="px-6 py-4">{{ $followupInstructions->firstItem() + $index }}</td>
-                            <td class="px-6 py-4">{{ $f->sender->name ?? '-' }}</td>
+
+                            {{-- Tampilkan kolom dinamis berdasarkan jenis pesan --}}
+                            @if ($messageType === 'received')
+                                <td class="px-6 py-4">{{ $f->sender->name ?? '-' }}</td>
+                            @elseif ($messageType === 'sent')
+                                <td class="px-6 py-4">{{ $f->receiver->name ?? '-' }}</td>
+                            @endif
+
                             <td class="px-6 py-4">
                                 @foreach ($f->forwards->unique('forwarded_by') as $forward)
                                     {{ $forward->forwarder->name ?? '-' }}
                                 @endforeach
                             </td>
+
                             <td class="px-6 py-4">
                                 @foreach ($f->forwards as $forward)
                                     {{ $forward->receiver->name ?? '-' }}
                                 @endforeach
                             </td>
+
                             <td class="px-6 py-4">{{ $f->instruction->title ?? '-' }}</td>
                             <td class="px-6 py-4">{!! $f->description !!}</td>
+
                             <td class="px-6 py-4">
                                 {{ optional($f->instruction)->start_time ? \Carbon\Carbon::parse($f->instruction->start_time)->format('d-m-Y') : '-' }}
                             </td>
+
                             <td class="px-6 py-4">
                                 {{ optional($f->instruction)->end_time ? \Carbon\Carbon::parse($f->instruction->end_time)->format('d-m-Y') : '-' }}
                             </td>
+
                             <td class="px-6 py-4">
                                 @if ($f->attachment)
                                     <a class="text-blue-600 text-underline" href="{{ Storage::url($f->attachment) }}"
                                         target="_blank">Lihat Lampiran</a>
                                 @else
-                                    Tidak ada lampiran ditambahkan
+                                    Tidak ada lampiran
                                 @endif
                             </td>
+
                             <td class="px-6 py-4">
                                 @if ($f->proof)
                                     <a class="text-blue-600 text-underline" href="{{ Storage::url($f->proof) }}"
                                         target="_blank">Lihat Bukti</a>
                                 @else
-                                    Tidak ada bukti ditambahkan
+                                    Tidak ada bukti
                                 @endif
                             </td>
+
                             <td class="px-6 py-4 flex gap-2">
                                 @can('forward', $f)
                                     <a href="{{ route('forward.followupinstruction.form', $f) }}"
@@ -158,7 +183,7 @@
                                 @endcan
                                 @can('delete', $f)
                                     <form action="{{ route('followupinstruction.destroy', $f) }}" method="POST"
-                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus instruction ini?')">
+                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus followup ini?')">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"

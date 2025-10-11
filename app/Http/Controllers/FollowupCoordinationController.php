@@ -41,8 +41,9 @@ class FollowupCoordinationController extends Controller
      */
     public function create()
     {
+        $coordinationId = session('selectedCoordinationId');
         $coordinations = $this->coordinationService->getAllCoordination(null, 10, MessageType::All, false);
-        return view('followupcoordination.create', compact('coordinations'));
+        return view('followupcoordination.create', compact('coordinations', 'coordinationId'));
     }
 
     /**
@@ -73,8 +74,9 @@ class FollowupCoordinationController extends Controller
      */
     public function edit(FollowupCoordination $followupcoordination)
     {
-        $coordinationTitle = $followupcoordination->coordination->title;
-        return view('followupcoordination.edit', compact('followupcoordination', 'coordinationTitle'));
+        $coordinations = $this->coordinationService->getAllCoordination(null, 10, MessageType::All, true);
+
+        return view('followupcoordination.edit', compact('followupcoordination', 'coordinations'));
     }
 
     /**
