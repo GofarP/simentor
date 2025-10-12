@@ -13,7 +13,7 @@
                     <label for="followup_instruction_id"
                         class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Nama Permission</label>
                     <select name="followup_instruction_id" id="followup_instruction_id"
-                        class="js-example-basic-single w-full">
+                        class="w-full pointer-events-none bg-white border rounded-md p-2">
                         @foreach ($followupInstructions as $followupInstruction)
                             <option value="{{ $followupInstruction->instruction->id }}"
                                 {{ old('followup_instruction_id', $followupinstructionscore->followup_instruction_id) == $followupInstruction->instruction->id ? 'selected' : '' }}>

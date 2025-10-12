@@ -152,8 +152,7 @@
                                         </a>
 
                                         @if ($followup->followupInstructionScore->first())
-                                            <a href="{{ route('followupinstructionscore.edit', $score) }}"
-                                                target="_blank"
+                                            <a href="{{ route('followupinstructionscore.edit', $followup->followupInstructionScore->first()->id) }}"
                                                 class="flex-1 sm:flex-none px-3 py-2 bg-purple-600 text-white rounded-lg text-center hover:bg-purple-700 transition">
                                                 Edit Penilaian
                                             </a>
