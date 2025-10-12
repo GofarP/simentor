@@ -21,16 +21,20 @@ class FollowupInstructionScorePolicy
      */
     public function view(User $user, FollowupInstructionScore $followupInstructionScore): bool
     {
-        return $user->id===$followupInstructionScore->user_id
-        || $user->id=== $followupInstructionScore->followupInstruction->sender_id;
+        return $user->id === $followupInstructionScore->user_id
+            || $user->id === $followupInstructionScore->followupInstruction->sender_id;
     }
 
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user, FollowupInstructionScore $followupInstructionScore): bool
     {
-        return false;
+        $instruction = $followupInstructionScore->followupInstruction;
+
+        return $instruction &&
+            ($user->id === $instruction->sender_id ||
+                $user->id === $instruction->receiver_id);
     }
 
     /**
@@ -38,15 +42,16 @@ class FollowupInstructionScorePolicy
      */
     public function update(User $user, FollowupInstructionScore $followupInstructionScore): bool
     {
-        return false;
+        return $user->id === $followupInstructionScore->user_id;
     }
+
 
     /**
      * Determine whether the user can delete the model.
      */
     public function delete(User $user, FollowupInstructionScore $followupInstructionScore): bool
     {
-        return false;
+        return $user->id === $followupInstructionScore->user_id;
     }
 
     /**
