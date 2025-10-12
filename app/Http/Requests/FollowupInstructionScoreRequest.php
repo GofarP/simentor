@@ -32,7 +32,10 @@ class FollowupInstructionScoreRequest extends FormRequest
     public function messages()
     {
         return[
-             'followup_instruction_id.required'=>'Silahkan pilih tindak lanjut instruksi'
+             'followup_instruction_id.required'=>'Silahkan pilih tindak lanjut instruksi',
+             'user_id.required'=>'Pemberi nilai dibutuhkan',
+             'score.required'=>'Pemberian nilai dibutuhkan',
+             'comment.required'=>'Comment Dibutuhkan',
         ];
     }
 }

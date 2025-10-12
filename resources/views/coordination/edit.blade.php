@@ -104,7 +104,7 @@
 
                 {{-- Tombol --}}
                 <div class="mt-6 flex justify-end gap-3">
-                    <a href="{{ route('instruction.index') }}"
+                    <a href="{{ route('coordination.index') }}"
                         class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">Batal</a>
                     <button type="submit"
                         class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition">Update</button>

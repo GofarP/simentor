@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FollowupInstructionScore;
+use App\Http\Requests\FollowupInstructionScoreRequest;
 use App\Services\FollowupInstruction\FollowupInstructionServiceInterface;
 use App\Services\FollowupInstructionScore\FollowupInstructionScoreServiceInterface;
 
@@ -23,7 +24,6 @@ class FollowupInstructionScoreController extends Controller
     ) {
         $this->followupInstructionService = $followupInstructionService;
         $this->followupInstructionScoreService = $followupInstructionScoreService;
-
     }
 
     /**
@@ -40,9 +40,8 @@ class FollowupInstructionScoreController extends Controller
     public function create()
     {
         $followupInstructionId = session('selectedFollowupInstructionId');
-        $followupInstructions=$this->followupInstructionService->getAll(null, MessageType::All,10, false);
-        return view('followupinstructionscore.create', compact('instructions', 'instructionId'));
-
+        $followupInstructions = $this->followupInstructionService->getAll(null, MessageType::All, 10, true);
+        return view('followupinstructionscore.create', compact('followupInstructions', 'followupInstructionId'));
     }
 
     /**
@@ -50,40 +49,46 @@ class FollowupInstructionScoreController extends Controller
      */
     public function store(FollowupInstructionScoreRequest $request)
     {
-        $data=$request->validated();
-        $data['user_id']=Auth::id();
+        $data = $request->validated();
+        $data['user_id'] = Auth::id();
         $this->followupInstructionScoreService->storeFollowupInstructionScore($data);
+
+        return redirect()->route('followupinstructionscore.index')->with('success', 'Sukses menambahkan penilaian instruksi');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(FollowupInstructionScore $followupinstructionscore)
     {
-        //
+        return view('followupinstructionscore.show', compact('followupinstructionscore'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(FollowupInstructionScore $followupInstructionScore)
+    public function edit(FollowupInstructionScore $followupinstructionscore)
     {
-        //
+        return view('followupinstruction.edit', $followupinstructionscore);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(FollowupInstructionScoreRequest $request, FollowupInstructionScore $id)
+    public function update(FollowupInstructionScoreRequest $request, FollowupInstructionScore $followupinstructionscore)
     {
-        //
+        $data = $request->validated();
+        $data['user_id'] = Auth::id();
+        $this->followupInstructionScoreService->editFollowupInstructionScore($followupinstructionscore, $data);
+        return redirect()->route('followupinstructionscore.index')->with('success', 'Sukses mengubah penilaian instruksi');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(FollowupInstructionScore $followupinstructionscore)
     {
-        //
+        $this->followupInstructionScoreService->deleteFollowupInstructionScore($followupinstructionscore);
+        return redirect()->route('followupinstructionscore.index')->with('success', 'Sukses menghapus penilaian instruksi');
     }
 }
