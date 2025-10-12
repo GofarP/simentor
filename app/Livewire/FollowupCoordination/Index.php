@@ -80,14 +80,24 @@ class Index extends Component
         $userId = Auth::id();
 
         if ($this->switch === 'coordinationMode') {
-            $coordinations = Coordination::withCount('followups')
+            $userId = Auth::id();
+
+            $coordinations = Coordination::withCount([
+                // Total semua follow-up (untuk pembuat koordinasi)
+                'followups as total_followups_count',
+
+                // Follow-up yang dibuat oleh user yang sedang login
+                'followups as user_followups_count' => function ($query) use ($userId) {
+                    $query->where('sender_id', $userId);
+                },
+            ])
                 ->where(function ($query) use ($userId) {
                     $query
-                        ->where('sender_id', $userId)
-                        ->orWhere('receiver_id', $userId)
-                        ->orWhereHas('followups', fn($q) => $q->where('receiver_id', $userId))
-                        ->orWhereHas('followups.forwards', fn($q) => $q->where('forwarded_to', $userId))
-                        ->orWhereHas('forwards', fn($q) => $q->where('forwarded_to', $userId));
+                        ->where('sender_id', $userId) // pembuat koordinasi
+                        ->orWhere('receiver_id', $userId) // penerima langsung
+                        ->orWhereHas('followups', fn($q) => $q->where('receiver_id', $userId)) // penerima follow-up
+                        ->orWhereHas('followups.forwards', fn($q) => $q->where('forwarded_to', $userId)) // penerima forward follow-up
+                        ->orWhereHas('forwards', fn($q) => $q->where('forwarded_to', $userId)); // penerima forward koordinasi
                 })
                 ->when(
                     $this->search,

@@ -50,7 +50,6 @@ class Index extends Component
         if ($this->switch === 'instructionMode') {
             $userId = Auth::id();
 
-            $userId = Auth::id();
 
             $instructions = Instruction::withCount([
                 // Hitung total semua follow-up (untuk pembuat instruksi)

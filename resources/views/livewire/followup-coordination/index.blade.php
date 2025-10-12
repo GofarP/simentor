@@ -39,7 +39,8 @@
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">#</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Judul</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Deskripsi</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jumlah Tindak Lanjut
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jumlah Tindak
+                            Lanjut
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Aksi</th>
                     </tr>
@@ -54,7 +55,12 @@
                                     {!! $coordination->description !!}
                                 </div>
                             </td>
-                            <td class="px-6 py-4">{{ $coordination->followups_count }}</td>
+                            <td class="px-6 py-4">
+                                {{ $coordination->sender_id === Auth::id()
+                                    ? $coordination->total_followups_count ?? 0
+                                    : $coordination->user_followups_count ?? 0 }}
+                            </td>
+
                             <td class="px-6 py-4">
                                 <button wire:click="showFollowups({{ $coordination->id }})"
                                     class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">

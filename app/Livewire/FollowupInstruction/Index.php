@@ -29,7 +29,7 @@ class Index extends Component
     {
         $this->switch = 'followupInstructionMode';
         $this->selectedInstructionId = $instructionId;
-        $this->search="";
+        $this->search = "";
         $this->resetPage();
     }
 
@@ -41,8 +41,9 @@ class Index extends Component
     }
 
 
-    public function goToCreate(){
-        session(key: ['selectedInstructionId'=>$this->selectedInstructionId]);
+    public function goToCreate()
+    {
+        session(key: ['selectedInstructionId' => $this->selectedInstructionId]);
 
         return redirect()->route('followupinstruction.create');
     }
@@ -52,7 +53,15 @@ class Index extends Component
         if ($this->switch === 'instructionMode') {
             $userId = Auth::id();
 
-            $instructions = Instruction::withCount('followups')
+            $instructions = Instruction::withCount([
+                // Hitung total semua follow-up (untuk pembuat instruksi)
+                'followups as total_followups_count',
+
+                // Hitung follow-up yang dibuat oleh user yang sedang login
+                'followups as user_followups_count' => function ($query) use ($userId) {
+                    $query->where('sender_id', $userId);
+                },
+            ])
                 ->where(function ($query) use ($userId) {
                     $query
                         ->where('sender_id', $userId) // pembuat instruksi

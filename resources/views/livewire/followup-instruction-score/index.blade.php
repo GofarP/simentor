@@ -57,8 +57,8 @@
                             </td>
                             <td class="px-6 py-4">
                                 {{ $instruction->sender_id === Auth::id()
-                                    ? $instruction->total_followups_count
-                                    : $instruction->user_followups_count }}
+                                    ? $instruction->total_followups_count ?? 0
+                                    : $instruction->user_followups_count ?? 0 }}
                             </td>
 
                             <td class="px-6 py-4">
@@ -104,6 +104,7 @@
                             <th class="px-6 py-3 text-left text-sm font-semibold">Pengirim</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold">Judul Instruksi</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold">Deskripsi Instruksi</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold">Komentar Penilaian</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold">Nilai</th>
                             <th class="px-6 py-3 text-left text-sm font-semibold">Aksi</th>
                         </tr>
@@ -134,22 +135,13 @@
                                     {!! $followup->description ?? '-' !!}
                                 </td>
 
-                                <td
-                                    class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-gray-100 text-center">
-                                    @php
-                                        $score = optional($followup->followupInstructionScore->first())->score;
-                                    @endphp
-
-                                    @if ($score === 1)
-                                        <img src="{{ asset('images/thumbsup.svg') }}" alt="thumbs up"
-                                            class="w-6 h-6 mx-auto">
-                                    @elseif ($score === 0)
-                                        <img src="{{ asset('images/thumbsdown.svg') }}" alt="thumbs down"
-                                            class="w-6 h-6 mx-auto">
-                                    @else
-                                        <p class="text-gray-500 dark:text-gray-400">Belum diberi nilai</p>
-                                    @endif
+                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">
+                                    {!! $followup->followupInstructionScore->first()->comment !!}
                                 </td>
+
+                                <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-gray-100 text-center">
+                                    @php $score = optional($followup->followupInstructionScore->first())->score; @endphp @if ($score === 1)
+                                    <img src="{{ asset('images/thumbsup.svg') }}" alt="thumbs up" class="w-6 h-6 mx-auto"> @elseif ($score === 0) <img src="{{ asset('images/thumbsdown.svg') }}" alt="thumbs down" class="w-6 h-6 mx-auto"> @else <p class="text-gray-500 dark:text-gray-400">Belum diberi nilai</p> @endif</td>
 
                                 <td class="px-6 py-4 text-sm">
                                     <div class="flex flex-wrap sm:flex-nowrap gap-2">
