@@ -19,7 +19,7 @@ class FollowupInstructionScoreRepository implements FollowupInstructionScoreRepo
     }
 
     public function storeFollowupInstructionScore(array $data) {
-        return FollowupInstructionScore::store($data);
+        return FollowupInstructionScore::create($data);
     }
 
 

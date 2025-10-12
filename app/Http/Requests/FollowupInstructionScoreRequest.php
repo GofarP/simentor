@@ -23,7 +23,6 @@ class FollowupInstructionScoreRequest extends FormRequest
     {
         return [
             'followup_instruction_id'=>'required',
-            'user_id'=>'required',
             'score'=>'required',
             'comment'=>'required'
         ];
@@ -33,8 +32,7 @@ class FollowupInstructionScoreRequest extends FormRequest
     {
         return[
              'followup_instruction_id.required'=>'Silahkan pilih tindak lanjut instruksi',
-             'user_id.required'=>'Pemberi nilai dibutuhkan',
-             'score.required'=>'Pemberian nilai dibutuhkan',
+             'score.required'=>'Silahkan Masukkan Nilai',
              'comment.required'=>'Comment Dibutuhkan',
         ];
     }

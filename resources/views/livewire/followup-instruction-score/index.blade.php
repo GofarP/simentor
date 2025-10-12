@@ -55,7 +55,12 @@
                                     {!! $instruction->description !!}
                                 </div>
                             </td>
-                            <td class="px-6 py-4">{{ $instruction->followups_count }}</td>
+                            <td class="px-6 py-4">
+                                {{ $instruction->sender_id === Auth::id()
+                                    ? $instruction->total_followups_count
+                                    : $instruction->user_followups_count }}
+                            </td>
+
                             <td class="px-6 py-4">
                                 <button wire:click="showFollowups({{ $instruction->id }})"
                                     class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
@@ -129,16 +134,46 @@
                                     {!! $followup->description ?? '-' !!}
                                 </td>
 
-                                <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-gray-100">
-                                    {{ $score }}
+                                <td
+                                    class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-gray-100 text-center">
+                                    @php
+                                        $score = optional($followup->followupInstructionScore->first())->score;
+                                    @endphp
+
+                                    @if ($score === 1)
+                                        <img src="{{ asset('images/thumbsup.svg') }}" alt="thumbs up"
+                                            class="w-6 h-6 mx-auto">
+                                    @elseif ($score === 0)
+                                        <img src="{{ asset('images/thumbsdown.svg') }}" alt="thumbs down"
+                                            class="w-6 h-6 mx-auto">
+                                    @else
+                                        <p class="text-gray-500 dark:text-gray-400">Belum diberi nilai</p>
+                                    @endif
                                 </td>
-                                <td class="px-6 py-4 text-sm flex gap-2">
-                                    <a href="{{ route('followupinstruction.show',$followup->id) }}" target="_blank"  class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Show</a>
-                                    <button wire:click="giveScore({{ $followup->id }})"
-                                        class="px-3 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
-                                        Beri Nilai
-                                    </button>
+
+                                <td class="px-6 py-4 text-sm">
+                                    <div class="flex flex-wrap sm:flex-nowrap gap-2">
+                                        <a href="{{ route('followupinstruction.show', $followup->id) }}"
+                                            target="_blank"
+                                            class="flex-1 sm:flex-none px-3 py-2 bg-blue-600 text-white rounded-lg text-center hover:bg-blue-700 transition">
+                                            Show
+                                        </a>
+
+                                        @if ($followup->followupInstructionScore->first())
+                                            <a href="{{ route('followupinstructionscore.edit', $score) }}"
+                                                target="_blank"
+                                                class="flex-1 sm:flex-none px-3 py-2 bg-purple-600 text-white rounded-lg text-center hover:bg-purple-700 transition">
+                                                Edit Penilaian
+                                            </a>
+                                        @else
+                                            <button wire:click="giveScore({{ $followup->id }})"
+                                                class="flex-1 sm:flex-none px-3 py-2 bg-purple-600 text-white rounded-lg text-center hover:bg-purple-700 transition">
+                                                Beri Penilaian
+                                            </button>
+                                        @endif
+                                    </div>
                                 </td>
+
                             </tr>
                         @empty
                             <tr>

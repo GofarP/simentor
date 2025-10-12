@@ -69,7 +69,8 @@ class FollowupInstructionScoreController extends Controller
      */
     public function edit(FollowupInstructionScore $followupinstructionscore)
     {
-        return view('followupinstruction.edit', $followupinstructionscore);
+        $followupInstructions = $this->followupInstructionService->getAll(null, MessageType::All, 10, true);
+        return view('followupinstructionscore.edit', compact('followupinstructionscore','followupInstructions'));
     }
 
     /**

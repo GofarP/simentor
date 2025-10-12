@@ -56,7 +56,6 @@ class FollowupCoordinationController extends Controller
 
         $this->followupCoordinationService->storeFollowupCoordination($data);
         session()->forget('selectedCoordinationId');
-
         return redirect()
             ->route('followupcoordination.index')
             ->with('success', 'Sukses menambah tindak lanjut koordinasi');

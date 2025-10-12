@@ -50,7 +50,17 @@ class Index extends Component
         if ($this->switch === 'instructionMode') {
             $userId = Auth::id();
 
-            $instructions = Instruction::withCount('followups')
+            $userId = Auth::id();
+
+            $instructions = Instruction::withCount([
+                // Hitung total semua follow-up (untuk pembuat instruksi)
+                'followups as total_followups_count',
+
+                // Hitung follow-up yang dibuat oleh user yang sedang login
+                'followups as user_followups_count' => function ($query) use ($userId) {
+                    $query->where('sender_id', $userId);
+                },
+            ])
                 ->where(function ($query) use ($userId) {
                     $query
                         ->where('sender_id', $userId) // pembuat instruksi
@@ -76,6 +86,7 @@ class Index extends Component
                 ->orderByDesc('created_at')
                 ->paginate(10);
 
+
             return view('livewire.followup-instruction-score.index', compact('instructions'));
         }
 
@@ -100,7 +111,10 @@ class Index extends Component
                             });
                     });
                 })
-                ->where('receiver_id', Auth::id())
+                ->where(function ($query) {
+                    $query->where('receiver_id', Auth::id())
+                        ->orWhere('sender_id', Auth::id());
+                })
                 ->orderByDesc('created_at')
                 ->paginate(10);
 
