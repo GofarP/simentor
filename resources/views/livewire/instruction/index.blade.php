@@ -205,21 +205,7 @@
     <div class="mt-4 flex justify-end">
         {{ $instructions->links() }}
     </div>
-    @push('css')
-        <style>
-            td ol {
-                list-style: decimal;
-                padding-left: 1.5rem;
-                /* biar agak masuk ke dalam */
-            }
-
-            td ul {
-                list-style: disc;
-                padding-left: 1.5rem;
-            }
-        </style>
-    @endpush
-
+   
 
 
 </div>

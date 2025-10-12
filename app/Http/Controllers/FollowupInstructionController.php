@@ -51,7 +51,7 @@ class FollowupInstructionController extends Controller
      */
     public function store(FollowupInstructionRequest $request)
     {
-        $data = $request->validated(); // hanya ambil data yang lolos validasi
+        $data = $request->validated();
 
         $data['receiver_id'] = $this->InstructionServiceInterface->getSenderIdByInstruction($data['instruction_id']);
 

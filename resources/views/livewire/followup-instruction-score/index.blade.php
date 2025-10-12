@@ -83,75 +83,76 @@
                     Kembali
                 </button>
 
-                @if (Auth::user()->id !== optional($followupInstructionScores->first()?->followupInstruction)->receiver_id)
+                @if ($followupInstructions->isNotEmpty() && Auth::id() !== optional($followupInstructions->first())->receiver_id)
                     <button wire:click="goToCreate"
                         class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                        Tambah Followup
+                        Tambah Penilaian
                     </button>
                 @endif
             </div>
 
-            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead class="bg-gray-100 dark:bg-gray-700">
-                    <tr>
-                        <th class="px-6 py-3">#</th>
-                        <th class="px-6 py-3">Pengirim</th>
-                        <th class="px-6 py-3">Judul Instruksi</th>
-                        <th class="px-6 py-3">Deskripsi Instruksi</th>
-                        <th class="px-6 py-3">Nilai</th>
-                        <th class="px-6 py-3">Aksi</th>
-                    </tr>
-                </thead>
-
-                <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                    @forelse($followupInstructionScores as $index => $score)
+            <div class="overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-100">
                         <tr>
-                            <td class="px-6 py-4">{{ $followupInstructionScores->firstItem() + $index }}</td>
-
-                            <td class="px-6 py-4">
-                                {{ $score->followupInstruction->sender->name ?? '-' }}
-                            </td>
-
-                            <td class="px-6 py-4">
-                                {{ $score->followupInstruction->instruction->title ?? '-' }}
-                            </td>
-
-                            <td class="px-6 py-4">
-                                {!! $score->followupInstruction->instruction->description ?? '-' !!}
-                            </td>
-
-                            <td class="px-6 py-4 font-semibold">
-                                {{ $score->score ?? '-' }}
-                            </td>
-
-                            <td class="px-6 py-4 flex gap-2">
-                                <a href="#" class="px-3 py-1 bg-purple-600 text-white  hover:bg-purple-700">
-                                    Forward
-                                </a>
-                                <a href="#" class="px-3 py-1 bg-yellow-600 text-white  hover:bg-yellow-700">
-                                    Edit
-                                </a>
-                                <a href="#" class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
-                                    Hapus
-                                </a>
-                                {{-- <button wire:click="deleteScore({{ $score->id }})"
-                                    class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
-                                    Hapus
-                                </button> --}}
-                            </td>
+                            <th class="px-6 py-3 text-left text-sm font-semibold">#</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold">Pengirim</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold">Judul Instruksi</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold">Deskripsi Instruksi</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold">Nilai</th>
+                            <th class="px-6 py-3 text-left text-sm font-semibold">Aksi</th>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                                Tidak ada data nilai followup
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                    </thead>
 
-            <div class="mb-3">
-                {{ $followupInstructionScores->links() }}
+                    <tbody class="divide-y divide-gray-200 dark:divide-gray-700 bg-white dark:bg-gray-800">
+                        @forelse($followupInstructions as $index => $followup)
+                            @php
+                                $instruction = $followup->instruction ?? null;
+                                $sender = $followup->sender ?? null;
+                                $score = $followup->score->score ?? '-';
+                            @endphp
+
+                            <tr>
+                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">
+                                    {{ $followupInstructions->firstItem() + $index }}
+                                </td>
+
+                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">
+                                    {{ $sender->name ?? '-' }}
+                                </td>
+
+                                <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">
+                                    {{ $instruction->title ?? '-' }}
+                                </td>
+
+                                <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
+                                    {!! $followup->description ?? '-' !!}
+                                </td>
+
+                                <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                    {{ $score }}
+                                </td>
+                                <td class="px-6 py-4 text-sm flex gap-2">
+                                    <a href="{{ route('followupinstruction.show',$followup->id) }}" target="_blank"  class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Show</a>
+                                    <button wire:click="giveScore({{ $followup->id }})"
+                                        class="px-3 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                                        Beri Nilai
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                    Tidak ada data nilai
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-4 px-3">
+                {{ $followupInstructions->links() }}
             </div>
         @endif
 

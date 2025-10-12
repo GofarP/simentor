@@ -12,6 +12,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FollowupInstructionController;
+use App\Http\Controllers\FollowupInstructionScoreController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleController;
 use App\Models\FollowupInstructionScore;
@@ -63,5 +64,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('coordination', CoordinationController::class);
     Route::resource('followupinstruction', FollowupInstructionController::class);
     Route::resource('followupcoordination', FollowupCoordinationController::class);
-    Route::resource('followupinstructionscore', FollowupInstructionScore::class);
+    Route::resource('followupinstructionscore', FollowupInstructionScoreController::class);
 });

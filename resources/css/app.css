@@ -3,6 +3,8 @@
 @import './additional-styles/utility-patterns.css' layer(components);
 @import "./trix.css";
 @import "./select2.css";
+@import "./list-style.css";
+
 
 @plugin "@tailwindcss/forms" {
   strategy: base;

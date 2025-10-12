@@ -18,6 +18,7 @@ class Index extends Component
     public ?int $selectedInstructionId = null;
 
 
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -38,11 +39,10 @@ class Index extends Component
         $this->resetPage();
     }
 
-    public function goToCreate()
+    public function giveScore($followupInstructionId)
     {
-        session(key: ['selectedInstructionId' => $this->selectedInstructionId]);
-
-        return redirect()->route('followupinstruction.create');
+        session(key: ['selectedFollowupInstructionId' => $followupInstructionId]);
+        return redirect()->route('followupinstructionscore.create');
     }
 
     public function render()
@@ -81,21 +81,30 @@ class Index extends Component
 
         if ($this->switch === 'followupInstructionScoreMode' && $this->selectedInstructionId) {
             $userId = Auth::id();
-            $followupInstructionScores = FollowupInstructionScore::with([
-                'followupInstruction.instruction',
-                'followupInstruction.sender',
+            $followupInstructions = FollowupInstruction::with([
+                'forwards',
+                'sender',
+                'receiver',
+                'instruction',
+                'followupInstructionScore'
             ])
                 ->where('instruction_id', $this->selectedInstructionId)
                 ->when($this->search, function ($query) {
-                    $query->whereHas('followupInstruction.instruction', function ($q) {
-                        $q->where('title', 'like', '%' . $this->search . '%')
-                            ->orWhere('description', 'like', '%' . $this->search . '%');
+                    $query->where(function ($q) {
+                        $q->where('description', 'like', '%' . $this->search . '%')
+                            ->orWhereHas('instruction', function ($sub) {
+                                $sub->where('title', 'like', '%' . $this->search . '%');
+                            })
+                            ->orWhereHas('sender', function ($sub) {
+                                $sub->where('name', 'like', '%' . $this->search . '%');
+                            });
                     });
                 })
+                ->where('receiver_id', Auth::id())
                 ->orderByDesc('created_at')
                 ->paginate(10);
 
-            return view('livewire.followup-instruction-score.index', compact('followupInstructionScores'));
+            return view('livewire.followup-instruction-score.index', compact('followupInstructions'));
         }
     }
 }
