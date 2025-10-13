@@ -174,7 +174,7 @@
                             </td>
 
                             <td class="px-6 py-4 flex gap-2">
-                                @can('forward', $f)
+                                @can('forwardinstruction', $f)
                                     <a href="{{ route('forward.followupinstruction.form', $f) }}"
                                         class="px-3 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Forward</a>
                                 @endcan
