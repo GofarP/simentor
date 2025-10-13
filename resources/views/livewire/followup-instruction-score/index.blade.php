@@ -47,27 +47,27 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($instructions as $index => $instruction)
-                        <tr>
-                            <td class="px-6 py-4">{{ $instructions->firstItem() + $index }}</td>
-                            <td class="px-6 py-4">{{ $instruction->title }}</td>
-                            <td class="px-6 py-4">
-                                <div class="truncate max-w-xs" title="{{ strip_tags($instruction->description) }}">
-                                    {!! $instruction->description !!}
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                {{ $instruction->sender_id === Auth::id()
-                                    ? $instruction->total_followups_count ?? 0
-                                    : $instruction->user_followups_count ?? 0 }}
-                            </td>
+                            <tr>
+                                <td class="px-6 py-4">{{ $instructions->firstItem() + $index }}</td>
+                                <td class="px-6 py-4">{{ $instruction->title }}</td>
+                                <td class="px-6 py-4">
+                                    <div class="truncate max-w-xs" title="{{ strip_tags($instruction->description) }}">
+                                        {!! $instruction->description !!}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    {{ $instruction->sender_id === Auth::id()
+                        ? $instruction->total_followups_count ?? 0
+                        : $instruction->user_followups_count ?? 0 }}
+                                </td>
 
-                            <td class="px-6 py-4">
-                                <button wire:click="showFollowups({{ $instruction->id }})"
-                                    class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                                    Detail
-                                </button>
-                            </td>
-                        </tr>
+                                <td class="px-6 py-4">
+                                    <button wire:click="showFollowups({{ $instruction->id }})"
+                                        class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                        Detail
+                                    </button>
+                                </td>
+                            </tr>
                     @empty
                         <tr>
                             <td colspan="5" class="px-6 py-4 text-center text-gray-500">Tidak ada data</td>
@@ -83,14 +83,12 @@
             {{-- FollowupInstruction Mode --}}
         @elseif($switch === 'followupInstructionScoreMode')
             <div class="flex justify-between items-center mb-4 mt-3 px-3">
-                <button wire:click="backToInstructions"
-                    class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                <button wire:click="backToInstructions" class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
                     Kembali
                 </button>
 
                 @if ($followupInstructions->isNotEmpty() && Auth::id() !== optional($followupInstructions->first())->receiver_id)
-                    <button wire:click="goToCreate"
-                        class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    <button wire:click="goToCreate" class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                         Tambah Penilaian
                     </button>
                 @endif
@@ -115,60 +113,79 @@
                             @php
                                 $instruction = $followup->instruction ?? null;
                                 $sender = $followup->sender ?? null;
-                                $score = $followup->score->score ?? '-';
+                                $scoreModel = $followup->followupInstructionScore->first();
+                                $scoreValue = optional($scoreModel)->score;
                             @endphp
 
                             <tr>
+                                {{-- No --}}
                                 <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">
                                     {{ $followupInstructions->firstItem() + $index }}
                                 </td>
 
+                                {{-- Pengirim --}}
                                 <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">
                                     {{ $sender->name ?? '-' }}
                                 </td>
 
+                                {{-- Judul Instruksi --}}
                                 <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">
                                     {{ $instruction->title ?? '-' }}
                                 </td>
 
+                                {{-- Deskripsi Followup --}}
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                                     {!! $followup->description ?? '-' !!}
                                 </td>
 
+                                {{-- Komentar Penilaian --}}
                                 <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">
-                                    {!! $followup->followupInstructionScore->first()->comment !!}
+                                    {!! $scoreModel->comment ?? '-' !!}
                                 </td>
 
+                                {{-- Nilai --}}
                                 <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-gray-100 text-center">
-                                    @php $score = optional($followup->followupInstructionScore->first())->score; @endphp @if ($score === 1)
-                                    <img src="{{ asset('images/thumbsup.svg') }}" alt="thumbs up" class="w-6 h-6 mx-auto"> @elseif ($score === 0) <img src="{{ asset('images/thumbsdown.svg') }}" alt="thumbs down" class="w-6 h-6 mx-auto"> @else <p class="text-gray-500 dark:text-gray-400">Belum diberi nilai</p> @endif</td>
+                                    @if ($scoreValue === 1)
+                                        <img src="{{ asset('images/thumbsup.svg') }}" alt="thumbs up" class="w-6 h-6 mx-auto">
+                                    @elseif ($scoreValue === 0)
+                                        <img src="{{ asset('images/thumbsdown.svg') }}" alt="thumbs down" class="w-6 h-6 mx-auto">
+                                    @else
+                                        <p class="text-gray-500 dark:text-gray-400">Belum diberi nilai</p>
+                                    @endif
+                                </td>
 
+                                {{-- Aksi --}}
                                 <td class="px-6 py-4 text-sm">
                                     <div class="flex flex-wrap sm:flex-nowrap gap-2">
-                                        <a href="{{ route('followupinstruction.show', $followup->id) }}"
-                                            target="_blank"
+                                        {{-- Tombol Show --}}
+                                        <a href="{{ route('followupinstruction.show', $followup->id) }}" target="_blank"
                                             class="flex-1 sm:flex-none px-3 py-2 bg-blue-600 text-white rounded-lg text-center hover:bg-blue-700 transition">
                                             Show
                                         </a>
 
-                                        @if ($followup->followupInstructionScore->first())
-                                            <a href="{{ route('followupinstructionscore.edit', $followup->followupInstructionScore->first()->id) }}"
-                                                class="flex-1 sm:flex-none px-3 py-2 bg-purple-600 text-white rounded-lg text-center hover:bg-purple-700 transition">
-                                                Edit Penilaian
-                                            </a>
+                                        {{-- Jika sudah ada score --}}
+                                        @if ($scoreModel)
+                                            @can('update', $scoreModel)
+                                                <a href="{{ route('followupinstructionscore.edit', $scoreModel->id) }}"
+                                                    class="flex-1 sm:flex-none px-3 py-2 bg-purple-600 text-white rounded-lg text-center hover:bg-purple-700 transition">
+                                                    Edit Penilaian
+                                                </a>
+                                            @endcan
                                         @else
-                                            <button wire:click="giveScore({{ $followup->id }})"
-                                                class="flex-1 sm:flex-none px-3 py-2 bg-purple-600 text-white rounded-lg text-center hover:bg-purple-700 transition">
-                                                Beri Penilaian
-                                            </button>
+                                            {{-- Jika belum ada score, hanya receiver yang bisa menilai --}}
+                                            @can('create', $followup)
+                                                <button wire:click="giveScore({{ $followup->id }})"
+                                                    class="flex-1 sm:flex-none px-3 py-2 bg-purple-600 text-white rounded-lg text-center hover:bg-purple-700 transition">
+                                                    Beri Penilaian
+                                                </button>
+                                            @endcan
                                         @endif
                                     </div>
                                 </td>
-
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                                <td colspan="7" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                     Tidak ada data nilai
                                 </td>
                             </tr>

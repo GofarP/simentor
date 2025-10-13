@@ -2,9 +2,10 @@
 
 namespace App\Policies;
 
-use App\Models\FollowupInstructionScore;
 use App\Models\User;
+use App\Models\FollowupInstruction;
 use Illuminate\Auth\Access\Response;
+use App\Models\FollowupInstructionScore;
 
 class FollowupInstructionScorePolicy
 {
@@ -28,21 +29,20 @@ class FollowupInstructionScorePolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user, FollowupInstructionScore $followupInstructionScore): bool
+    // FollowupInstructionScorePolicy.php
+    public function create(User $user, FollowupInstructionScore $score): bool
     {
-        $instruction = $followupInstructionScore->followupInstruction;
-
-        return $instruction &&
-            ($user->id === $instruction->sender_id ||
-                $user->id === $instruction->receiver_id);
+        return $user->id === $score->followupInstruction->receiver_id;
     }
+
+
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, FollowupInstructionScore $followupInstructionScore): bool
+    public function update(User $user, FollowupInstructionScore $score): bool
     {
-        return $user->id === $followupInstructionScore->user_id;
+        return $user->id === $score->followupInstruction->receiver_id;
     }
 
 

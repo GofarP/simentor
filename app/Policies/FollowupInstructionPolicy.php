@@ -21,16 +21,16 @@ class FollowupInstructionPolicy
      */
     public function view(User $user, FollowupInstruction $followupInstruction): bool
     {
-        return $user->id===$followupInstruction->sender_id
-        || $user->id===$followupInstruction->receiver_id;
+        return $user->id === $followupInstruction->sender_id
+            || $user->id === $followupInstruction->receiver_id;
     }
 
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(User $user, FollowupInstruction $followup): bool
     {
-        return false;
+        return $user->id === $followup->receiver_id;
     }
 
     /**
@@ -65,7 +65,8 @@ class FollowupInstructionPolicy
         return false;
     }
 
-    public function forward(User $user, FollowupInstruction $followupInstruction){
-        return $user->id=== $followupInstruction->sender_id || $user->id=== $followupInstruction->receiver_id;
+    public function forward(User $user, FollowupInstruction $followupInstruction)
+    {
+        return $user->id === $followupInstruction->sender_id || $user->id === $followupInstruction->receiver_id;
     }
 }
