@@ -28,7 +28,7 @@ class CoordinationRequest extends FormRequest
             'description' => 'required',
             'start_time' => 'required',
             'end_time' => 'required',
-            'attachment' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,png,jpg,jpeg|max:2048',
+            'attachment' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx,png,jpg,jpeg|max:1000',
         ];
     }
 
@@ -42,7 +42,7 @@ class CoordinationRequest extends FormRequest
             'end_time.required' => 'Silahkan masukkan batas waktu',
             'attachment.file' => 'Lampiran harus berupa file.',
             'attachment.mimes' => 'Lampiran hanya boleh berupa file PDF, DOC, DOCX, XLS, XLSX, PNG, JPG, atau JPEG.',
-            'attachment.max' => 'Ukuran lampiran maksimal 2 MB.',
+            'attachment.max' => 'Ukuran lampiran maksimal 1 MB.',
         ];
     }
 }
