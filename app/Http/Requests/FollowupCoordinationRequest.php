@@ -25,7 +25,7 @@ class FollowupCoordinationRequest extends FormRequest
         return [
             'coordination_id' => 'required',
             'proof'          => ($isUpdate ? 'nullable' : 'required') . '|file|mimes:pdf,jpg,jpeg,png,gif,webp|max:1000',
-            'attachment'     => ($isUpdate ? 'nullable' : 'required') . '|file|mimes:pdf,jpg,jpeg,png,gif,webp|max:1000',
+            'attachment'     =>  'nullable|file|mimes:pdf,jpg,jpeg,png,gif,webp|max:1000',
             'description'    => 'required|max:1000',
 
         ];

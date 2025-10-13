@@ -27,7 +27,7 @@ class FollowupInstructionRequest extends FormRequest
         return [
             'instruction_id' => 'required',
             'proof'          => ($isUpdate ? 'nullable' : 'required') . '|file|mimes:pdf,jpg,jpeg,png,gif,webp|max:1000',
-            'attachment'     => ($isUpdate ? 'nullable' : 'required') . '|file|mimes:pdf,jpg,jpeg,png,gif,webp|max:1000',
+            'attachment'     =>  'nullable|file|mimes:pdf,jpg,jpeg,png,gif,webp|max:1000',
             'description'    => 'required|max:2048',
         ];
     }
