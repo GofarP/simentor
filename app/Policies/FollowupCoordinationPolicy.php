@@ -65,7 +65,12 @@ class FollowupCoordinationPolicy
         return false;
     }
 
-    public function forward(User $user, FollowupCoordination $followupCoordination){
-        return $user->id== $followupCoordination->sender_id || $user->id== $followupCoordination->receiver_id;
+    public function forward(User $user, FollowupCoordination $followupCoordination)
+    {
+        return (
+            ($user->id == $followupCoordination->sender_id ||
+                $user->id == $followupCoordination->receiver_id)
+            && $user->hasRole('kasubag')
+        );
     }
 }

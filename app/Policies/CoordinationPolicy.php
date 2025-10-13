@@ -67,8 +67,8 @@ class CoordinationPolicy
         return false;
     }
 
-    public function forward(User $user, Coordination $instruction)
+    public function forward(User $user, Coordination $coordination)
     {
-        return $user->id == $instruction->sender_id || $user->id == $instruction->receiver_id;
+        return $user->id == $coordination->receiver_id && $user->hasRole('kasubag');
     }
 }
