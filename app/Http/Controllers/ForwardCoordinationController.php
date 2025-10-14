@@ -30,12 +30,13 @@ class ForwardCoordinationController extends Controller
     {
         $this->authorize('forward',$coordination);
         $users=$this->userService->getReceiver();
+
         $forwardCoordination=$this->forwardCoordinationService
         ->getForwardCoordination($coordination)
         ->pluck('forwarded_to')
         ->toArray();
 
-        return view('coordination.index',compact('coordination','users','forwardCoordination'));
+        return view('coordination.forward',compact('coordination','users','forwardCoordination'));
     }
 
     public function submit(ForwardRequest $request, Coordination $coordination)

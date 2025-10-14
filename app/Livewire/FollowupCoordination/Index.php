@@ -96,7 +96,12 @@ class Index extends Component
                     $q->where('description', 'like', "%{$this->search}%")
                 )
                 ->when($this->messageType === 'sent', fn($q) => $q->where('sender_id', $userId))
-                ->when($this->messageType === 'received', fn($q) => $q->where('receiver_id', $userId))
+                ->when($this->messageType === 'received', function ($q) {
+                    $q->where('receiver_id', Auth::id())
+                        ->orWhereHas('forwards', function ($q2) {
+                            $q2->where('forwarded_to', Auth::id()); // sesuaikan kolom di relation forwards
+                        });
+                })
                 ->orderByDesc('created_at')
                 ->paginate(10);
 

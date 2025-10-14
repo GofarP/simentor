@@ -62,9 +62,7 @@ class FollowupInstructionScorePolicy
         return false;
     }
 
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
+
     public function forceDelete(User $user, FollowupInstructionScore $followupInstructionScore): bool
     {
         return false;

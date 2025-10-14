@@ -70,7 +70,7 @@ class FollowupCoordinationPolicy
         return (
             ($user->id == $followupCoordination->sender_id ||
                 $user->id == $followupCoordination->receiver_id)
-            && $user->hasRole('kasubag')
+            || $user->hasRole('Kasubbag')
         );
     }
 }

@@ -70,6 +70,6 @@ class InstructionPolicy
 
     public function forward(User $user, Instruction $instruction)
     {
-        return  $user->id == $instruction->receiver_id && $user->hasRole('kasubag');
+        return  $user->id == $instruction->receiver_id && $user->hasRole('Kasubbag');
     }
 }

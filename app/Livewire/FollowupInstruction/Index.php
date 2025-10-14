@@ -96,13 +96,19 @@ class Index extends Component
                 ->where('instruction_id', $this->selectedInstructionId)
                 ->when($this->search, function ($query) {
                     $query->where(function ($q) {
-                        $q->Where('description', 'like', '%' . $this->search . '%');
+                        $q->where('description', 'like', '%' . $this->search . '%');
                     });
                 })
                 ->when($this->messageType === 'sent', fn($q) => $q->where('sender_id', Auth::id()))
-                ->when($this->messageType === 'received', fn($q) => $q->where('receiver_id', Auth::id()))
+                ->when($this->messageType === 'received', function ($q) {
+                    $q->where('receiver_id', Auth::id())
+                        ->orWhereHas('forwards', function ($q2) {
+                            $q2->where('forwarded_to', Auth::id()); // sesuaikan kolom di relation forwards
+                        });
+                })
                 ->orderByDesc('created_at')
                 ->paginate(10);
+
             return view('livewire.followup-instruction.index', compact('followupInstructions'));
         }
     }

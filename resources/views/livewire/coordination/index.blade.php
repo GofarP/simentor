@@ -37,7 +37,7 @@
                         <option value="received">Diterima</option>
                         <option value="all">Semua</option>
                     </select>
-                    
+
                 </div>
 
             </div>
@@ -167,6 +167,7 @@
                                     Forward
                                 </a>
                             @endcan
+
 
                             <a href="{{ route('coordination.show', $coordination) }}"
                                 class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">Show</a>

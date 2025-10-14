@@ -21,10 +21,10 @@ class ForwardCoordinationService implements ForwardCoordinationServiceInterface
 
     public function deleteForwardCoordination(Coordination $coordination): bool
     {
-        return $this->deleteForwardCoordination($coordination);
+        return $this->forwardCoordinationRepository->deleteForwardCoordination($coordination);
     }
 
     public function getForwardCoordination(Coordination $coordination){
-        return $this->getForwardCoordination($coordination);
+        return $this->forwardCoordinationRepository->getForwardCoordination($coordination);
     }
 }

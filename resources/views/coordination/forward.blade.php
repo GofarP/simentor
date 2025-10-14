@@ -4,8 +4,9 @@
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 w-full">
             <h2 class="text-2xl font-bold text-violet-600 mb-6">Teruskan Koordinasi</h2>
 
-            <form method="POST" action="{{ route('forward.coordination.submit',$coordination->id) }}">
+            <form method="POST" action="{{ route('forward.coordination.submit', $coordination->id) }}">
                 @csrf
+
                 {{-- Penerima --}}
                 <div class="mb-4">
                     <label for="forwarded_to" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
@@ -16,7 +17,7 @@
                         multiple="true">
                         <option value="">Pilih Penerima</option>
                         @foreach ($users as $user)
-                            <option value="{{ $user->id }}" {{ old('forwarded_to', $coordination->forwarded_to) == $user->id ? 'selected' : '' }}>
+                            <option value="{{ $user->id }}" @if (in_array($user->id, old('forwarded_to', $forwardCoordination ?? []))) selected @endif>
                                 {{ $user->name }}
                             </option>
                         @endforeach
