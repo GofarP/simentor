@@ -25,7 +25,7 @@ class ForwardFollowupCoordinationController extends Controller
 
     public function showForm(FollowupCoordination $followupcoordination)
     {
-        // $this->authorize('forward', $followupcoordination);
+            $this->authorize('forward', $followupcoordination);
 
         $users = $this->userService->getReceiver();
         $forwardFollowupCoordination = $this->forwardFollowupCoordinationService

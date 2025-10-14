@@ -52,9 +52,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('forward.instruction.submit');
     Route::post('/forward/coordination/{coordination}', [ForwardCoordinationController::class, 'submit'])
         ->name('forward.coordination.submit');
-    Route::post('/forward/followup/{followupinstruction}', [ForwardFollowupInstructionController::class, 'submit'])
+    Route::post('/forward/followupinstruction/{followupinstruction}', [ForwardFollowupInstructionController::class, 'submit'])
         ->name('forward.followupinstruction.submit');
-    Route::post('/forward/followup/{followupcoordination}', [ForwardFollowupCoordinationController::class, 'submit'])
+    Route::post('/forward/followupcoordination/{followupcoordination}', [ForwardFollowupCoordinationController::class, 'submit'])
         ->name('forward.followupcoordination.submit');
 
     Route::resource('permission', PermissionController::class);
