@@ -11,23 +11,28 @@ use Illuminate\Support\Facades\Auth;
 
 class ForwardFollowupCoordinationRepository implements ForwardFollowupCoordinationRepositoryInterface
 {
-    public function forwardFollowupCoordination(FollowupCoordination $followupCoordination, array $data) {
-        $forwardedTo=$data['forwarded_to'] ?? [];
-        $followupCoordination->forwardedUsers->sync(
-            collect($forwardedTo)->mapWithKeys(function($receiverId){
-                return [$receiverId=>['forwarded_by'=>Auth::id()]];
-            })->toArray()
-        );
+    public function forwardFollowupCoordination(FollowupCoordination $followupCoordination, array $data)
+    {
+        $forwardedTo = $data['forwarded_to'] ?? [];
+
+        $followupCoordination->forwardedUsers()
+            ->sync(
+                collect($forwardedTo)->mapWithKeys(function ($receiverId) {
+                    return [$receiverId => ['forwarded_by' => Auth::id()]];
+                })->toArray()
+            );
 
         return $followupCoordination->forwardedUsers;
     }
 
+
     public function deleteForwardFollowupCoordination(FollowupCoordination $followupCoordination)
     {
-        return ForwardFollowupCoordination::where('followup_coordination_id',$followupCoordination->id);
+        return ForwardFollowupCoordination::where('followup_coordination_id', $followupCoordination->id);
     }
 
-    public function getForwardFollowupCoordination(FollowupCoordination $followupCoordination){
-        return ForwardFollowupCoordination::where('followup_coordination_id',$followupCoordination->id);
+    public function getForwardFollowupCoordination(FollowupCoordination $followupCoordination)
+    {
+        return ForwardFollowupCoordination::where('followup_coordination_id', $followupCoordination->id);
     }
 }
