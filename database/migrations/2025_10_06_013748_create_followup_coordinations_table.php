@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('followup_coordinations', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('coordination_id');
-            $table->string('proof');
             $table->string('attachment');
             $table->longText('description');
             $table->timestamps();

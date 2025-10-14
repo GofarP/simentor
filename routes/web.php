@@ -41,7 +41,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('forward.coordination.form');
     Route::get('/forward/followupinstruction/{followupinstruction}', [ForwardFollowupInstructionController::class, 'showForm'])
         ->name('forward.followupinstruction.form');
-    Route::get('/forward/followupcoordination/{coordination}', [ForwardFollowupCoordinationController::class, 'showForm'])
+    Route::get('/forward/followupcoordination/{followupcoordination}', [ForwardFollowupCoordinationController::class, 'showForm'])
         ->name('forward.followupcoordination.form');
     Route::get('/instructions/search', [InstructionController::class, 'fetchInstruction'])
         ->name('instructions.search');

@@ -27,17 +27,6 @@
                     @enderror
                 </div>
 
-                <div class="mb-4">
-                    <label for="proof" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
-                        Bukti
-                    </label>
-                    <input type="file" name="proof" id="proof"
-                        class="form-input w-full rounded border-gray-300 dark:border-gray-600
-                               dark:bg-gray-700 dark:text-gray-200">
-                    @error('proof')
-                        <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
-                    @enderror
-                </div>
 
                 <div class="mb-4">
                     <label for="attachment" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">

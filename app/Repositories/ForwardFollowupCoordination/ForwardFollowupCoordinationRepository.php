@@ -28,6 +28,6 @@ class ForwardFollowupCoordinationRepository implements ForwardFollowupCoordinati
     }
 
     public function getForwardFollowupCoordination(FollowupCoordination $followupCoordination){
-        return FollowupInstruction::where('followup_coordination_id',$followupCoordination->id);
+        return ForwardFollowupCoordination::where('followup_coordination_id',$followupCoordination->id);
     }
 }

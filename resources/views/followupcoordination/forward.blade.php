@@ -4,7 +4,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 w-full">
             <h2 class="text-2xl font-bold text-violet-600 mb-6">Teruskan Tindak Lanjut Koordinasi</h2>
 
-            <form method="POST" action="{{ route('forward.followupinstruction.submit',$coordination->id) }}">
+            <form method="POST" action="{{ route('forward.followupinstruction.submit',$followupcoordination->id) }}">
                 @csrf
                 {{-- Penerima --}}
                 <div class="mb-4">
@@ -16,7 +16,7 @@
                         multiple="true">
                         <option value="">Pilih Penerima</option>
                         @foreach ($users as $user)
-                            <option value="{{ $user->id }}" {{ old('forwarded_to', $coordination->forwarded_to) == $user->id ? 'selected' : '' }}>
+                            <option value="{{ $user->id }}" {{ old('forwarded_to', $followupcoordination->forwarded_to) == $user->id ? 'selected' : '' }}>
                                 {{ $user->name }}
                             </option>
                         @endforeach
@@ -42,7 +42,7 @@
     @push('css')
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://unpkg.com/trix@2.1.0/dist/trix.css">
-       
+
 
     @endpush
 

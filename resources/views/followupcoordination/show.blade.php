@@ -12,17 +12,6 @@
                 </p>
             </div>
 
-            {{-- Proof --}}
-            <div class="mb-4">
-                <label class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Bukti</label>
-                @if ($followupcoordination->proof)
-                    <a href="{{ Storage::url($followupcoordination->proof) }}" target="_blank"
-                        class="text-violet-600 underline">Lihat File</a>
-                @else
-                    <p class="text-gray-500">Tidak ada file</p>
-                @endif
-            </div>
-
             {{-- Attachment --}}
             <div class="mb-4">
                 <label class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Lampiran</label>

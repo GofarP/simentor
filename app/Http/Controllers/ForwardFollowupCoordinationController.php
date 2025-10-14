@@ -23,23 +23,23 @@ class ForwardFollowupCoordinationController extends Controller
         // $this->middleware('permission:submit.forwardfollowupcoordination')->only('submit');
     }
 
-    public function showForm(FollowupCoordination $followupCoordination)
+    public function showForm(FollowupCoordination $followupcoordination)
     {
-        $this->authorize('forward', $followupCoordination);
+        $this->authorize('forward', $followupcoordination);
         $users = $this->userService->getReceiver();
         $forwardFollowupCoordination = $this->forwardFollowupCoordinationService
-            ->getForwardFollowupCoordination($followupCoordination)
+            ->getForwardFollowupCoordination($followupcoordination)
             ->pluck('forwarded_to')
             ->toArray();
 
-        return view('followupcoordination.forward', compact('forwardFollowupCoordination', 'users'));
+        return view('followupcoordination.forward', compact('forwardFollowupCoordination', 'users','followupcoordination'));
     }
 
 
-    public function submit(ForwardRequest $request, FollowupCoordination $followupCoordination)
+    public function submit(ForwardRequest $request, FollowupCoordination $followupcoordination)
     {
-        $this->authorize('forward', $followupCoordination);
-        $this->forwardFollowupCoordinationService->forwardFollowupCoordination($followupCoordination, $request->all());
+        $this->authorize('forward', $followupcoordination);
+        $this->forwardFollowupCoordinationService->forwardFollowupCoordination($followupcoordination, $request->all());
         return redirect()->route('followupcoordination.index')->with('success', 'Sukses meneruskan tindak lanjut koordinasi');
     }
 }

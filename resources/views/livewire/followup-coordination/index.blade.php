@@ -116,7 +116,6 @@
                         <th class="px-6 py-3">Waktu Mulai</th>
                         <th class="px-6 py-3">Batas Waktu</th>
                         <th class="px-6 py-3">Lampiran</th>
-                        <th class="px-6 py-3">Bukti</th>
                         <th class="px-6 py-3">Aksi</th>
                     </tr>
                 </thead>
@@ -163,14 +162,7 @@
                                 @endif
                             </td>
 
-                            <td class="px-6 py-4">
-                                @if ($f->proof)
-                                    <a class="text-blue-600 text-underline" href="{{ Storage::url($f->proof) }}"
-                                        target="_blank">Lihat Bukti</a>
-                                @else
-                                    Tidak ada bukti
-                                @endif
-                            </td>
+
 
                             <td class="px-6 py-4 flex gap-2">
                                 @can('forward', $f)

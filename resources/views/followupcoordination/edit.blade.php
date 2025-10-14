@@ -27,24 +27,7 @@
                     @enderror
                 </div>
 
-                {{-- Proof --}}
-                <div class="mb-4">
-                    <label for="proof" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
-                        Bukti
-                    </label>
-                    @if ($followupcoordination->proof)
-                        <p class="mb-2 text-sm text-gray-500">
-                            File lama: <a href="{{ Storage::url($followupcoordination->proof) }}" target="_blank"
-                                class="text-violet-600 underline">Lihat</a>
-                        </p>
-                    @endif
-                    <input type="file" name="proof" id="proof"
-                        class="form-input w-full rounded border-gray-300 dark:border-gray-600
-                               dark:bg-gray-700 dark:text-gray-200">
-                    @error('proof')
-                        <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
-                    @enderror
-                </div>
+             
 
                 {{-- Attachment --}}
                 <div class="mb-4">

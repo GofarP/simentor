@@ -69,6 +69,6 @@ class CoordinationPolicy
 
     public function forward(User $user, Coordination $coordination)
     {
-        return $user->id === $coordination->receiver_id && $user->hasRole('Kasubbag');
+        return $user->id === $coordination->receiver_id;
     }
 }

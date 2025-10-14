@@ -60,12 +60,7 @@ class FollowupCoordinationRepository implements FollowupCoordinationRepositoryIn
             $data['attachment'] = request()->file('attachment')->store('attachment', 'public');
         }
 
-        if (request()->hasFile('proof')) {
-            $data['proof'] = request()->file('proof')->store('proof', 'public');
-        }
-
         $data['sender_id'] = Auth::user()->id;
-
 
         return FollowupCoordination::create($data);
     }
@@ -80,14 +75,6 @@ class FollowupCoordinationRepository implements FollowupCoordinationRepositoryIn
             $data['attachment'] = request()->file('attachment')->store('attachment', 'public');
         }
 
-        // Handle proof
-        if (request()->hasFile('proof')) {
-            if ($followupCoordination->proof && Storage::disk('public')->exists($followupCoordination->proof)) {
-                Storage::disk('public')->delete($followupCoordination->proof);
-            }
-            $data['proof'] = request()->file('proof')->store('proof', 'public');
-        }
-
         // Update data ke database
         $followupCoordination->update($data);
 
@@ -98,10 +85,6 @@ class FollowupCoordinationRepository implements FollowupCoordinationRepositoryIn
     {
         if ($followupCoordination->attachment && Storage::disk('public')->exists($followupCoordination->attachment)) {
             Storage::disk('public')->delete($followupCoordination->attachment);
-        }
-
-        if ($followupCoordination->proof && Storage::disk('public')->exists($followupCoordination->proof)) {
-            Storage::disk('public')->delete($followupCoordination->proof);
         }
 
         return  $followupCoordination->delete();

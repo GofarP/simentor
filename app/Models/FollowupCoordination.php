@@ -11,7 +11,6 @@ class FollowupCoordination extends Model
         "coordination_id",
         "sender_id",
         "receiver_id",
-        "proof",
         "attachment",
         "description"
     ];

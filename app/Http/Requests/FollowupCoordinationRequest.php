@@ -24,7 +24,6 @@ class FollowupCoordinationRequest extends FormRequest
         $isUpdate = in_array($this->method(), ['PUT', 'PATCH']);
         return [
             'coordination_id' => 'required',
-            'proof'          => ($isUpdate ? 'nullable' : 'required') . '|file|mimes:pdf,jpg,jpeg,png,gif,webp|max:1000',
             'attachment'     =>  'nullable|file|mimes:pdf,jpg,jpeg,png,gif,webp|max:1000',
             'description'    => 'required|max:1000',
 
@@ -35,11 +34,6 @@ class FollowupCoordinationRequest extends FormRequest
     {
         return [
             'coordination_id.required' => 'Silahkan pilih koordinasi.',
-
-            'proof.required'          => 'Silahkan pilih bukti.',
-            'proof.file'              => 'Bukti harus berupa file yang valid.',
-            'proof.mimes'             => 'Bukti harus berupa file gambar/pdf (jpg, jpeg, png, gif, webp, pdf).',
-            'proof.max'               => 'Ukuran bukti hanya maksimal 1 MB',
 
             'attachment.nullable'     => 'Lampiran bersifat opsional.',
             'attachment.file'         => 'Lampiran harus berupa file yang valid.',
