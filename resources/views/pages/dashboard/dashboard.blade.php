@@ -10,7 +10,7 @@
                 </p>
 
                 <p class="text-gray-700 dark:text-gray-300 text-base md:text-lg leading-relaxed">
-                    Selamat datang di <span class="font-semibold">Koridor</span> - Aplikasi Koordinasi dan Instruksi dalam Kantor.
+                    Selamat datang di <span class="font-semibold">Simentor</span> - Aplikasi Koordinasi dan Instruksi dalam Kantor.
                 </p>
 
             </div>

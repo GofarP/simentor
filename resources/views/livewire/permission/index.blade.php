@@ -13,7 +13,7 @@
                     Permission
                 </p>
                 <p class="text-gray-700 dark:text-gray-300 text-base md:text-lg">
-                    Kelola permission di <span class="font-semibold">Koridor</span>.
+                    Kelola permission di <span class="font-semibold">Simentor</span>.
                 </p>
             </div>
 
