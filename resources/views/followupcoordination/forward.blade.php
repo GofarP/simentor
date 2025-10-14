@@ -4,7 +4,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 w-full">
             <h2 class="text-2xl font-bold text-violet-600 mb-6">Teruskan Tindak Lanjut Koordinasi</h2>
 
-            <form method="POST" action="{{ route('forward.followupinstruction.submit',$followupcoordination->id) }}">
+            <form method="POST" action="{{ route('forward.followupcoordination.submit',$followupcoordination->id) }}">
                 @csrf
                 {{-- Penerima --}}
                 <div class="mb-4">

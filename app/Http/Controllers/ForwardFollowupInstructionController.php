@@ -28,7 +28,7 @@ class ForwardFollowupInstructionController extends Controller
 
     public function showForm(FollowupInstruction $followupinstruction)
     {
-        // $this->authorize('forward', $followupinstruction);
+        $this->authorize('forward', $followupinstruction);
         $users = $this->userService->getReceiver();
         $forwardFollowupInstruction = $this->forwardFollowupInstructionService
             ->getForwardFollowupInstruction($followupinstruction)
@@ -41,7 +41,7 @@ class ForwardFollowupInstructionController extends Controller
 
     public function submit(ForwardRequest $request, FollowupInstruction $followupinstruction)
     {
-        // $this->authorize('forward', $followupinstruction);
+        $this->authorize('forward', $followupinstruction);
         $this->forwardFollowupInstructionService->forwardFollowupInstruction($followupinstruction, $request->all());
         return redirect()->route('followupinstruction.index')->with('success', 'Sukses meneruskan tindak lanjut instruksi');
     }
