@@ -1,3 +1,3 @@
 <x-app-layout>
-    @livewire('followupinstructionscore.index')
+    @livewire('followup-instruction-score.index')
 </x-app-layout>
