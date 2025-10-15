@@ -93,21 +93,7 @@ class RoleUserPermissionSeeder extends Seeder
 
 
         // === ROLE ADMIN (KASEK) ===
-        $kasek->syncPermissions([
-            'view.coordination',
-            'show.coordination',
-            'create.instruction',
-            'submit.forwardinstruction',
-            'view.instructionscore',
-            'create.instructionscore',
-            'view.user',
-            'show.user',
-            'create.user',
-            'edit.user',
-            'delete.user',
-
-
-        ]);
+        $kasek->syncPermissions($permissions);
 
         // === ROLE KASUBBAG ===
         $kasubbag->syncPermissions([
