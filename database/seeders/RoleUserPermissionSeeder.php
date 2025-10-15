@@ -72,6 +72,8 @@ class RoleUserPermissionSeeder extends Seeder
             ['name' => 'create.user', 'guard_name' => 'web'],
             ['name' => 'edit.user', 'guard_name' => 'web'],
             ['name' => 'delete.user', 'guard_name' => 'web'],
+            ['name' => 'show.user', 'guard_name' => 'web'],
+
 
             ['name' => 'view.permission', 'guard_name' => 'web'],
             ['name' => 'create.permission', 'guard_name' => 'web'],
