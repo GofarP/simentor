@@ -33,15 +33,10 @@
                         class="mt-1 block w-full rounded-md border-gray-300 focus:border-violet-500 focus:ring focus:ring-violet-200 focus:ring-opacity-50" />
                 </div>
 
-                <div class="flex items-center justify-between">
-                  
-
-                    <x-button class="!bg-violet-600 !hover:bg-violet-700 !text-white w-full sm:w-auto">
+                <div>
+                    <x-button class="!bg-violet-600 !hover:bg-violet-700 !text-white w-full">
                         {{ __('Sign in') }}
                     </x-button>
-
-
-
                 </div>
 
                 <x-validation-errors class="mt-4" />
