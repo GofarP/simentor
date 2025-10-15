@@ -106,8 +106,8 @@ class RoleUserPermissionSeeder extends Seeder
             'submit.forwardfollowupInstruction',
             'create.followupcoordination',
             'submit.forwardfollowupcoordination',
-            'view.instructionscore',
-            'create.instructionscore',
+            'view.followupinstructionscore',
+            'create.followupinstructionscore',
         ]);
 
         // === ROLE STAF ===
