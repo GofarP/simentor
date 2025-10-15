@@ -4,7 +4,7 @@
 
             <!-- Header -->
             <div class="text-center mb-6">
-                <h1 class="text-3xl font-bold text-violet-600">Simentor</h1>
+                <h1 class="text-3xl font-bold text-violet-600">SIMENTOR</h1>
                 <p class="text-gray-600 dark:text-gray-300 mt-1 text-sm" style="font-family: 'Poppins', sans-serif;">
                     Aplikasi Manajemen Tugas Kantor Bawaslu Batam
                 </p>
