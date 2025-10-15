@@ -93,23 +93,29 @@ class Index extends Component
         if ($this->switch === 'followupInstructionMode' && $this->selectedInstructionId) {
             $userId = Auth::id();
             $followupInstructions = FollowupInstruction::with(['forwards', 'sender', 'receiver', 'instruction'])
-                ->where('instruction_id', $this->selectedInstructionId)
+                ->where('instruction_id', $this->selectedInstructionId) // filter hanya untuk instruction yang dipilih
                 ->when($this->search, function ($query) {
                     $query->where(function ($q) {
                         $q->where('description', 'like', '%' . $this->search . '%');
                     });
                 })
-                ->when($this->messageType === 'sent', fn($q) => $q->where('sender_id', Auth::id()))
+                ->when($this->messageType === 'sent', function ($q) {
+                    $q->where('sender_id', Auth::id());
+                })
                 ->when($this->messageType === 'received', function ($q) {
-                    $q->where('receiver_id', Auth::id())
-                        ->orWhereHas('forwards', function ($q2) {
-                            $q2->where('forwarded_to', Auth::id()); // sesuaikan kolom di relation forwards
-                        });
+                    $q->where(function ($sub) {
+                        $sub->where('receiver_id', Auth::id())
+                            ->orWhereHas('forwards', function ($q2) {
+                                $q2->where('forwarded_to', Auth::id());
+                            });
+                    });
                 })
                 ->orderByDesc('created_at')
                 ->paginate(10);
 
-            return view('livewire.followup-instruction.index', compact('followupInstructions'));
+            $instructionEndTime = Instruction::where('id', $this->selectedInstructionId)->value('end_time');
+
+            return view('livewire.followup-instruction.index', compact('followupInstructions', 'instructionEndTime'));
         }
     }
 }

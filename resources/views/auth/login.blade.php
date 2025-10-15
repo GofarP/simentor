@@ -4,7 +4,7 @@
 
             <!-- Header -->
             <div class="text-center mb-6">
-                <h1 class="text-3xl font-bold text-violet-600">Simentor</h1>
+                <h1 class="text-3xl font-bold text-violet-600">SIMENTOR</h1>
                 <p class="text-gray-600 dark:text-gray-300 mt-1 text-sm" style="font-family: 'Poppins', sans-serif;">
                     Aplikasi Manajemen Tugas Kantor Bawaslu Batam
                 </p>
@@ -33,19 +33,10 @@
                         class="mt-1 block w-full rounded-md border-gray-300 focus:border-violet-500 focus:ring focus:ring-violet-200 focus:ring-opacity-50" />
                 </div>
 
-                <div class="flex items-center justify-between">
-                    @if (Route::has('password.request'))
-                        <a class="text-sm text-violet-600 hover:text-violet-700" href="{{ route('password.request') }}">
-                            {{ __('Forgot Password?') }}
-                        </a>
-                    @endif
-
-                    <x-button class="!bg-violet-600 !hover:bg-violet-700 !text-white w-full sm:w-auto">
-                        {{ __('Sign in') }}
+                <div>
+                    <x-button class="!bg-violet-600 !hover:bg-violet-700 !text-white w-full">
+                        {{ __('Logins') }}
                     </x-button>
-
-
-
                 </div>
 
                 <x-validation-errors class="mt-4" />
