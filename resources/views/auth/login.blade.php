@@ -35,7 +35,7 @@
 
                 <div>
                     <x-button class="!bg-violet-600 !hover:bg-violet-700 !text-white w-full">
-                        {{ __('Login') }}
+                        {{ __('Logins') }}
                     </x-button>
                 </div>
 
