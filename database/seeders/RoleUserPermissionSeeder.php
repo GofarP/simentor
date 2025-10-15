@@ -39,10 +39,10 @@ class RoleUserPermissionSeeder extends Seeder
             ['name' => 'delete.coordination', 'guard_name' => 'web'],
             ['name' => 'fetch.coordination', 'guard_name' => 'web'],
 
-            ['name' => 'view.instructionscore', 'guard_name' => 'web'],
-            ['name' => 'create.instructionscore', 'guard_name' => 'web'],
-            ['name' => 'edit.instructionscore', 'guard_name' => 'web'],
-            ['name' => 'delete.instructionscore', 'guard_name' => 'web'],
+            ['name' => 'view.followupinstructionscore', 'guard_name' => 'web'],
+            ['name' => 'create.followupinstructionscore', 'guard_name' => 'web'],
+            ['name' => 'edit.followupinstructionscore', 'guard_name' => 'web'],
+            ['name' => 'delete.followupinstructionscore', 'guard_name' => 'web'],
 
             ['name' => 'view.followupinstruction', 'guard_name' => 'web'],
             ['name' => 'create.followupinstruction', 'guard_name' => 'web'],
@@ -77,6 +77,8 @@ class RoleUserPermissionSeeder extends Seeder
             ['name' => 'create.permission', 'guard_name' => 'web'],
             ['name' => 'edit.permission', 'guard_name' => 'web'],
             ['name' => 'delete.permission', 'guard_name' => 'web'],
+
+
         ];
 
         foreach ($permissions as $perm) {
@@ -101,7 +103,7 @@ class RoleUserPermissionSeeder extends Seeder
             'create.user',
             'edit.user',
             'delete.user',
-            
+
 
         ]);
 

@@ -20,10 +20,10 @@ class RoleController extends Controller
         $this->roleService = $roleService;
         $this->permissionService = $permissionService;
 
-        // $this->middleware('permission:view.role')->only('index');
-        // $this->middleware('permission:create.role')->only(['create', 'store']);
-        // $this->middleware('permission:edit.role')->only(['edit', 'update']);
-        // $this->middleware('permission:delete.role')->only('destroy');
+        $this->middleware('permission:view.role')->only('index');
+        $this->middleware('permission:create.role')->only(['create', 'store']);
+        $this->middleware('permission:edit.role')->only(['edit', 'update']);
+        $this->middleware('permission:delete.role')->only('destroy');
     }
     /**
      * Display a listing of the resource.
