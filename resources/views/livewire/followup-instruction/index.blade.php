@@ -47,26 +47,26 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($instructions as $index => $instruction)
-                        <tr>
-                            <td class="px-6 py-4">{{ $instructions->firstItem() + $index }}</td>
-                            <td class="px-6 py-4">{{ $instruction->title }}</td>
-                            <td class="px-6 py-4">
-                                <div class="truncate max-w-xs" title="{{ strip_tags($instruction->description) }}">
-                                    {!! $instruction->description !!}
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                {{ $instruction->sender_id === Auth::id()
-                                    ? $instruction->total_followups_count ?? 0
-                                    : $instruction->user_followups_count ?? 0 }}
-                            </td>
-                            <td class="px-6 py-4">
-                                <button wire:click="showFollowups({{ $instruction->id }})"
-                                    class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                                    Detail
-                                </button>
-                            </td>
-                        </tr>
+                            <tr>
+                                <td class="px-6 py-4">{{ $instructions->firstItem() + $index }}</td>
+                                <td class="px-6 py-4">{{ $instruction->title }}</td>
+                                <td class="px-6 py-4">
+                                    <div class="truncate max-w-xs" title="{{ strip_tags($instruction->description) }}">
+                                        {!! $instruction->description !!}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    {{ $instruction->sender_id === Auth::id()
+                        ? $instruction->total_followups_count ?? 0
+                        : $instruction->user_followups_count ?? 0 }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    <button wire:click="showFollowups({{ $instruction->id }})"
+                                        class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                        Detail
+                                    </button>
+                                </td>
+                            </tr>
                     @empty
                         <tr>
                             <td colspan="5" class="px-6 py-4 text-center text-gray-500">Tidak ada data</td>
@@ -83,17 +83,29 @@
         @elseif($switch === 'followupInstructionMode')
             <div class="flex justify-between items-center mb-4 mt-3 px-3">
                 <!-- Tombol kiri -->
-                <button wire:click="backToInstructions"
-                    class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                <button wire:click="backToInstructions" class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
                     Kembali
                 </button>
 
-                @if (Auth::user()->id !== optional($followupInstructions->first())->receiver_id)
-                    <button wire:click="goToCreate"
-                        class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                        Tambah Followup
-                    </button>
+                @php
+                    $firstFollowup = $followupInstructions->first();
+                    $receiverId = optional($firstFollowup)->receiver_id;
+                    $forwardedTo = collect(optional($firstFollowup)->forwards)->pluck('receiver_id')->toArray();
+                    $isExpired = $instructionEndTime && now()->greaterThan(\Carbon\Carbon::parse($instructionEndTime)->addDay());
+                @endphp
+
+                @if (Auth::id() !== $receiverId && !in_array(Auth::id(), $forwardedTo))
+                    @if ($isExpired)
+                        <button class="px-3 py-1 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
+                            Waktu telah lewat
+                        </button>
+                    @else
+                        <button wire:click="goToCreate" class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            Tambah Followup
+                        </button>
+                    @endif
                 @endif
+
 
             </div>
 
@@ -176,15 +188,21 @@
                             <td class="px-6 py-4 flex gap-2">
                                 @can('forward', $f)
                                     <a href="{{ route('forward.followupinstruction.form', $f) }}"
-                                        class="px-3 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Forward</a>
+                                        class="px-3 py-1 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                                        Forward
+                                    </a>
                                 @endcan
                                 @can('view', $f)
                                     <a href="{{ route('followupinstruction.show', $f) }}"
-                                        class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Show</a>
+                                        class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                        Show
+                                    </a>
                                 @endcan
                                 @can('update', $f)
                                     <a href="{{ route('followupinstruction.edit', $f) }}"
-                                        class="px-3 py-1 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">Edit</a>
+                                        class="px-3 py-1 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">
+                                        Edit
+                                    </a>
                                 @endcan
                                 @can('delete', $f)
                                     <form action="{{ route('followupinstruction.destroy', $f) }}" method="POST"

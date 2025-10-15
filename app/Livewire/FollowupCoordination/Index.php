@@ -89,26 +89,28 @@ class Index extends Component
 
         if ($this->switch === 'followupCoordinationMode' && $this->selectedCoordinationId) {
             $followupCoordinations = FollowupCoordination::with(['forwards', 'sender', 'receiver', 'coordination'])
-                ->where('coordination_id', $this->selectedCoordinationId)
-                ->when(
-                    $this->search,
-                    fn($q) =>
-                    $q->where('description', 'like', "%{$this->search}%")
-                )
-                ->when($this->messageType === 'sent', fn($q) => $q->where('sender_id', $userId))
+                ->where('coordination_id', $this->selectedCoordinationId) // hanya coordination yang dipilih
+                ->when($this->search, function ($q) {
+                    $q->where('description', 'like', "%{$this->search}%");
+                })
+                ->when($this->messageType === 'sent', function ($q) {
+                    $q->where('sender_id', Auth::id());
+                })
                 ->when($this->messageType === 'received', function ($q) {
-                    $q->where('receiver_id', Auth::id())
-                        ->orWhereHas('forwards', function ($q2) {
-                            $q2->where('forwarded_to', Auth::id()); // sesuaikan kolom di relation forwards
-                        });
+                    $q->where(function ($sub) {
+                        $sub->where('receiver_id', Auth::id())
+                            ->orWhereHas('forwards', function ($q2) {
+                                $q2->where('forwarded_to', Auth::id());
+                            });
+                    });
                 })
                 ->orderByDesc('created_at')
                 ->paginate(10);
 
-            return view('livewire.followup-coordination.index', compact('followupCoordinations'));
-        }
 
-        // default return
-        return view('livewire.followup-coordination.index');
+            $coordinationEndTime = Coordination::where('id', $this->selectedCoordinationId)->value('end_time');
+
+            return view('livewire.followup-coordination.index', compact('followupCoordinations', 'coordinationEndTime'));
+        }
     }
 }
