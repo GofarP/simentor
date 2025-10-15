@@ -7,7 +7,6 @@ use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Models\FollowupInstruction;
 use Illuminate\Support\Facades\Auth;
-use App\Models\FollowupInstructionScore;
 
 class Index extends Component
 {
