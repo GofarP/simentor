@@ -34,11 +34,7 @@
                 </div>
 
                 <div class="flex items-center justify-between">
-                    @if (Route::has('password.request'))
-                        <a class="text-sm text-violet-600 hover:text-violet-700" href="{{ route('password.request') }}">
-                            {{ __('Forgot Password?') }}
-                        </a>
-                    @endif
+                  
 
                     <x-button class="!bg-violet-600 !hover:bg-violet-700 !text-white w-full sm:w-auto">
                         {{ __('Sign in') }}
