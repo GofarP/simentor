@@ -1,12 +1,10 @@
 <x-app-layout>
     <div class="px-4 sm:px-6 lg:px-8 py-12 w-full mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
-
-        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 w-full">
+        <div x-data="{ loading: false }" class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 w-full">
             <h2 class="text-2xl font-bold text-violet-600 mb-6">Edit Koordinasi</h2>
 
             <form method="POST" action="{{ route('coordination.update', ['coordination' => $coordination->id]) }}"
-                enctype="multipart/form-data">
-
+                enctype="multipart/form-data" x-on:submit="loading = true; $refs.submitBtn.disabled = true;">
                 @csrf
                 @method('PUT')
 
@@ -72,7 +70,7 @@
                         End Time
                     </label>
                     <input type="date" name="end_time" id="end_time"
-                        value="{{ old('end_time', $coordination->batas_waktu ? \Carbon\Carbon::parse($coordination->end_tine)->format('Y-m-d') : '') }}"
+                        value="{{ old('end_time', $coordination->end_time ? \Carbon\Carbon::parse($coordination->end_tine)->format('Y-m-d') : '') }}"
                         class="form-input w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
                     @error('end_time')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
@@ -87,10 +85,10 @@
                     <input type="file" name="attachment" id="attachment"
                         class="form-input w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200">
 
-                    @if ($instruction->attachment)
+                    @if ($coordination->attachment)
                         <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             File lama:
-                            <a href="{{ Storage::url($instruction->attachment) }}" target="_blank"
+                            <a href="{{ Storage::url($coordination->attachment) }}" target="_blank"
                                 class="text-violet-600 underline">
                                 Lihat Lampiran
                             </a>
@@ -106,8 +104,26 @@
                 <div class="mt-6 flex justify-end gap-3">
                     <a href="{{ route('coordination.index') }}"
                         class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">Batal</a>
-                    <button type="submit"
-                        class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition">Update</button>
+                    <button x-ref="submitBtn" type="submit"
+                        class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition">
+                        <template x-if="!loading">
+                            <span>Update</span>
+                        </template>
+
+                        <template x-if="loading">
+                            <div class="flex items-center gap-2">
+                                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l3 3-3 3v-4a8 8 0 01-8-8z">
+                                    </path>
+                                </svg>
+                                <span>Proses...</span>
+                            </div>
+                        </template>
+                    </button>
                 </div>
             </form>
         </div>

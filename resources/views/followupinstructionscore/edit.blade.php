@@ -1,10 +1,12 @@
 <x-app-layout>
-    <div class="px-4 sm:px-6 lg:px-8 py-12 w-full mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div x-data="{ loading: false }"
+        class="px-4 sm:px-6 lg:px-8 py-12 w-full mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
 
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 w-full">
             <h2 class="text-2xl font-bold text-violet-600 mb-6">Edit Penilaian</h2>
 
-            <form method="POST" action="{{ route('followupinstructionscore.update', $followupinstructionscore->id) }}">
+            <form method="POST" action="{{ route('followupinstructionscore.update', $followupinstructionscore->id) }}"
+                x-on:submit="loading = true; $refs.submitBtn.disabled = true;">
                 @csrf
                 @method('PUT')
 
@@ -15,8 +17,7 @@
                     <select name="followup_instruction_id" id="followup_instruction_id"
                         class="w-full pointer-events-none bg-white border rounded-md p-2">
                         @foreach ($followupInstructions as $followupInstruction)
-                            <option value="{{ $followupInstruction->instruction->id }}"
-                                {{ old('followup_instruction_id', $followupinstructionscore->followup_instruction_id) == $followupInstruction->instruction->id ? 'selected' : '' }}>
+                            <option value="{{ $followupInstruction->instruction->id }}" {{ old('followup_instruction_id', $followupinstructionscore->followup_instruction_id) == $followupInstruction->instruction->id ? 'selected' : '' }}>
                                 {{ $followupInstruction->instruction->title }}
                             </option>
                         @endforeach
@@ -30,10 +31,10 @@
                 <div class="mb-4">
                     <label for="score" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Nilai</label>
                     <select name="score" id="score" class="js-example-basic-single w-full">
-                        <option value="1"
-                            {{ old('score', $followupinstructionscore->score) == 1 ? 'selected' : '' }}>Baik</option>
-                        <option value="0"
-                            {{ old('score', $followupinstructionscore->score) == 0 ? 'selected' : '' }}>Buruk</option>
+                        <option value="1" {{ old('score', $followupinstructionscore->score) == 1 ? 'selected' : '' }}>Baik
+                        </option>
+                        <option value="0" {{ old('score', $followupinstructionscore->score) == 0 ? 'selected' : '' }}>
+                            Buruk</option>
                     </select>
                     @error('score')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
@@ -58,8 +59,26 @@
                 <div class="mt-6 flex justify-end gap-3">
                     <a href="{{ route('followupinstructionscore.index') }}"
                         class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">Batal</a>
-                    <button type="submit"
-                        class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition">Update</button>
+                    <button x-ref="submitBtn" type="submit"
+                        class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition flex items-center justify-center min-w-[120px]">
+                        <template x-if="!loading">
+                            <span>Update</span>
+                        </template>
+
+                        <template x-if="loading">
+                            <div class="flex items-center gap-2">
+                                <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                                    fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l3 3-3 3v-4a8 8 0 01-8-8z">
+                                    </path>
+                                </svg>
+                                <span>Proses...</span>
+                            </div>
+                        </template>
+                    </button>
                 </div>
             </form>
         </div>
@@ -76,7 +95,7 @@
         <script src="https://unpkg.com/trix@2.1.0/dist/trix.umd.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script>
-            $(function() {
+            $(function () {
                 $('.js-example-basic-single').select2({
                     width: '100%'
                 });
