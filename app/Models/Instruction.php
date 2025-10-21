@@ -79,6 +79,6 @@ class Instruction extends Model
 
     public function scores()
     {
-        return $this->hasMany(InstructionScore::class, 'instruction_id');
+        return $this->hasMany(FollowupInstructionScore::class, 'instruction_id');
     }
 }
