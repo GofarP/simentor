@@ -104,7 +104,7 @@
                         </button>
                     @else
                         <button wire:click="goToCreate" class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                            Tambah Followup
+                            Tambah Aksi
                         </button>
                     @endif
                 @endif
