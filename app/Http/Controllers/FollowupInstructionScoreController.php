@@ -24,6 +24,12 @@ class FollowupInstructionScoreController extends Controller
     ) {
         $this->followupInstructionService = $followupInstructionService;
         $this->followupInstructionScoreService = $followupInstructionScoreService;
+
+        $this->middleware('permission:view.followupinstructionscore')->only('index');
+        $this->middleware('permission:create.followupinstructionscore')->only(['create', 'store']);
+        $this->middleware('permission:show.followupinstructionscore')->only('show');
+        $this->middleware('permission:edit.followupinstructionscore')->only(['edit', 'update']);
+        $this->middleware('permission:delete.followupinstructionscore')->only('destroy');
     }
 
     /**
@@ -70,7 +76,7 @@ class FollowupInstructionScoreController extends Controller
     public function edit(FollowupInstructionScore $followupinstructionscore)
     {
         $followupInstructions = $this->followupInstructionService->getAll(null, MessageType::All, 10, true);
-        return view('followupinstructionscore.edit', compact('followupinstructionscore','followupInstructions'));
+        return view('followupinstructionscore.edit', compact('followupinstructionscore', 'followupInstructions'));
     }
 
     /**

@@ -16,10 +16,10 @@ class PermissionController extends Controller
     {
         $this->permissionService = $permissionService;
 
-        // $this->middleware('permission:view.permission')->only('index');
-        // $this->middleware('permission:create.permission')->only(['create', 'store']);
-        // $this->middleware('permission:edit.permission')->only(['edit', 'update']);
-        // $this->middleware('permission:delete.permission')->only('destroy');
+        $this->middleware('permission:view.permission')->only('index');
+        $this->middleware('permission:create.permission')->only(['create', 'store']);
+        $this->middleware('permission:edit.permission')->only(['edit', 'update']);
+        $this->middleware('permission:delete.permission')->only('destroy');
     }
 
     public function index()
@@ -35,8 +35,9 @@ class PermissionController extends Controller
 
     public function store(PermissionRequest $request)
     {
-
-        $this->permissionService->storePermission($request->all());
+        $data['guard']="web";
+        $data['name']=$request->input('name');
+        $this->permissionService->storePermission($data);
         return redirect()->route('permission.index')->with('success', 'Sukses Menambah Permission.');
     }
 

@@ -21,18 +21,6 @@
                 @enderror
             </div>
 
-            <div class="mb-4">
-                <label for="guard_name" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Guard Name</label>
-                <input type="text" name="guard_name" id="guard_name"
-                       value="{{ old('guard_name', $permission->guard_name) }}"
-                       class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
-                              focus:ring-2 focus:ring-violet-500 focus:border-violet-500
-                              dark:bg-gray-800 dark:text-gray-200"
-                       required>
-                @error('guard_name')
-                    <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
-                @enderror
-            </div>
 
             <div class="mt-6 flex justify-end gap-3">
                 <a href="{{ route('permission.index') }}" class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">Batal</a>

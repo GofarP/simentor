@@ -39,10 +39,10 @@ class RoleUserPermissionSeeder extends Seeder
             ['name' => 'delete.coordination', 'guard_name' => 'web'],
             ['name' => 'fetch.coordination', 'guard_name' => 'web'],
 
-            ['name' => 'view.instructionscore', 'guard_name' => 'web'],
-            ['name' => 'create.instructionscore', 'guard_name' => 'web'],
-            ['name' => 'edit.instructionscore', 'guard_name' => 'web'],
-            ['name' => 'delete.instructionscore', 'guard_name' => 'web'],
+            ['name' => 'view.followupinstructionscore', 'guard_name' => 'web'],
+            ['name' => 'create.followupinstructionscore', 'guard_name' => 'web'],
+            ['name' => 'edit.followupinstructionscore', 'guard_name' => 'web'],
+            ['name' => 'delete.followupinstructionscore', 'guard_name' => 'web'],
 
             ['name' => 'view.followupinstruction', 'guard_name' => 'web'],
             ['name' => 'create.followupinstruction', 'guard_name' => 'web'],
@@ -79,6 +79,8 @@ class RoleUserPermissionSeeder extends Seeder
             ['name' => 'create.permission', 'guard_name' => 'web'],
             ['name' => 'edit.permission', 'guard_name' => 'web'],
             ['name' => 'delete.permission', 'guard_name' => 'web'],
+
+
         ];
 
         foreach ($permissions as $perm) {
@@ -91,21 +93,8 @@ class RoleUserPermissionSeeder extends Seeder
 
 
         // === ROLE ADMIN (KASEK) ===
-        $kasek->syncPermissions([
-            'view.coordination',
-            'show.coordination',
-            'create.instruction',
-            'submit.forwardinstruction',
-            'view.instructionscore',
-            'create.instructionscore',
-            'view.user',
-            'show.user',
-            'create.user',
-            'edit.user',
-            'delete.user',
-            
+        $kasek->syncPermissions(array_column($permissions, 'name'));
 
-        ]);
 
         // === ROLE KASUBBAG ===
         $kasubbag->syncPermissions([
@@ -117,8 +106,8 @@ class RoleUserPermissionSeeder extends Seeder
             'submit.forwardfollowupInstruction',
             'create.followupcoordination',
             'submit.forwardfollowupcoordination',
-            'view.instructionscore',
-            'create.instructionscore',
+            'view.followupinstructionscore',
+            'create.followupinstructionscore',
         ]);
 
         // === ROLE STAF ===
@@ -133,19 +122,19 @@ class RoleUserPermissionSeeder extends Seeder
 
         $kasekUser = User::firstOrCreate(
             ['email' => 'kasek@example.com'],
-            ['name' => 'Kepala Seksi','telp'=>"0819291891829891" ,'password' => Hash::make('password')]
+            ['name' => 'Kepala Seksi', 'telp' => "0819291891829891", 'password' => Hash::make('password')]
         );
         $kasekUser->assignRole($kasek);
 
         $kasubbagUser = User::firstOrCreate(
             ['email' => 'kasubbag@example.com'],
-            ['name' => 'Kasubbag User', 'telp'=>"08019019912090" ,'password' => Hash::make('password')]
+            ['name' => 'Kasubbag User', 'telp' => "08019019912090", 'password' => Hash::make('password')]
         );
         $kasubbagUser->assignRole($kasubbag);
 
         $staffUser = User::firstOrCreate(
             ['email' => 'staff@example.com'],
-            ['name' => 'Staff User','telp'=>"2119019209021" ,'password' => Hash::make('password')]
+            ['name' => 'Staff User', 'telp' => "2119019209021", 'password' => Hash::make('password')]
         );
         $staffUser->assignRole($staff);
 
