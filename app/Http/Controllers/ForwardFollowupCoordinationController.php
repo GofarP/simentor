@@ -19,8 +19,8 @@ class ForwardFollowupCoordinationController extends Controller
         $this->forwardFollowupCoordinationService = $forwardFollowupCoordinationService;
         $this->userService = $userService;
 
-        // $this->middleware('permission:showform.forwardfollowupcoordination')->only('showform');
-        // $this->middleware('permission:submit.forwardfollowupcoordination')->only('submit');
+        $this->middleware('permission:showform.forwardfollowupcoordination')->only('showform');
+        $this->middleware('permission:submit.forwardfollowupcoordination')->only('submit');
     }
 
     public function showForm(FollowupCoordination $followupcoordination)
