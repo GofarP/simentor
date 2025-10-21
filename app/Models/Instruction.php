@@ -24,31 +24,40 @@ class Instruction extends Model
     protected static function booted()
     {
         static::deleting(function ($instruction) {
+            // Hapus attachment utama Instruction
             if ($instruction->attachment) {
                 Storage::delete($instruction->attachment);
             }
 
+            // Hapus semua data forwards yang terkait langsung dengan Instruction
             $instruction->forwards()->delete();
 
+            // Loop semua followup terkait Instruction
             $instruction->followups->each(function ($followup) {
+                // Hapus file lampiran followup
                 if ($followup->attachment) {
                     Storage::delete($followup->attachment);
                 }
 
+                // Hapus file proof followup
                 if ($followup->proof) {
                     Storage::delete($followup->proof);
                 }
 
+                // Hapus semua forwards di followup
                 $followup->forwards()->delete();
 
+                // Jika followup memiliki relasi scores, hapus juga (aman)
+                if (method_exists($followup, 'scores')) {
+                    $followup->scores()->delete();
+                }
+
+                // Terakhir hapus followup itu sendiri
                 $followup->delete();
             });
-
-            if (method_exists($instruction, 'scores')) {
-                $instruction->scores()->delete();
-            }
         });
     }
+
 
     public function sender()
     {
