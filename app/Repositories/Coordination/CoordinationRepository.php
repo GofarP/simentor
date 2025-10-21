@@ -70,6 +70,10 @@ class CoordinationRepository implements CoordinationRepositoryInterface
             }
             $data['attachment'] = request()->file('attachment')->store('attachment', 'public');
         }
+
+        $coordination->update($data);
+
+        return $coordination;
     }
 
     public function deleteCoordination(Coordination $coordination): bool
