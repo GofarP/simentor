@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use App\Models\User;
-use App\Models\InstructionScore;
+use App\Models\FollowupInstructionScore;
 use App\Models\ForwardInstruction;
 use App\Models\FollowupInstruction;
 use Illuminate\Database\Eloquent\Model;
