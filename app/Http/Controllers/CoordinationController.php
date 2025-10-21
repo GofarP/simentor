@@ -80,7 +80,7 @@ class CoordinationController extends Controller
     {
         $this->authorize('update', $coordination);
         $users = $this->userService->getReceiver();
-        return view('coordination.edit', compact('coordination'));
+        return view('coordination.edit', compact('coordination','users'));
     }
 
     /**
