@@ -82,6 +82,8 @@ class CoordinationController extends Controller
     public function edit(Coordination $coordination)
     {
         $this->authorize('update', $coordination);
+        $coordination->load('receivers');
+
         $users = $this->userService->getReceiver();
         return view('coordination.edit', compact('coordination', 'users'));
     }

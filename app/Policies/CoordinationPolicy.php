@@ -44,7 +44,6 @@ class CoordinationPolicy
 
 
 
-
     /**
      * Determine whether the user can update the model.
      */

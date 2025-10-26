@@ -3,7 +3,8 @@
         <div x-data="{ loading: false }" class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 w-full">
             <h2 class="text-2xl font-bold text-violet-600 mb-6">Edit Koordinasi</h2>
 
-            <form method="POST" action="{{ route('coordination.update', ['coordination' => $coordination->id, 'messageType' => request('messageType')]) }}"
+            <form method="POST"
+                action="{{ route('coordination.update', ['coordination' => $coordination->id, 'messageType' => request('messageType')]) }}"
                 enctype="multipart/form-data" x-on:submit="loading = true; $refs.submitBtn.disabled = true;">
                 @csrf
                 @method('PUT')
@@ -13,10 +14,11 @@
                     <label for="receiver_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
                         Penerima
                     </label>
-                    <select name="receiver_id" id="receiver_id" class="form-control js-example-basic-single w-full">
-                        <option value="">Pilih Penerima</option>
+                    <select name="receiver_id[]" id="receiver_id" class="form-control js-example-basic-single w-full"
+                        multiple>
                         @foreach ($users as $user)
-                            <option value="{{ $user->id }}" {{ old('receiver_id', $coordination->receiver_id) == $user->id ? 'selected' : '' }}>
+                            <option value="{{ $user->id }}"
+                                {{ in_array($user->id, old('receiver_id', $coordination->receivers->pluck('id')->toArray() ?? [])) ? 'selected' : '' }}>
                                 {{ $user->name }}
                             </option>
                         @endforeach
@@ -29,9 +31,11 @@
                 {{-- Judul --}}
                 <div class="mb-4">
                     <label for="title" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Title</label>
-                    <input type="text" name="title" id="title" value="{{ old('title', $coordination->title) }}" class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
+                    <input type="text" name="title" id="title" value="{{ old('title', $coordination->title) }}"
+                        class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
                                focus:ring-2 focus:ring-violet-500 focus:border-violet-500
-                               dark:bg-gray-800 dark:text-gray-200" required placeholder="Masukkan judul">
+                               dark:bg-gray-800 dark:text-gray-200"
+                        required placeholder="Masukkan judul">
                     @error('judul')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
@@ -114,8 +118,8 @@
                             <div class="flex items-center gap-2">
                                 <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
                                     fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                        stroke-width="4"></circle>
+                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor"
                                         d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l3 3-3 3v-4a8 8 0 01-8-8z">
                                     </path>
@@ -210,18 +214,18 @@
         <script src="https://unpkg.com/trix@2.1.0/dist/trix.umd.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script>
-            $(function () {
+            $(function() {
                 $('.js-example-basic-single').select2({
                     width: '100%'
                 });
             });
         </script>
         <script>
-            document.addEventListener("trix-initialize", function (event) {
+            document.addEventListener("trix-initialize", function(event) {
                 const toolbar = event.target.toolbarElement;
                 if (toolbar) {
                     toolbar.querySelectorAll(
-                        "button[data-trix-attribute='bullet'], button[data-trix-attribute='number']")
+                            "button[data-trix-attribute='bullet'], button[data-trix-attribute='number']")
                         .forEach(btn => btn.removeAttribute("disabled"));
                 }
                 Trix.config.blockAttributes.heading1 = {

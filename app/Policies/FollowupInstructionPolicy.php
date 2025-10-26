@@ -70,7 +70,6 @@ class FollowupInstructionPolicy
         return (
             ( $user->id == $followupInstruction->sender_id ||
                $user->hasRole('kasubbag'))
-
         );
     }
 }

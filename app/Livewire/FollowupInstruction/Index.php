@@ -67,6 +67,12 @@ class Index extends Component
 
                 'followups as total_followups_count',
             ])
+                ->when($this->search, function ($query, $search) {
+                    $query->where(function ($q) use ($search) {
+                        $q->where('title', 'like', "%{$search}%")
+                            ->orWhere('description', 'like', "%{$search}%");
+                    });
+                })
                 ->where(function ($query) use ($userId) {
                     $query
                         ->whereHas('instructionUsers', function ($q) use ($userId) {
