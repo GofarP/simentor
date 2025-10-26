@@ -4,6 +4,7 @@ namespace App\Repositories\Coordination;
 
 use App\Enums\MessageType;
 use App\Models\Coordination;
+use App\Models\CoordinationUser;
 use App\Models\ForwardCoordination;
 use App\Repositories\Coordination\CoordinationRepositoryInterface;
 use Illuminate\Support\Facades\Auth;
@@ -11,54 +12,107 @@ use Illuminate\Support\Facades\Storage;
 
 class CoordinationRepository implements CoordinationRepositoryInterface
 {
-    public function getAll(?string $search = null, int $perPage = 10, MessageType $messageType, bool $eager = false)
+    public function getAll(?string $search = '', int $perPage = 10, MessageType $messageType, bool $eager = false)
     {
         $userId = Auth::id();
 
-        $query = Coordination::with(['sender', 'receiver', 'forwards.forwarder', 'forwards.receiver'])
-            ->where(function ($q) use ($userId, $messageType) {
+        $query = Coordination::query();
+
+        // Filter sesuai MessageType
+        $query->where(function ($q) use ($userId, $messageType) {
+            $q->whereHas('coordinationUsers', function ($q2) use ($userId, $messageType) {
                 switch ($messageType) {
                     case MessageType::Sent:
-                        $q->where('sender_id', $userId);
+                        $q2->where('sender_id', $userId);
                         break;
 
                     case MessageType::Received:
-                        $q->where('receiver_id', $userId)
-                            ->orWhereHas('forwards', fn($sub) => $sub->where('forwarded_to', $userId));
+                        $q2->where('receiver_id', $userId);
                         break;
 
                     case MessageType::All:
                     default:
-                        $q->where('sender_id', $userId)
-                            ->orWhere('receiver_id', $userId)
-                            ->orWhereHas('forwards', fn($sub) => $sub->where('forwarded_to', $userId));
+                        $q2->where(function ($q3) use ($userId) {
+                            $q3->where('sender_id', $userId)
+                                ->orWhere('receiver_id', $userId);
+                        });
                         break;
                 }
             });
 
+            // Tambahkan filter forwarded
+            $q->orWhereHas('forwards', function ($qf) use ($userId, $messageType) {
+                if ($messageType === MessageType::Sent) {
+                    $qf->where('forwarded_by', $userId);
+                } elseif ($messageType === MessageType::Received) {
+                    $qf->where('forwarded_to', $userId);
+                } else {
+                    $qf->where('forwarded_by', $userId)
+                        ->orWhere('forwarded_to', $userId);
+                }
+            });
+        });
+
+        // Eager load relasi jika diminta
+        if ($eager) {
+            $query->with([
+                'receivers',
+                'senders',
+                'forwards.forwarder',
+                'forwards.receiver',
+            ]);
+        }
+
+        // Filter search
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->whereHas('sender', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
-                    ->orWhereHas('receiver', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
-                    ->orWhere('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhereHas('senders', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('receivers', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('forwards.forwarder', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('forwards.receiver', fn($sub) => $sub->where('name', 'like', "%{$search}%"));
             });
         }
 
-        $query->orderByDesc('created_at');
-
-        return $eager ? $query->get() : $query->paginate($perPage)->onEachSide(1);
+        return $query->orderByDesc('created_at')
+            ->paginate($perPage)
+            ->onEachSide(1);
     }
 
     public function storeCoordination(array $data)
     {
+        // Simpan lampiran jika ada
         if (request()->hasFile('attachment')) {
             $data['attachment'] = request()->file('attachment')->store('attachment', 'public');
         }
 
-        $data['sender_id'] = Auth::user()->id;
+        // Ambil list penerima dari form
+        $receiverIds = $data['receiver_id'] ?? [];
+        unset($data['receiver_id']); // hapus dari data utama karena tidak ada di tabel utama
 
-        return Coordination::create($data);
+        // Simpan instruksi utama
+        $coordination = Coordination::create([
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'start_time' => $data['start_time'],
+            'end_time' => $data['end_time'],
+            'attachment' => $data['attachment'] ?? null,
+        ]);
+
+        $senderId = Auth::id();
+
+        // Simpan ke pivot via Eloquent
+        $pivotData = [];
+        foreach ($receiverIds as $receiverId) {
+            $pivotData[$receiverId] = ['sender_id' => $senderId];
+        }
+
+        if (!empty($pivotData)) {
+            $coordination->receivers()->sync($pivotData);
+        }
+
+        return $coordination;
     }
 
 
@@ -71,7 +125,26 @@ class CoordinationRepository implements CoordinationRepositoryInterface
             $data['attachment'] = request()->file('attachment')->store('attachment', 'public');
         }
 
-        $coordination->update($data);
+        // Update data utama
+        $coordination->update([
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'start_time' => $data['start_time'],
+            'end_time' => $data['end_time'],
+            'attachment' => $data['attachment'] ?? $coordination->attachment,
+        ]);
+
+        // Update pivot (receiver)
+        $receiverIds = $data['receiver_id'] ?? [];
+        $senderId = Auth::id();
+
+        // Detach existing receivers for the current sender
+        $coordination->receivers()->wherePivot('sender_id', $senderId)->detach();
+
+        // Attach new receivers for the current sender
+        foreach ($receiverIds as $receiverId) { // Assuming $receiverIds is an array of user IDs
+            $coordination->receivers()->attach($receiverId, ['sender_id' => $senderId]);
+        }
 
         return $coordination;
     }
@@ -87,6 +160,6 @@ class CoordinationRepository implements CoordinationRepositoryInterface
 
     public function getSenderIdByCoordination(int $id): int
     {
-        return Coordination::where('id', $id)->value('sender_id');
+        return CoordinationUser::where('coordination_id', $id)->value('sender_id');
     }
 }

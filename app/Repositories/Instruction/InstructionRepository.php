@@ -4,6 +4,8 @@ namespace App\Repositories\Instruction;
 
 use App\Enums\MessageType;
 use App\Models\Instruction;
+use App\Models\InstructionUser;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,63 +16,109 @@ class InstructionRepository implements InstructionRepositoryInterface
     {
         $userId = Auth::id();
 
-        $query = Instruction::with([
-            'sender',
-            'receiver',
-            'forwardedUsers' => function ($q) {
-                $q->withPivot('forwarded_by')->withTimestamps();
-            },
-            'forwards.forwarder',
-            'forwards.receiver'
-        ])->where(function ($q) use ($userId, $messageType) {
-            switch ($messageType) {
-                case MessageType::Sent:
-                    // instruksi yang dikirim user
-                    $q->where('sender_id', $userId);
-                    break;
+        $query = Instruction::query();
 
-                case MessageType::Received:
-                    // instruksi yang diterima user langsung / lewat forward
-                    $q->where('receiver_id', $userId)
-                        ->orWhereHas('forwardedUsers', fn($sub) => $sub->where('users.id', $userId));
-                    break;
+        // Filter sesuai MessageType
+        $query->where(function ($q) use ($userId, $messageType) {
+            $q->whereHas('instructionUsers', function ($q2) use ($userId, $messageType) {
+                switch ($messageType) {
+                    case MessageType::Sent:
+                        $q2->where('sender_id', $userId);
+                        break;
 
-                case MessageType::All:
-                default:
-                    // semua instruksi terkait user (sebagai sender, receiver, atau penerima forward)
-                    $q->where('sender_id', $userId)
-                        ->orWhere('receiver_id', $userId)
-                        ->orWhereHas('forwardedUsers', fn($sub) => $sub->where('users.id', $userId));
-                    break;
-            }
+                    case MessageType::Received:
+                        $q2->where('receiver_id', $userId);
+                        break;
+
+                    case MessageType::All:
+                    default:
+                        $q2->where(function ($q3) use ($userId) {
+                            $q3->where('sender_id', $userId)
+                                ->orWhere('receiver_id', $userId);
+                        });
+                        break;
+                }
+            });
+
+            // Tambahkan filter forwarded
+            $q->orWhereHas('forwards', function ($qf) use ($userId, $messageType) {
+                if ($messageType === MessageType::Sent) {
+                    $qf->where('forwarded_by', $userId);
+                } elseif ($messageType === MessageType::Received) {
+                    $qf->where('forwarded_to', $userId);
+                } else {
+                    $qf->where('forwarded_by', $userId)
+                        ->orWhere('forwarded_to', $userId);
+                }
+            });
         });
 
-        // filter search
+        // Eager load relasi jika diminta
+        if ($eager) {
+            $query->with([
+                'receivers',
+                'senders',
+                'forwards.forwarder',
+                'forwards.receiver',
+            ]);
+        }
+
+        // Filter search
         if (!empty($search)) {
             $query->where(function ($q) use ($search) {
-                $q->whereHas('sender', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
-                    ->orWhereHas('receiver', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
-                    ->orWhere('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+                $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
+                    ->orWhereHas('senders', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('receivers', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('forwards.forwarder', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
+                    ->orWhereHas('forwards.receiver', fn($sub) => $sub->where('name', 'like', "%{$search}%"));
             });
         }
 
-        $query->orderByDesc('created_at');
-
-        return $eager
-            ? $query->get()
-            : $query->paginate($perPage)->onEachSide(1);
+        return $query->orderByDesc('created_at')
+            ->paginate($perPage)
+            ->onEachSide(1);
     }
+
 
 
     public function storeInstruction(array $data)
     {
+        // Simpan lampiran jika ada
         if (request()->hasFile('attachment')) {
             $data['attachment'] = request()->file('attachment')->store('attachment', 'public');
         }
-        $data['sender_id'] = Auth::user()->id;
-        return Instruction::create($data);
+
+        // Ambil list penerima dari form
+        $receiverIds = $data['receiver_id'] ?? [];
+        unset($data['receiver_id']); // hapus dari data utama karena tidak ada di tabel utama
+
+        // Simpan instruksi utama
+        $instruction = Instruction::create([
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'start_time' => $data['start_time'],
+            'end_time' => $data['end_time'],
+            'attachment' => $data['attachment'] ?? null,
+        ]);
+
+        $senderId = Auth::id();
+
+        // Simpan ke pivot via Eloquent
+        $pivotData = [];
+        foreach ($receiverIds as $receiverId) {
+            $pivotData[$receiverId] = ['sender_id' => $senderId];
+        }
+
+        if (!empty($pivotData)) {
+            $instruction->receivers()->sync($pivotData);
+        }
+
+        return $instruction;
     }
+
+
+
 
     public function editInstruction(Instruction $instruction, array $data)
     {
@@ -81,7 +129,26 @@ class InstructionRepository implements InstructionRepositoryInterface
             $data['attachment'] = request()->file('attachment')->store('attachment', 'public');
         }
 
-        $instruction->update($data);
+        // Update data utama
+        $instruction->update([
+            'title' => $data['title'],
+            'description' => $data['description'],
+            'start_time' => $data['start_time'],
+            'end_time' => $data['end_time'],
+            'attachment' => $data['attachment'] ?? $instruction->attachment,
+        ]);
+
+        // Update pivot (receiver)
+        $receiverIds = $data['receiver_id'] ?? [];
+        $senderId = Auth::id();
+
+        // Detach existing receivers for the current sender
+        $instruction->receivers()->wherePivot('sender_id', $senderId)->detach();
+
+        // Attach new receivers for the current sender
+        foreach ($receiverIds as $receiverId) { // Assuming $receiverIds is an array of user IDs
+            $instruction->receivers()->attach($receiverId, ['sender_id' => $senderId]);
+        }
 
         return $instruction;
     }
@@ -98,7 +165,7 @@ class InstructionRepository implements InstructionRepositoryInterface
 
     public function getSenderIdByInstruction(int $instructionId): ?int
     {
-        return Instruction::where('id',$instructionId)->value('sender_id');
+        return InstructionUser::where('instruction_id', $instructionId)
+            ->value('sender_id');
     }
-
 }

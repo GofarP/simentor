@@ -21,7 +21,6 @@ class ForwardFollowupInstructionRepository implements ForwardFollowupInstruction
             })->toArray()
         );
 
-
         return $followupInstruction->forwardedUsers;
     }
 

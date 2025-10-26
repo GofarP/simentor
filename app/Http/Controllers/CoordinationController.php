@@ -60,8 +60,11 @@ class CoordinationController extends Controller
      */
     public function store(CoordinationRequest $request)
     {
+        $messageType = $request->query('messageType', 'received');
+
         $this->coordinationService->storeCoordination($request->all());
-        return redirect()->route('coordination.index')->with('success', 'Sukses menambah koordinasi');
+        return redirect()->route('coordination.index', ['messageType' => $messageType])
+            ->with('success', 'Sukses menambah koordinasi');
     }
 
     /**
@@ -80,7 +83,7 @@ class CoordinationController extends Controller
     {
         $this->authorize('update', $coordination);
         $users = $this->userService->getReceiver();
-        return view('coordination.edit', compact('coordination','users'));
+        return view('coordination.edit', compact('coordination', 'users'));
     }
 
     /**
@@ -89,8 +92,9 @@ class CoordinationController extends Controller
     public function update(CoordinationRequest $request, Coordination $coordination)
     {
         $this->authorize('update', $coordination);
+        $messageType = $request->query('messageType', 'received');
         $this->coordinationService->editCoordination($coordination, $request->all());
-        return redirect()->route('coordination.index')->with('success', 'Sukses Mengubah Koordinasi');
+        return redirect()->route('coordination.index', ['messageType' => $messageType])->with('success', 'Sukses Mengubah Koordinasi');
     }
 
     /**

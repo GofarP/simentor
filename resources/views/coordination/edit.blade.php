@@ -3,7 +3,7 @@
         <div x-data="{ loading: false }" class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 w-full">
             <h2 class="text-2xl font-bold text-violet-600 mb-6">Edit Koordinasi</h2>
 
-            <form method="POST" action="{{ route('coordination.update', ['coordination' => $coordination->id]) }}"
+            <form method="POST" action="{{ route('coordination.update', ['coordination' => $coordination->id, 'messageType' => request('messageType')]) }}"
                 enctype="multipart/form-data" x-on:submit="loading = true; $refs.submitBtn.disabled = true;">
                 @csrf
                 @method('PUT')

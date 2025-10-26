@@ -50,63 +50,63 @@ class Index extends Component
 
     public function render()
     {
+        $userId = Auth::id();
+
+        // === MODE INSTRUCTION ===
         if ($this->switch === 'instructionMode') {
-            $userId = Auth::id();
-
             $instructions = Instruction::withCount([
-                // Hitung total semua follow-up (untuk pembuat instruksi)
                 'followups as total_followups_count',
-
-                // Hitung follow-up yang dibuat oleh user yang sedang login
                 'followups as user_followups_count' => function ($query) use ($userId) {
                     $query->where('sender_id', $userId);
                 },
             ])
                 ->where(function ($query) use ($userId) {
                     $query
-                        ->where('sender_id', $userId) // pembuat instruksi
-                        ->orWhere('receiver_id', $userId) // penerima langsung
+                        // Cek dari tabel pivot instruction_user
+                        ->whereHas('instructionUsers', function ($q) use ($userId) {
+                            $q->where('sender_id', $userId)
+                                ->orWhere('receiver_id', $userId);
+                        })
+                        // Cek follow-up yang ditujukan ke user ini
                         ->orWhereHas('followups', function ($q) use ($userId) {
-                            $q->where('receiver_id', $userId); // penerima follow-up
+                            $q->where('receiver_id', $userId);
                         })
+                        // Cek follow-up yang diteruskan ke user ini
                         ->orWhereHas('followups.forwards', function ($q) use ($userId) {
-                            $q->where('forwarded_to', $userId); // penerima forward follow-up
+                            $q->where('forwarded_to', $userId);
                         })
+                        // Cek instruksi yang diteruskan ke user ini
                         ->orWhereHas('forwards', function ($q) use ($userId) {
-                            $q->where('forwarded_to', $userId); // penerima forward instruction
+                            $q->where('forwarded_to', $userId);
                         });
                 })
-                ->when(
-                    $this->search,
-                    fn($q) =>
-                    $q->where(function ($sub) {
+                ->when($this->search, function ($query) {
+                    $query->where(function ($sub) {
                         $sub->where('title', 'like', "%{$this->search}%")
                             ->orWhere('description', 'like', "%{$this->search}%");
-                    })
-                )
+                    });
+                })
                 ->orderByDesc('created_at')
                 ->paginate(10);
 
             return view('livewire.followup-instruction.index', compact('instructions'));
         }
 
+        // === MODE FOLLOW-UP ===
         if ($this->switch === 'followupInstructionMode' && $this->selectedInstructionId) {
-            $userId = Auth::id();
             $followupInstructions = FollowupInstruction::with(['forwards', 'sender', 'receiver', 'instruction'])
-                ->where('instruction_id', $this->selectedInstructionId) // filter hanya untuk instruction yang dipilih
+                ->where('instruction_id', $this->selectedInstructionId)
                 ->when($this->search, function ($query) {
-                    $query->where(function ($q) {
-                        $q->where('description', 'like', '%' . $this->search . '%');
-                    });
+                    $query->where('description', 'like', '%' . $this->search . '%');
                 })
-                ->when($this->messageType === 'sent', function ($q) {
-                    $q->where('sender_id', Auth::id());
+                ->when($this->messageType === 'sent', function ($q) use ($userId) {
+                    $q->where('sender_id', $userId);
                 })
-                ->when($this->messageType === 'received', function ($q) {
-                    $q->where(function ($sub) {
-                        $sub->where('receiver_id', Auth::id())
-                            ->orWhereHas('forwards', function ($q2) {
-                                $q2->where('forwarded_to', Auth::id());
+                ->when($this->messageType === 'received', function ($q) use ($userId) {
+                    $q->where(function ($sub) use ($userId) {
+                        $sub->where('receiver_id', $userId)
+                            ->orWhereHas('forwards', function ($q2) use ($userId) {
+                                $q2->where('forwarded_to', $userId);
                             });
                     });
                 })

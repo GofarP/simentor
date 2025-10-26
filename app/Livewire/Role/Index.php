@@ -16,6 +16,9 @@ class Index extends Component
     /**
      * Dependency Injection lewat boot()
      */
+
+
+
     public function boot(RoleServiceInterface $roleService)
     {
         $this->roleService = $roleService;

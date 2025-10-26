@@ -5,6 +5,7 @@ namespace App\Livewire\Coordination;
 use Livewire\Component;
 use App\Enums\MessageType;
 use Livewire\WithPagination;
+use Livewire\Attributes\Url;
 use App\Services\Coordination\CoordinationServiceInterface;
 
 class Index extends Component
@@ -13,6 +14,7 @@ class Index extends Component
 
     public $search = "";
 
+    #[Url]
     public string $messageType = "received";
 
     protected CoordinationServiceInterface $coordinationService;
@@ -22,6 +24,11 @@ class Index extends Component
         $this->coordinationService = $coordinationService;
     }
 
+    public function mount()
+    {
+        $this->messageType = request('messageType', $this->messageType);
+    }
+
     public function updatingSearch()
     {
         $this->resetPage();
@@ -29,12 +36,18 @@ class Index extends Component
 
     public function render()
     {
-        $jenisPesanEnum = MessageType::from($this->messageType);
-        $coordinations = $this->coordinationService->getAllCoordination($this->search, 10, $jenisPesanEnum);
+        // Konversi ke enum
+        $messageTypeEnum = MessageType::tryFrom($this->messageType) ?? MessageType::Received;
+
+        $coordinations = $this->coordinationService->getAllCoordination(
+            $this->search,
+            10,
+            $messageTypeEnum, true
+        );
+
         return view('livewire.coordination.index', [
-            'coordinations' => $coordinations
+            'coordinations' => $coordinations,
+            'messageType' => $this->messageType,
         ]);
     }
-
-
 }

@@ -2,8 +2,9 @@
 
 namespace App\Policies;
 
-use App\Models\Instruction;
 use App\Models\User;
+use App\Models\Instruction;
+use App\Models\InstructionUser;
 use Illuminate\Auth\Access\Response;
 
 class InstructionPolicy
@@ -21,10 +22,18 @@ class InstructionPolicy
      */
     public function view(User $user, Instruction $instruction): bool
     {
-        return $user->id === $instruction->sender_id
-            || $user->id === $instruction->receiver_id
-            || $instruction->forwards()->where('forwarded_to', $user->id)->exists();
+        $isUserInInstruction = $instruction->instructionUsers()
+            ->where('sender_id', $user->id)
+            ->orWhere('receiver_id', $user->id)
+            ->exists();
+
+        $isUserForwarded = $instruction->forwards()
+            ->where('forwarded_to', $user->id)
+            ->exists();
+
+        return $isUserInInstruction || $isUserForwarded;
     }
+
     /**
      * Determine whether the user can create models.
      */
@@ -41,15 +50,16 @@ class InstructionPolicy
      */
     public function update(User $user, Instruction $instruction): bool
     {
-        return $user->id === $instruction->sender_id;
+        return $instruction->instructionUsers()->where('sender_id', $user->id)->exists();
     }
+
 
     /**
      * Determine whether the user can delete the model.
      */
     public function delete(User $user, Instruction $instruction): bool
     {
-        return $user->id === $instruction->sender_id;
+        return $instruction->instructionUsers()->where('sender_id', $user->id)->exists();
     }
 
     /**
@@ -68,8 +78,12 @@ class InstructionPolicy
         return false;
     }
 
-    public function forward(User $user, Instruction $instruction)
+    public function forward(User $user, Instruction $instruction): bool
     {
-        return  $user->id == $instruction->receiver_id && $user->hasRole('kasubbag');
+        $isReceiver = $instruction->instructionUsers()
+            ->where('receiver_id', $user->id)
+            ->exists();
+
+        return $isReceiver && $user->hasRole('kasubbag');
     }
 }

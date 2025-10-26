@@ -53,60 +53,65 @@ class Index extends Component
     {
         $userId = Auth::id();
 
+        // === MODE Coordination ===
         if ($this->switch === 'coordinationMode') {
-            $userId = Auth::id();
-
             $coordinations = Coordination::withCount([
-                // Total semua follow-up (untuk pembuat koordinasi)
                 'followups as total_followups_count',
-
-                // Follow-up yang dibuat oleh user yang sedang login
                 'followups as user_followups_count' => function ($query) use ($userId) {
                     $query->where('sender_id', $userId);
                 },
             ])
                 ->where(function ($query) use ($userId) {
                     $query
-                        ->where('sender_id', $userId) // pembuat koordinasi
-                        ->orWhere('receiver_id', $userId) // penerima langsung
-                        ->orWhereHas('followups', fn($q) => $q->where('receiver_id', $userId)) // penerima follow-up
-                        ->orWhereHas('followups.forwards', fn($q) => $q->where('forwarded_to', $userId)) // penerima forward follow-up
-                        ->orWhereHas('forwards', fn($q) => $q->where('forwarded_to', $userId)); // penerima forward koordinasi
+                        ->whereHas('coordinationUsers', function ($q) use ($userId) {
+                            $q->where('sender_id', $userId)
+                                ->orWhere('receiver_id', $userId);
+                        })
+                        // Cek follow-up yang ditujukan ke user ini
+                        ->orWhereHas('followups', function ($q) use ($userId) {
+                            $q->where('receiver_id', $userId);
+                        })
+                        // Cek follow-up yang diteruskan ke user ini
+                        ->orWhereHas('followups.forwards', function ($q) use ($userId) {
+                            $q->where('forwarded_to', $userId);
+                        })
+                        // Cek instruksi yang diteruskan ke user ini
+                        ->orWhereHas('forwards', function ($q) use ($userId) {
+                            $q->where('forwarded_to', $userId);
+                        });
                 })
-                ->when(
-                    $this->search,
-                    fn($q) =>
-                    $q->where(function ($sub) {
+                ->when($this->search, function ($query) {
+                    $query->where(function ($sub) {
                         $sub->where('title', 'like', "%{$this->search}%")
                             ->orWhere('description', 'like', "%{$this->search}%");
-                    })
-                )
+                    });
+                })
                 ->orderByDesc('created_at')
                 ->paginate(10);
 
             return view('livewire.followup-coordination.index', compact('coordinations'));
         }
 
+        // === MODE FOLLOW-UP ===
         if ($this->switch === 'followupCoordinationMode' && $this->selectedCoordinationId) {
             $followupCoordinations = FollowupCoordination::with(['forwards', 'sender', 'receiver', 'coordination'])
-                ->where('coordination_id', $this->selectedCoordinationId) // hanya coordination yang dipilih
-                ->when($this->search, function ($q) {
-                    $q->where('description', 'like', "%{$this->search}%");
+                ->where('coordination_id', $this->selectedCoordinationId)
+                ->when($this->search, function ($query) {
+                    $query->where('description', 'like', '%' . $this->search . '%');
                 })
-                ->when($this->messageType === 'sent', function ($q) {
-                    $q->where('sender_id', Auth::id());
+                ->when($this->messageType === 'sent', function ($q) use ($userId) {
+                    $q->where('sender_id', $userId);
                 })
-                ->when($this->messageType === 'received', function ($q) {
-                    $q->where(function ($sub) {
-                        $sub->where('receiver_id', Auth::id())
-                            ->orWhereHas('forwards', function ($q2) {
-                                $q2->where('forwarded_to', Auth::id());
+                ->when($this->messageType === 'received', function ($q) use ($userId) {
+                    $q->where(function ($sub) use ($userId) {
+                        $sub->where('receiver_id', $userId)
+                            ->orWhereHas('forwards', function ($q2) use ($userId) {
+                                $q2->where('forwarded_to', $userId);
                             });
                     });
                 })
                 ->orderByDesc('created_at')
                 ->paginate(10);
-
 
             $coordinationEndTime = Coordination::where('id', $this->selectedCoordinationId)->value('end_time');
 

@@ -37,7 +37,6 @@ class InstructionController extends Controller
         $this->middleware('permission:show.instruction')->only('show');
         $this->middleware('permission:delete.instruction')->only('destroy');
         $this->middleware('permission:fetch.instruction')->only('fetchInstruction');
-
     }
     /**
      * Display a listing of the resource.
@@ -61,8 +60,10 @@ class InstructionController extends Controller
      */
     public function store(InstructionRequest $request)
     {
+        $messageType = $request->query('messageType', 'received');
         $this->instructionService->storeInstruction($request->all());
-        return redirect()->route('instruction.index')->with('success', 'Sukses menambah instruction');
+        return redirect()->route('instruction.index', ['messageType' => $messageType])
+            ->with('success', 'Sukses menambah instruction');
     }
 
     /**
@@ -70,6 +71,7 @@ class InstructionController extends Controller
      */
     public function show(Instruction $instruction)
     {
+
         $this->authorize('view', $instruction);
         return view('instruction.show', compact('instruction'));
     }
@@ -81,19 +83,26 @@ class InstructionController extends Controller
     {
         $this->authorize('update', $instruction);
 
+        // Eager load receivers
+        $instruction->load('receivers');
+
         $users = $this->userService->getReceiver();
 
         return view('instruction.edit', compact('instruction', 'users'));
     }
+
 
     /**
      * Update the specified resource in storage.
      */
     public function update(InstructionRequest $request, Instruction $instruction)
     {
+        $messageType = $request->query('messageType', 'received');
+
         $this->authorize('update', $instruction);
         $this->instructionService->editInstruction($instruction, $request->all());
-        return redirect()->route('instruction.index')->with('success', 'Sukses mengubah instruction');
+        return redirect()->route('instruction.index', ['messageType' => $messageType])
+            ->with('success', 'Sukses mengubah instruction');
     }
 
     /**
@@ -101,11 +110,20 @@ class InstructionController extends Controller
      */
     public function destroy(Instruction $instruction)
     {
+
         $this->authorize('delete', $instruction);
+
+        $messageType = request('messageType', 'received');
+
         $this->instructionService->deleteInstruction($instruction);
         $this->forwardInstructionService->deleteForwardInstruction($instruction);
-        return redirect()->route('instruction.index')->with('success', 'Sukses menghapus instruction');
+
+        return redirect()
+            ->route('instruction.index', ['messageType' => $messageType])
+            ->with('success', 'Sukses menghapus instruction');
     }
+
+
 
 
     public function fetchInstruction(Request $request)

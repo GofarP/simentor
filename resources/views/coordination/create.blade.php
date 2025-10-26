@@ -3,7 +3,7 @@
         <div  class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 w-full">
             <h2 class="text-2xl font-bold text-violet-600 mb-6">Tambahkan Koordinasi</h2>
 
-            <form method="POST" action="{{ route('coordination.store') }}" enctype="multipart/form-data"
+            <form method="POST" action="{{ route('coordination.store',['messageType' => request('messageType')]) }}" enctype="multipart/form-data"
                 x-on:submit="loading = true; $refs.submitBtn.disabled = true;">
                 @csrf
 
@@ -12,7 +12,7 @@
                     <label for="receiver_id" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">
                         Penerima
                     </label>
-                    <select name="receiver_id" id="receiver_id" class="form-control js-example-basic-single w-full">
+                    <select name="receiver_id[]" id="receiver_id[]" class="form-control js-example-basic-single w-full" multiple>
                         <option value="">Pilih Penerima</option>
                         @foreach ($users as $user)
                             <option value="{{ $user->id }}" {{ old('receiver_id') == $user->id ? 'selected' : '' }}>

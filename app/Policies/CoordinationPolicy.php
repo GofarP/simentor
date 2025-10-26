@@ -18,12 +18,22 @@ class CoordinationPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Coordination $instruction): bool
+    public function view(User $user, Coordination $coordination): bool
     {
-        return $user->id === $instruction->sender_id
-            || $user->id === $instruction->receiver_id
-            || $instruction->forwards()->where('forwarded_to', $user->id)->exists();
+        // Cek apakah user sebagai sender atau receiver di coordination_user
+        $isUserInCoordination = $coordination->coordinationUsers()
+            ->where('sender_id', $user->id)
+            ->orWhere('receiver_id', $user->id)
+            ->exists();
+
+        // Cek apakah user sebagai penerima forwarded
+        $isUserForwarded = $coordination->forwards()
+            ->where('forwarded_to', $user->id)
+            ->exists();
+
+        return $isUserInCoordination || $isUserForwarded;
     }
+
     /**
      * Determine whether the user can create models.
      */
@@ -38,17 +48,21 @@ class CoordinationPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Coordination $instruction): bool
+    public function update(User $user, Coordination $coordination): bool
     {
-        return $user->id === $instruction->sender_id;
+        return $coordination->coordinationUsers()
+            ->where('sender_id', $user->id)
+            ->exists();
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Coordination $instruction): bool
+    public function delete(User $user, Coordination $coordination): bool
     {
-        return $user->id === $instruction->sender_id;
+        return $coordination->coordinationUsers()
+            ->where('sender_id', $user->id)
+            ->exists();
     }
 
     /**
@@ -67,8 +81,12 @@ class CoordinationPolicy
         return false;
     }
 
-    public function forward(User $user, Coordination $coordination)
+    public function forward(User $user, Coordination $coordination): bool
     {
-        return $user->id === $coordination->receiver_id;
+        $isReceiver = $coordination->coordinationUsers()
+            ->where('receiver_id', $user->id)
+            ->exists();
+
+        return $isReceiver && $user->hasRole('kasubbag');
     }
 }

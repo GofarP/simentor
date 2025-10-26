@@ -32,16 +32,21 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    // === INSTRUCTION ===
-    public function sentInstructions()
+    public function instructionsReceived()
     {
-        return $this->hasMany(Instruction::class, 'sender_id');
+        return $this->belongsToMany(Instruction::class, 'instruction_user')
+            ->withPivot('sender_id')
+            ->withTimestamps();
     }
 
-    public function receivedInstructions()
+    public function instructionsSent()
     {
-        return $this->hasMany(Instruction::class, 'receiver_id');
+        return $this->belongsToMany(Instruction::class, 'instruction_user')
+            ->wherePivot('sender_id', $this->id)
+            ->withPivot('sender_id')
+            ->withTimestamps();
     }
+
 
     public function forwardedInstructions()
     {

@@ -2,23 +2,17 @@
 
 namespace App\Models;
 
-use App\Models\User;
-use App\Models\FollowupInstructionScore;
-use App\Models\ForwardInstruction;
-use App\Models\FollowupInstruction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class Instruction extends Model
 {
     protected $fillable = [
-        "sender_id",
-        "receiver_id",
-        "title",
-        "description",
-        "start_time",
-        "end_time",
-        "attachment"
+        'title',
+        'description',
+        'start_time',
+        'end_time',
+        'attachment',
     ];
 
     protected static function booted()
@@ -32,43 +26,38 @@ class Instruction extends Model
             // Hapus semua data forwards yang terkait langsung dengan Instruction
             $instruction->forwards()->delete();
 
-            // Loop semua followup terkait Instruction
+            //Hapus semua data di instructionUsers yang terkait dengan instruction ini
+            $instruction->instructionUsers()->delete();
+
+            // Hapus followups beserta attachment, proof, forwards, dan scores
             $instruction->followups->each(function ($followup) {
-                // Hapus file lampiran followup
-                if ($followup->attachment) {
-                    Storage::delete($followup->attachment);
-                }
-
-                // Hapus file proof followup
-                if ($followup->proof) {
-                    Storage::delete($followup->proof);
-                }
-
-                // Hapus semua forwards di followup
+                if ($followup->attachment) Storage::delete($followup->attachment);
+                if ($followup->proof) Storage::delete($followup->proof);
                 $followup->forwards()->delete();
-
-                // Jika followup memiliki relasi scores, hapus juga (aman)
                 if (method_exists($followup, 'scores')) {
                     $followup->scores()->delete();
                 }
-
-                // Terakhir hapus followup itu sendiri
                 $followup->delete();
             });
         });
     }
 
-
-    public function sender()
+    public function senders()
     {
-        return $this->belongsTo(User::class, 'sender_id');
+        return $this->belongsToMany(User::class, 'instruction_users', 'instruction_id', 'sender_id')
+            ->withPivot('receiver_id')
+            ->withTimestamps();
     }
 
-    public function receiver()
+    public function receivers()
     {
-        return $this->belongsTo(User::class, 'receiver_id');
+
+        return $this->belongsToMany(User::class, 'instruction_users', 'instruction_id', 'receiver_id')
+            ->withPivot('sender_id')
+            ->withTimestamps();
     }
 
+    // RELASI LAINNYA
     public function followups()
     {
         return $this->hasMany(FollowupInstruction::class, 'instruction_id');
@@ -76,8 +65,12 @@ class Instruction extends Model
 
     public function forwardedUsers()
     {
-        return $this->belongsToMany(User::class, 'forward_instructions', 'instruction_id', 'forwarded_to')
-            ->withPivot('forwarded_by')
+        return $this->belongsToMany(
+            User::class,
+            'forward_instructions',
+            'instruction_id',
+            'forwarded_to'
+        )->withPivot('forwarded_by')
             ->withTimestamps();
     }
 
@@ -89,5 +82,10 @@ class Instruction extends Model
     public function scores()
     {
         return $this->hasMany(FollowupInstructionScore::class, 'instruction_id');
+    }
+
+    public function instructionUsers()
+    {
+        return $this->hasMany(InstructionUser::class, 'instruction_id');
     }
 }
