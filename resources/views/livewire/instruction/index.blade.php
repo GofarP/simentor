@@ -1,211 +1,164 @@
 <div class="px-4 sm:px-6 lg:px-8 py-12 w-full max-w-7xl mx-auto bg-gray-50 dark:bg-gray-900 min-h-screen">
+
+    {{-- Pesan sukses --}}
     @if (session('success'))
-        <div
-            class="mb-4 px-4 py-3 rounded-lg bg-green-100 border border-green-300 text-green-800 dark:bg-green-800 dark:text-green-100 dark:border-green-700">
+        <div class="mb-4 px-4 py-3 rounded-lg bg-green-100 border border-green-300 text-green-800 dark:bg-green-800 dark:text-green-100 dark:border-green-700">
             {{ session('success') }}
         </div>
     @endif
 
-    <div class="mb-6">
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
-            <div>
-                <p class="text-3xl md:text-4xl font-extrabold text-violet-600 mb-2">
-                    Instruksi
-                </p>
-                <p class="text-gray-700 dark:text-gray-300 text-base md:text-lg">
-                    Kelola Instruksi.
-                </p>
-            </div>
+    {{-- Header --}}
+    <div class="mb-6 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+        <div>
+            <p class="text-3xl md:text-4xl font-extrabold text-violet-600 mb-2">Instruksi</p>
+            <p class="text-gray-700 dark:text-gray-300 text-base md:text-lg">Kelola Instruksi.</p>
+        </div>
 
-            <div class="flex flex-col items-end gap-2">
+        <div class="flex flex-col items-end gap-2 w-full sm:w-auto">
+            <input type="text" name="search" wire:model.live.debounce.500ms="search" placeholder="Cari instruksi..."
+                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm focus:ring-2 focus:ring-violet-500 focus:border-violet-500 dark:bg-gray-800 dark:text-gray-200" />
 
-                <input type="text" name="search" wire:model.live.debounce.500ms="search"
-                    placeholder="Cari permission..."
-                    class="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm
-              focus:ring-2 focus:ring-violet-500 focus:border-violet-500
-              dark:bg-gray-800 dark:text-gray-200" />
+            <a href="{{ route('instruction.create', ['messageType' => $messageType]) }}" class="mt-3 inline-flex items-center px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-lg shadow hover:bg-violet-700 focus:outline-none w-full sm:w-auto justify-center">
+                + Tambah
+            </a>
 
-                <a href="{{ route('instruction.create') }}"
-                    class=" mt-3 inline-flex items-center px-4 py-2 bg-violet-600 text-white text-sm font-medium rounded-lg shadow hover:bg-violet-700 focus:outline-none w-full sm:w-auto justify-center">
-                    + Tambah
-                </a>
-
-                <div>
-                    <select id="message_type" class="form-control js-example-basic-single w-full"
-                        wire:model.live='messageType'>
-                        <option value="sent">Terkirim</option>
-                        <option value="received">Diterima</option>
-                        <option value="all">Semua</option>
-                    </select>
-                </div>
-
-            </div>
+            <select id="message_type" class="form-control js-example-basic-single w-full mt-2" wire:model.live='messageType'>
+                <option value="sent">Terkirim</option>
+                <option value="received">Diterima</option>
+                <option value="all">Semua</option>
+            </select>
         </div>
     </div>
 
+    {{-- Table --}}
     <div class="bg-white dark:bg-gray-800 rounded-2xl shadow overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-100 dark:bg-gray-700">
                 <tr>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        #</th>
-
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">#</th>
                     @if ($messageType == 'received' || $messageType == 'all')
-                        <th
-                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                            Pengirim</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Pengirim</th>
                     @endif
-
                     @if ($messageType == 'sent' || $messageType == 'all')
-                        <th
-                            class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                            Penerima Asli</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Penerima</th>
                     @endif
-
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Diteruskan Oleh</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Penerima Forward</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Judul</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Deskripsi</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Waktu mulai</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Batas waktu</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Lampiran</th>
-                    <th
-                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
-                        Aksi</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Diteruskan Oleh</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Penerima Forward</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Judul</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Deskripsi</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Waktu Mulai</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Batas Waktu</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Lampiran</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">Aksi</th>
                 </tr>
             </thead>
 
             <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                @forelse($instructions as $index => $instruction)
+                @forelse($instructions as $instruction)
                     <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $index + 1 }}
-                        </td>
+                        {{-- Index --}}
+                        <td class="px-6 py-4 text-sm text-gray-800 dark:text-gray-200">{{ $loop->iteration }}</td>
 
+                        {{-- Pengirim --}}
                         @if ($messageType == 'received' || $messageType == 'all')
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                <span
-                                    class="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded-full text-xs">{{ $instruction->sender->name }}</span>
+                            <td class="px-6 py-4 text-sm text-gray-800 dark:text-gray-200">
+                                <span class="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded-full text-xs">
+                                    {{ $instruction->senders->first()->name ?? '-' }}
+                                </span>
                             </td>
                         @endif
 
+                        {{-- Penerima --}}
                         @if ($messageType == 'sent' || $messageType == 'all')
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                                <span
-                                    class="px-2 py-1 bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 rounded-full text-xs">{{ $instruction->receiver->name }}</span>
+                            <td class="px-6 py-4 text-sm text-gray-800 dark:text-gray-200">
+                                @forelse ($instruction->receivers ?? [] as $receiver)
+                                    <span class="px-2 py-1 bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 rounded-full text-xs inline-block mb-1">
+                                        {{ $receiver->name }}
+                                    </span>
+                                @empty
+                                    <span class="text-gray-400">-</span>
+                                @endforelse
                             </td>
                         @endif
 
-                        <!-- Diteruskan Oleh -->
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            @if ($instruction->forwards->isNotEmpty())
-                                @foreach ($instruction->forwards->unique('forwarded_by') as $forward)
-                                    <span
-                                        class="px-2 py-1 bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-100 rounded-full text-xs inline-block mb-1">{{ $forward->forwarder->name ?? '-' }}</span>
-                                @endforeach
-                            @else
+                        {{-- Diteruskan Oleh --}}
+                        <td class="px-6 py-4 text-sm text-gray-800 dark:text-gray-200">
+                            @forelse ($instruction->forwards->unique('forwarded_by') ?? [] as $forward)
+                                <span class="px-2 py-1 bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-100 rounded-full text-xs inline-block mb-1">
+                                    {{ $forward->forwarder->name ?? '-' }}
+                                </span>
+                            @empty
                                 <span class="text-gray-400">-</span>
-                            @endif
+                            @endforelse
                         </td>
 
-                        <!-- Penerima Forward -->
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            @if ($instruction->forwards->isNotEmpty())
-                                @foreach ($instruction->forwards as $forward)
-                                    <span
-                                        class="px-2 py-1 bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 rounded-full text-xs inline-block mb-1">{{ $forward->receiver->name ?? '-' }}</span>
-                                @endforeach
-                            @else
+                        {{-- Penerima Forward --}}
+                        <td class="px-6 py-4 text-sm text-gray-800 dark:text-gray-200">
+                            @forelse ($instruction->forwards ?? [] as $forward)
+                                <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 rounded-full text-xs inline-block mb-1">
+                                    {{ $forward->receiver->name ?? '-' }}
+                                </span>
+                            @empty
                                 <span class="text-gray-400">-</span>
-                            @endif
+                            @endforelse
                         </td>
 
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ $instruction->title }}</td>
-
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                        {{-- Judul & Deskripsi --}}
+                        <td class="px-6 py-4 text-sm text-gray-800 dark:text-gray-200">{{ $instruction->title }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-800 dark:text-gray-200">
                             <div class="truncate max-w-xs" title="{{ strip_tags($instruction->description) }}">
                                 {!! $instruction->description !!}
                             </div>
                         </td>
 
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ \Carbon\Carbon::parse($instruction->start_time)->format('d-m-Y') }}</td>
+                        {{-- Waktu --}}
+                        <td class="px-6 py-4 text-sm text-gray-800 dark:text-gray-200">{{ \Carbon\Carbon::parse($instruction->start_time)->format('d-m-Y') }}</td>
+                        <td class="px-6 py-4 text-sm text-gray-800 dark:text-gray-200">{{ \Carbon\Carbon::parse($instruction->end_time)->format('d-m-Y') }}</td>
 
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
-                            {{ \Carbon\Carbon::parse($instruction->end_time)->format('d-m-Y') }}</td>
-
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800 dark:text-gray-200">
+                        {{-- Lampiran --}}
+                        <td class="px-6 py-4 text-sm text-gray-800 dark:text-gray-200">
                             @if ($instruction->attachment)
-                                <a href="{{ Storage::url($instruction->attachment) }}" target="_blank"
-                                    class="text-blue-600 dark:text-blue-400 underline">Lihat Lampiran</a>
+                                <a href="{{ Storage::url($instruction->attachment) }}" target="_blank" class="text-blue-600 dark:text-blue-400 underline">Lihat</a>
                             @else
-                                <span class="text-gray-400">Tidak Ada Lampiran</span>
+                                <span class="text-gray-400">Tidak ada</span>
                             @endif
                         </td>
 
-                        <td class="px-6 py-4 whitespace-nowrap text-sm flex gap-2">
+                        {{-- Aksi --}}
+                        <td class="px-6 py-4 text-sm flex gap-2">
                             @can('forward', $instruction)
-                                <a href="{{ route('forward.instruction.form', $instruction) }}"
-                                    class="px-3 py-1 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition">
-                                    Forward
-                                </a>
+                                <a href="{{ route('forward.instruction.form', $instruction) }}" class="px-3 py-1 bg-purple-600 text-white rounded-lg text-sm font-medium hover:bg-purple-700 transition">Forward</a>
                             @endcan
 
-                            <a href="{{ route('instruction.show', $instruction) }}"
-                                class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">Show</a>
+                            <a href="{{ route('instruction.show', $instruction) }}" class="px-3 py-1 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition">Show</a>
 
                             @can('update', $instruction)
-                                <a href="{{ route('instruction.edit', $instruction) }}"
-                                    class="px-3 py-1 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition">Edit</a>
+                                <a href="{{ route('instruction.edit', ['instruction' => $instruction, 'messageType' =>$messageType]) }}" class="px-3 py-1 bg-yellow-600 text-white rounded-lg text-sm font-medium hover:bg-yellow-700 transition">Edit</a>
                             @endcan
 
                             @can('delete', $instruction)
-                                <form action="{{ route('instruction.destroy', $instruction) }}" method="POST"
-                                    onsubmit="return confirm('Apakah Anda yakin ingin menghapus instruction ini?')">
+                                <form action="{{ route('instruction.destroy', ['instruction' => $instruction, 'messageType' => $messageType]) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus instruction ini?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit"
-                                        class="px-3 py-1 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition">Hapus</button>
+                                    <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition">Hapus</button>
                                 </form>
                             @endcan
                         </td>
+
                     </tr>
                 @empty
-                    @php
-                        $colspanNumber = $messageType == 'sent' || $messageType == 'received' ? 10 : 8;
-                    @endphp
                     <tr>
-                        <td colspan="{{ $colspanNumber }}"
-                            class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                            Data instruction tidak ditemukan</td>
+                        <td colspan="11" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                            Data instruction tidak ditemukan
+                        </td>
                     </tr>
                 @endforelse
             </tbody>
         </table>
-
     </div>
 
-    <!-- Pagination -->
+    {{-- Pagination --}}
     <div class="mt-4 flex justify-end">
         {{ $instructions->links() }}
     </div>
-   
-
-
 </div>
