@@ -39,6 +39,10 @@
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">#</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Judul</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Deskripsi</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Waktu Mulai</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Waktu Selesai
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jumlah Tindak
                             Lanjut
                         </th>
@@ -47,29 +51,63 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($instructions as $index => $instruction)
-                            <tr>
-                                <td class="px-6 py-4">{{ $instructions->firstItem() + $index }}</td>
-                                <td class="px-6 py-4">{{ $instruction->title }}</td>
-                                <td class="px-6 py-4">
-                                    <div class="truncate max-w-xs" title="{{ strip_tags($instruction->description) }}">
-                                        {!! $instruction->description !!}
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    {{ $instruction->sender_id === Auth::id()
-                        ? $instruction->total_followups_count ?? 0
-                        : $instruction->user_followups_count ?? 0 }}
-                                </td>
-                                <td class="px-6 py-4">
+                        <tr>
+                            <td class="px-6 py-4">{{ $instructions->firstItem() + $index }}</td>
+                            <td class="px-6 py-4">{{ $instruction->title }}</td>
+                            <td class="px-6 py-4">
+                                <div class="truncate max-w-xs" title="{{ strip_tags($instruction->description) }}">
+                                    {!! $instruction->description !!}
+                                </div>
+                            </td>
+                            <td>
+                                {{ optional($instruction)->start_time ? \Carbon\Carbon::parse($instruction->start_time)->format('d-m-Y') : '-' }}
+                            </td>
+                            <td>
+                                {{ optional($instruction)->end_time ? \Carbon\Carbon::parse($instruction->end_time)->format('d-m-Y') : '-' }}
+                            </td>
+                            <td class="text-center align-middle">
+                                @php
+                                    $end = optional($instruction)->end_time
+                                        ? \Carbon\Carbon::parse($instruction->end_time)
+                                        : null;
+
+                                    $now = now();
+                                    $isExpired = $end && $now->isAfter($end->endOfDay());
+                                @endphp
+
+                                @if ($isExpired)
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 text-xs font-medium text-red-800 bg-red-100 rounded-full">
+                                        Waktu habis
+                                    </span>
+                                @else
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full">
+                                        Berlangsung
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ $instruction->sender_id === Auth::id()
+                                    ? $instruction->total_followups_count ?? 0
+                                    : $instruction->user_followups_count ?? 0 }}
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex items-center gap-2">
+                                    @if ($isExpired)
+                                        <a href="{{ route('instruction.edit', $instruction->id)}}"
+                                            class="px-3 py-1 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">Edit</a>
+                                    @endif
                                     <button wire:click="showFollowups({{ $instruction->id }})"
                                         class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                                         Detail
                                     </button>
-                                </td>
-                            </tr>
+                                </div>
+                            </td>
+                        </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">Tidak ada data</td>
+                            <td colspan="8" class="px-6 py-4 text-center text-gray-500">Tidak ada data</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -83,7 +121,8 @@
         @elseif($switch === 'followupInstructionMode')
             <div class="flex justify-between items-center mb-4 mt-3 px-3">
                 <!-- Tombol kiri -->
-                <button wire:click="backToInstructions" class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                <button wire:click="backToInstructions"
+                    class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
                     Kembali
                 </button>
 
@@ -91,21 +130,22 @@
                     $firstFollowup = $followupInstructions->first();
                     $receiverId = optional($firstFollowup)->receiver_id;
                     $forwardedTo = collect(optional($firstFollowup)->forwards)->pluck('receiver_id')->toArray();
-                    $isExpired = $instructionEndTime && now()->greaterThan(\Carbon\Carbon::parse($instructionEndTime)->addDay());
+                    $isExpired =
+                        $instructionEndTime && now()->greaterThan(\Carbon\Carbon::parse($instructionEndTime)->addDay());
                 @endphp
 
                 @if (Auth::id() !== $receiverId && !in_array(Auth::id(), $forwardedTo))
                     @if ($isExpired)
                         <button class="px-3 py-1 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
-                            Waktu telah lewat
+                            Waktu telah habis
                         </button>
                     @else
-                        <button wire:click="goToCreate" class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                        <button wire:click="goToCreate"
+                            class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                             Tambah Aksi
                         </button>
                     @endif
                 @endif
-
 
             </div>
 
