@@ -4,13 +4,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-2xl shadow p-8 w-full">
             <h2 class="text-2xl font-bold text-violet-600 mb-6">Detail Instruksi</h2>
 
-            {{-- Penerima --}}
-            <div class="mb-4">
-                <label class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Penerima</label>
-                <p class="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200">
-                    {{ $instruction->receiver?->name ?? '-' }}
-                </p>
-            </div>
+
 
             {{-- Judul --}}
             <div class="mb-4">
