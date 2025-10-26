@@ -57,8 +57,8 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     {{ $coordination->sender_id === Auth::id()
-                        ? $coordination->total_followups_count ?? 0
-                        : $coordination->user_followups_count ?? 0 }}
+                                        ? $coordination->total_followups_count ?? 0
+                                        : $coordination->user_followups_count ?? 0 }}
                                 </td>
 
                                 <td class="px-6 py-4">

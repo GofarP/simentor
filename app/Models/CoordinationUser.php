@@ -14,7 +14,7 @@ class CoordinationUser extends Model
 
     public function coordination()
     {
-        return $this->belongsTo(Instruction::class, 'instruction_id');
+        return $this->belongsTo(Coordination::class, 'coordination_id');
     }
 
     public function sender()

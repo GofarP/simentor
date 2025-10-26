@@ -53,13 +53,21 @@ class Index extends Component
     {
         $userId = Auth::id();
 
-        // === MODE Coordination ===
         if ($this->switch === 'coordinationMode') {
+            $userId = Auth::id();
+
             $coordinations = Coordination::withCount([
-                'followups as total_followups_count',
                 'followups as user_followups_count' => function ($query) use ($userId) {
-                    $query->where('sender_id', $userId);
+                    $query->where(function ($sub) use ($userId) {
+                        $sub
+                            ->whereHas('coordination.coordinationUsers', function ($q) use ($userId) {
+                                $q->where('sender_id', $userId);
+                            })
+                            ->orWhereRaw('followup_coordinations.sender_id = ?', [$userId]);
+                    });
                 },
+
+                'followups as total_followups_count',
             ])
                 ->where(function ($query) use ($userId) {
                     $query
@@ -67,30 +75,25 @@ class Index extends Component
                             $q->where('sender_id', $userId)
                                 ->orWhere('receiver_id', $userId);
                         })
-                        // Cek follow-up yang ditujukan ke user ini
+
                         ->orWhereHas('followups', function ($q) use ($userId) {
                             $q->where('receiver_id', $userId);
                         })
-                        // Cek follow-up yang diteruskan ke user ini
+
                         ->orWhereHas('followups.forwards', function ($q) use ($userId) {
                             $q->where('forwarded_to', $userId);
                         })
-                        // Cek instruksi yang diteruskan ke user ini
+
                         ->orWhereHas('forwards', function ($q) use ($userId) {
                             $q->where('forwarded_to', $userId);
                         });
-                })
-                ->when($this->search, function ($query) {
-                    $query->where(function ($sub) {
-                        $sub->where('title', 'like', "%{$this->search}%")
-                            ->orWhere('description', 'like', "%{$this->search}%");
-                    });
                 })
                 ->orderByDesc('created_at')
                 ->paginate(10);
 
             return view('livewire.followup-coordination.index', compact('coordinations'));
         }
+
 
         // === MODE FOLLOW-UP ===
         if ($this->switch === 'followupCoordinationMode' && $this->selectedCoordinationId) {
