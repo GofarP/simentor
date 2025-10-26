@@ -94,8 +94,13 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
-                                    @if ($isExpired)
-                                        <a href="{{ route('instruction.edit', $instruction->id)}}"
+
+                                    @php
+                                        $isSender=Auth::id()===$instruction->instructionUsers->first()->sender_id ;
+                                    @endphp
+
+                                    @if ($isExpired && $isSender)
+                                        <a href="{{ route('instruction.edit', $instruction->id) }}"
                                             class="px-3 py-1 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">Edit</a>
                                     @endif
                                     <button wire:click="showFollowups({{ $instruction->id }})"
@@ -120,7 +125,6 @@
             {{-- FollowupInstruction Mode --}}
         @elseif($switch === 'followupInstructionMode')
             <div class="flex justify-between items-center mb-4 mt-3 px-3">
-                <!-- Tombol kiri -->
                 <button wire:click="backToInstructions"
                     class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
                     Kembali
@@ -128,24 +132,38 @@
 
                 @php
                     $firstFollowup = $followupInstructions->first();
+
                     $receiverId = optional($firstFollowup)->receiver_id;
+                    $senderId = optional($firstFollowup)->sender_id;
                     $forwardedTo = collect(optional($firstFollowup)->forwards)->pluck('receiver_id')->toArray();
-                    $isExpired =
-                        $instructionEndTime && now()->greaterThan(\Carbon\Carbon::parse($instructionEndTime)->addDay());
+
+                    $endTime = optional($instruction)->end_time;
+                    $isExpired = $endTime && now()->greaterThan(\Carbon\Carbon::parse($endTime)->addDay());
+
+                    $instructionSenderId = optional($instruction->instructionUsers->first())->sender_id;
                 @endphp
 
-                @if (Auth::id() !== $receiverId && !in_array(Auth::id(), $forwardedTo))
-                    @if ($isExpired)
-                        <button class="px-3 py-1 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
-                            Waktu telah habis
-                        </button>
-                    @else
-                        <button wire:click="goToCreate"
-                            class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                            Tambah Aksi
-                        </button>
+                <div class="flex gap-2">
+                    @if (Auth::id() === $instructionSenderId && $isExpired)
+                        <a href="{{ route('instruction.edit', $instruction->id) }}"
+                            class="px-3 py-1 bg-yellow-400 text-white rounded-lg">
+                            Perpanjang Waktu
+                        </a>
                     @endif
-                @endif
+
+                    @if (Auth::id() !== $receiverId && !in_array(Auth::id(), $forwardedTo))
+                        @if ($isExpired)
+                            <button class="px-3 py-1 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
+                                Waktu habis
+                            </button>
+                        @else
+                            <button wire:click="goToCreate"
+                                class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                Tambah Aksi
+                            </button>
+                        @endif
+                    @endif
+                </div>
 
             </div>
 
@@ -210,7 +228,8 @@
                             <td class="px-6 py-4">
                                 @if ($f->attachment)
                                     <a class="text-blue-600 text-underline" href="{{ Storage::url($f->attachment) }}"
-                                        target="_blank">Lihat Lampiran</a>
+                                        target="_blank">Lihat
+                                        Lampiran</a>
                                 @else
                                     Tidak ada lampiran
                                 @endif
@@ -257,7 +276,8 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="11" class="px-6 py-4 text-center text-gray-500">Tidak ada data followup</td>
+                            <td colspan="11" class="px-6 py-4 text-center text-gray-500">Tidak ada data followup
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
