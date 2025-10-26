@@ -119,9 +119,10 @@ class Index extends Component
                 ->orderByDesc('created_at')
                 ->paginate(10);
 
-            $instructionEndTime = Instruction::where('id', $this->selectedInstructionId)->value('end_time');
+            $instruction = Instruction::with('instructionUsers')
+            ->where('id', $this->selectedInstructionId)->first();
 
-            return view('livewire.followup-instruction.index', compact('followupInstructions', 'instructionEndTime'));
+            return view('livewire.followup-instruction.index', compact('followupInstructions', 'instruction'));
         }
     }
 }
