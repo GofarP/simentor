@@ -2,13 +2,13 @@
 
 namespace App\Livewire\FollowupInstruction;
 
+use Carbon\Carbon;
 use Livewire\Component;
 use App\Enums\MessageType;
 use App\Models\Instruction;
 use Livewire\WithPagination;
 use App\Models\FollowupInstruction;
 use Illuminate\Support\Facades\Auth;
-use App\Services\FollowupInstruction\FollowupInstructionServiceInterface;
 
 class Index extends Component
 {
@@ -52,6 +52,15 @@ class Index extends Component
     {
         $userId = Auth::id();
 
+        $instructions = null;
+        $followupInstructions = null;
+        $instruction = null;
+        $firstFollowup = null;
+        $receiverId = null;
+        $senderId = null;
+        $forwardedTo = [];
+        $endTime = null;
+
         // === MODE INSTRUCTION ===
         if ($this->switch === 'instructionMode') {
             $instructions = Instruction::withCount([
@@ -64,7 +73,6 @@ class Index extends Component
                             ->orWhereRaw('followup_instructions.sender_id = ?', [$userId]);
                     });
                 },
-
                 'followups as total_followups_count',
             ])
                 ->when($this->search, function ($query, $search) {
@@ -79,26 +87,20 @@ class Index extends Component
                             $q->where('sender_id', $userId)
                                 ->orWhere('receiver_id', $userId);
                         })
-
                         ->orWhereHas('followups', function ($q) use ($userId) {
                             $q->where('receiver_id', $userId);
                         })
-
                         ->orWhereHas('followups.forwards', function ($q) use ($userId) {
                             $q->where('forwarded_to', $userId);
                         })
-
                         ->orWhereHas('forwards', function ($q) use ($userId) {
                             $q->where('forwarded_to', $userId);
                         });
                 })
                 ->orderByDesc('created_at')
                 ->paginate(10);
-
-            return view('livewire.followup-instruction.index', compact('instructions'));
         }
 
-        // === MODE FOLLOW-UP ===
         if ($this->switch === 'followupInstructionMode' && $this->selectedInstructionId) {
             $followupInstructions = FollowupInstruction::with(['forwards', 'sender', 'receiver', 'instruction'])
                 ->where('instruction_id', $this->selectedInstructionId)
@@ -119,10 +121,24 @@ class Index extends Component
                 ->orderByDesc('created_at')
                 ->paginate(10);
 
-            $instruction = Instruction::with('instructionUsers')
-            ->where('id', $this->selectedInstructionId)->first();
+            $instruction = Instruction::where('id', $this->selectedInstructionId)->first();
 
-            return view('livewire.followup-instruction.index', compact('followupInstructions', 'instruction'));
+            $firstFollowup = $followupInstructions->first();
+            $receiverId = optional($firstFollowup)->receiver_id;
+            $senderId = optional($firstFollowup)->sender_id;
+            $forwardedTo = collect(optional($firstFollowup)->forwards)->pluck('receiver_id')->toArray();
+            $endTime = optional($instruction)->end_time;
         }
+
+        return view('livewire.followup-instruction.index', compact(
+            'instructions',
+            'followupInstructions',
+            'instruction',
+            'firstFollowup',
+            'receiverId',
+            'senderId',
+            'forwardedTo',
+            'endTime'
+        ));
     }
 }

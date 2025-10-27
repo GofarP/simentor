@@ -66,16 +66,8 @@
                                 {{ optional($instruction)->end_time ? \Carbon\Carbon::parse($instruction->end_time)->format('d-m-Y') : '-' }}
                             </td>
                             <td class="text-center align-middle">
-                                @php
-                                    $end = optional($instruction)->end_time
-                                        ? \Carbon\Carbon::parse($instruction->end_time)
-                                        : null;
-
-                                    $now = now();
-                                    $isExpired = $end && $now->isAfter($end->endOfDay());
-                                @endphp
-
-                                @if ($isExpired)
+                              
+                                @if ($instruction->is_expired)
                                     <span
                                         class="inline-flex items-center px-3 py-1 text-xs font-medium text-red-800 bg-red-100 rounded-full">
                                         Waktu habis
@@ -95,11 +87,7 @@
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
 
-                                    @php
-                                        $isSender=Auth::id()===$instruction->instructionUsers->first()->sender_id ;
-                                    @endphp
-
-                                    @if ($isExpired && $isSender)
+                                    @if ($instruction->is_expired && $instruction->is_sender)
                                         <a href="{{ route('instruction.edit', $instruction->id) }}"
                                             class="px-3 py-1 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">Edit</a>
                                     @endif
@@ -130,21 +118,9 @@
                     Kembali
                 </button>
 
-                @php
-                    $firstFollowup = $followupInstructions->first();
-
-                    $receiverId = optional($firstFollowup)->receiver_id;
-                    $senderId = optional($firstFollowup)->sender_id;
-                    $forwardedTo = collect(optional($firstFollowup)->forwards)->pluck('receiver_id')->toArray();
-
-                    $endTime = optional($instruction)->end_time;
-                    $isExpired = $endTime && now()->greaterThan(\Carbon\Carbon::parse($endTime)->addDay());
-
-                    $instructionSenderId = optional($instruction->instructionUsers->first())->sender_id;
-                @endphp
-
+            
                 <div class="flex gap-2">
-                    @if (Auth::id() === $instructionSenderId && $isExpired)
+                    @if (Auth::id() === $instruction->instruction_sender_id && $instruction->is_expired)
                         <a href="{{ route('instruction.edit', $instruction->id) }}"
                             class="px-3 py-1 bg-yellow-400 text-white rounded-lg">
                             Perpanjang Waktu
@@ -152,7 +128,7 @@
                     @endif
 
                     @if (Auth::id() !== $receiverId && !in_array(Auth::id(), $forwardedTo))
-                        @if ($isExpired)
+                        @if ($instruction->is_expired)
                             <button class="px-3 py-1 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
                                 Waktu habis
                             </button>

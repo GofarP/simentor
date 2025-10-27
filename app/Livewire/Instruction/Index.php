@@ -35,10 +35,8 @@ class Index extends Component
 
     public function render()
     {
-        // Konversi ke enum
         $messageTypeEnum = MessageType::tryFrom($this->messageType) ?? MessageType::Received;
 
-        // Ambil instruksi dari service, pivot sudah menampung sender & receiver
         $instructions = $this->instruksiService->getAllInstruction(
             $this->search,
             10,

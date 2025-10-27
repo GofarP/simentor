@@ -81,7 +81,6 @@ class InstructionRepository implements InstructionRepositoryInterface
     }
 
 
-
     public function storeInstruction(array $data)
     {
         return DB::transaction(function () use ($data) {

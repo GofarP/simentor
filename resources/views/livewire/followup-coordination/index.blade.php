@@ -57,8 +57,8 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     {{ $coordination->sender_id === Auth::id()
-                                        ? $coordination->total_followups_count ?? 0
-                                        : $coordination->user_followups_count ?? 0 }}
+                        ? $coordination->total_followups_count ?? 0
+                        : $coordination->user_followups_count ?? 0 }}
                                 </td>
 
                                 <td class="px-6 py-4">
@@ -88,27 +88,26 @@
                     class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
                     Kembali
                 </button>
-
-                @php
-                    $firstFollowup = $followupCoordinations->first();
-                    $receiverId = optional($firstFollowup)->receiver_id;
-                    $forwardedTo = collect(optional($firstFollowup)->forwards)->pluck('receiver_id')->toArray();
-                    $isExpired = $coordinationEndTime && now()->greaterThan(\Carbon\Carbon::parse($coordinationEndTime)->addDay());
-
-                @endphp
-
-                @if (Auth::id() !== $receiverId && !in_array(Auth::id(), $forwardedTo))
-                    @if ($isExpired)
-                        <button class="px-3 py-1 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
-                            Waktu telah lewat
-                        </button>
-                    @else
-                        <button wire:click="goToCreate" class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                            Tambah Aksi
-                        </button>
+                <div class="flex gap-2">
+                    @if (Auth::id() === $coordination->coordination_sender_id && $coordination->is_expired)
+                        <a href="{{ route('coordination.edit', $coordination->id) }}"
+                            class="px-3 py-1 bg-yellow-400 text-white rounded-lg">
+                            Perpanjang Waktu
+                        </a>
                     @endif
-                @endif
 
+                    @if (Auth::id() !== $receiverId && !in_array(Auth::id(), $forwardedTo))
+                        @if ($coordination->is_expired)
+                            <button class="px-3 py-1 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
+                                Waktu habis
+                            </button>
+                        @else
+                            <button wire:click="goToCreate" class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                Tambah Aksi
+                            </button>
+                        @endif
+                    @endif
+                </div>
             </div>
 
             <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">

@@ -17,10 +17,8 @@ class RoleUserPermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // 2. Buat Permissions (FORMAT DIPERBAIKI)
         $modules = [
             'instruction' => ['view', 'create', 'show', 'edit', 'delete'],
             'coordination' => ['view', 'create', 'show', 'edit', 'delete'],
@@ -36,14 +34,10 @@ class RoleUserPermissionSeeder extends Seeder
             'user' => ['view', 'create', 'edit', 'delete', 'fetch'],
         ];
 
-        // Looping untuk membuat permissions
         foreach ($modules as $module => $actions) {
             foreach ($actions as $action) {
-                // ---- INI BAGIAN YANG DIUBAH ----
-                // Semula: $module . '.' . $action
-                // Menjadi: $action . '.' . $module
+               
                 $permissionName = $action . '.' . $module; 
-                // ---------------------------------
                 
                 Permission::firstOrCreate([
                     'name' => $permissionName,

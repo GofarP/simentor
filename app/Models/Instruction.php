@@ -2,8 +2,15 @@
 
 namespace App\Models;
 
+use App\Models\User;
+use App\Models\InstructionUser;
+use App\Models\ForwardInstruction;
+use App\Models\FollowupInstruction;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use App\Models\FollowupInstructionScore;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Instruction extends Model
 {
@@ -15,21 +22,21 @@ class Instruction extends Model
         'attachment',
     ];
 
+    protected $casts = [
+        'end_time' => 'date',
+    ];
+
     protected static function booted()
     {
         static::deleting(function ($instruction) {
-            // Hapus attachment utama Instruction
             if ($instruction->attachment) {
                 Storage::delete($instruction->attachment);
             }
 
-            // Hapus semua data forwards yang terkait langsung dengan Instruction
             $instruction->forwards()->delete();
 
-            //Hapus semua data di instructionUsers yang terkait dengan instruction ini
             $instruction->instructionUsers()->delete();
 
-            // Hapus followups beserta attachment, proof, forwards, dan scores
             $instruction->followups->each(function ($followup) {
                 if ($followup->attachment) Storage::delete($followup->attachment);
                 if ($followup->proof) Storage::delete($followup->proof);
@@ -87,5 +94,36 @@ class Instruction extends Model
     public function instructionUsers()
     {
         return $this->hasMany(InstructionUser::class, 'instruction_id');
+    }
+
+    protected function isExpired(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value, $attributes) {
+
+                if (empty($attributes['end_time'])) {
+                    return false;
+                }
+
+                $expiryPoint = $this->end_time->endOfDay();
+
+                return now()->gt($expiryPoint);
+            }
+        );
+    }
+
+    protected function instructionSenderId(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => optional($this->instructionUsers->first())->sender_id
+        );
+    }
+
+
+    protected function isSender(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => Auth::id() === $this->instruction_sender_id
+        );
     }
 }

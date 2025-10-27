@@ -17,7 +17,7 @@ return new class extends Migration
             $table->bigInteger('receiver_id');
             $table->string('title');
             $table->longText('description');
-            $table->longText('start_time');
+            $table->date('start_time');
             $table->date('end_time');
             $table->string('attachment')->nullable();
             $table->timestamps();

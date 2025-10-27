@@ -2,12 +2,13 @@
 
 namespace App\Livewire\FollowupCoordination;
 
+use Carbon\Carbon;
 use Livewire\Component;
 use App\Enums\MessageType;
 use App\Models\Coordination;
-use App\Models\FollowupCoordination;
 use Livewire\WithPagination;
 
+use App\Models\FollowupCoordination;
 use Illuminate\Support\Facades\Auth;
 use App\Services\FollowupCoordination\FollowupCoordinationServiceInterface;
 
@@ -122,9 +123,33 @@ class Index extends Component
                 ->orderByDesc('created_at')
                 ->paginate(10);
 
-            $coordinationEndTime = Coordination::where('id', $this->selectedCoordinationId)->value('end_time');
+            $coordination = Coordination::where('id', $this->selectedCoordinationId)->first();
+            $firstFollowup = $this->followupCoordinations->first();
 
-            return view('livewire.followup-coordination.index', compact('followupCoordinations', 'coordinationEndTime'));
+            $receiverId = optional($firstFollowup)->receiver_id;
+            $senderId = optional($firstFollowup)->sender_id;
+            $forwardedTo = collect(optional($firstFollowup)->forwards)->pluck('receiver_id')->toArray();
+
+            $endTime = optional($this->coordination)->end_time;
+
+            $isExpired = $endTime && now()->greaterThan(Carbon::parse($endTime)->addDay());
+
+            $coordinationSenderId = optional($this->coordination->coordinationUsers->first())->sender_id;
+
+            $isSender = Auth::id() === $coordination->coordinationUsers->first()->sender_id;
+
+
+            return view('livewire.followup-coordination.index', compact(
+                'followupCoordinations',
+                'coordination',
+                'firstFollowup',
+                'receiverId',
+                'senderId',
+                'forwardedTo',
+                'endTime',
+                'isExpired',
+                'coordinationSenderId'
+            ));
         }
     }
 }

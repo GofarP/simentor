@@ -3,9 +3,13 @@
 namespace App\Models;
 
 use App\Models\User;
+use App\Models\CoordinationUser;
 use App\Models\ForwardCoordination;
+use App\Models\FollowupCoordination;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class Coordination extends Model
 {
@@ -17,6 +21,10 @@ class Coordination extends Model
         "start_time",
         "end_time",
         "attachment",
+    ];
+
+    protected $casts = [
+        'end_time' => 'date',
     ];
 
     protected static function booted()
@@ -81,5 +89,36 @@ class Coordination extends Model
     public function coordinationUsers()
     {
         return $this->hasMany(CoordinationUser::class, 'coordination_id');
+    }
+
+    protected function isExpired(): Attribute
+    {
+        return Attribute::make(
+            get: function ($value, $attributes) {
+
+                if (empty($attributes['end_time'])) {
+                    return false;
+                }
+
+                $expiryPoint = $this->end_time->endOfDay();
+
+                return now()->gt($expiryPoint);
+            }
+        );
+    }
+
+
+    protected function coordinationSenderId(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => optional($this->coordinationUsers->first())->sender_id
+        );
+    }
+
+    protected function isSender(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => Auth::id() === $this->coordination_sender_id
+        );
     }
 }

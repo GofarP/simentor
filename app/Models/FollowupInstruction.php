@@ -2,7 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\User;
+use App\Models\Instruction;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\FollowupInstructionScore;
+use App\Models\ForwardFollowupInstruction;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 class FollowupInstruction extends Model
 {
@@ -46,7 +51,16 @@ class FollowupInstruction extends Model
         return $this->hasMany(ForwardFollowupInstruction::class, 'followup_instruction_id');
     }
 
-    public function followupInstructionScore(){
+    public function followupInstructionScore()
+    {
         return $this->hasMany(FollowupInstructionScore::class, 'followup_instruction_id');
+    }
+
+    public function isExpired(): Attribute
+    {
+        return Attribute::make(
+          
+            get: fn() => optional($this->instruction)->is_expired ?? false
+        );
     }
 }

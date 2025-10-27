@@ -21,8 +21,8 @@ class ForwardCoordinationController extends Controller
         $this->userService = $userService;
         $this->forwardCoordinationService = $forwardCoordinationService;
 
-        $this->middleware('permission:showform.forwardcoordination')->only('showform');
-        $this->middleware('permission:submit.forwardcoordination')->only('submit');
+        $this->middleware('permission:showform.forward-coordination')->only('showform');
+        $this->middleware('permission:submit.forward-coordination')->only('submit');
     }
 
 
@@ -43,7 +43,7 @@ class ForwardCoordinationController extends Controller
     {
         $this->authorize('forward', $coordination);
         $this->forwardCoordinationService->forwardCoordination($coordination, $request->all());
-        return redirect()->route('coordination.index')->with('success', 'Sukses meneruskan instruksi');
+        return redirect()->route('coordination.index')->with('success', 'Sukses meneruskan koordinasi');
 
     }
 }
