@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('instruction_users', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('instruction_id');
-            $table->bigInteger('user_id');
             $table->bigInteger('sender_id');
             $table->bigInteger('receiver_id');
             $table->timestamps();

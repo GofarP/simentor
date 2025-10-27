@@ -17,127 +17,56 @@ class RoleUserPermissionSeeder extends Seeder
      */
     public function run(): void
     {
+        // 1. Reset cached roles and permissions
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        $permissions = [
-            ['name' => 'view.role', 'guard_name' => 'web'],
-            ['name' => 'create.role', 'guard_name' => 'web'],
-            ['name' => 'edit.role', 'guard_name' => 'web'],
-            ['name' => 'delete.role', 'guard_name' => 'web'],
-
-            ['name' => 'view.instruction', 'guard_name' => 'web'],
-            ['name' => 'create.instruction', 'guard_name' => 'web'],
-            ['name' => 'edit.instruction', 'guard_name' => 'web'],
-            ['name' => 'show.instruction', 'guard_name' => 'web'],
-            ['name' => 'delete.instruction', 'guard_name' => 'web'],
-            ['name' => 'fetch.instruction', 'guard_name' => 'web'],
-
-            ['name' => 'view.coordination', 'guard_name' => 'web'],
-            ['name' => 'create.coordination', 'guard_name' => 'web'],
-            ['name' => 'edit.coordination', 'guard_name' => 'web'],
-            ['name' => 'show.coordination', 'guard_name' => 'web'],
-            ['name' => 'delete.coordination', 'guard_name' => 'web'],
-            ['name' => 'fetch.coordination', 'guard_name' => 'web'],
-
-            ['name' => 'view.followupinstructionscore', 'guard_name' => 'web'],
-            ['name' => 'create.followupinstructionscore', 'guard_name' => 'web'],
-            ['name' => 'edit.followupinstructionscore', 'guard_name' => 'web'],
-            ['name' => 'delete.followupinstructionscore', 'guard_name' => 'web'],
-
-            ['name' => 'view.followupinstruction', 'guard_name' => 'web'],
-            ['name' => 'create.followupinstruction', 'guard_name' => 'web'],
-            ['name' => 'edit.followupinstruction', 'guard_name' => 'web'],
-            ['name' => 'show.followupinstruction', 'guard_name' => 'web'],
-            ['name' => 'delete.followupinstruction', 'guard_name' => 'web'],
-
-            ['name' => 'view.followupcoordination', 'guard_name' => 'web'],
-            ['name' => 'create.followupcoordination', 'guard_name' => 'web'],
-            ['name' => 'edit.followupcoordination', 'guard_name' => 'web'],
-            ['name' => 'show.followupcoordination', 'guard_name' => 'web'],
-            ['name' => 'delete.followupcoordination', 'guard_name' => 'web'],
-
-            ['name' => 'showform.forwardinstruction', 'guard_name' => 'web'],
-            ['name' => 'submit.forwardinstruction', 'guard_name' => 'web'],
-
-            ['name' => 'showform.forwardcoordination', 'guard_name' => 'web'],
-            ['name' => 'submit.forwardcoordination', 'guard_name' => 'web'],
-
-            ['name' => 'showform.forwardfollowupcoordination', 'guard_name' => 'web'],
-            ['name' => 'submit.forwardfollowupcoordination', 'guard_name' => 'web'],
-
-            ['name' => 'showform.forwardfollowupInstruction', 'guard_name' => 'web'],
-            ['name' => 'submit.forwardfollowupInstruction', 'guard_name' => 'web'],
-
-            ['name' => 'view.user', 'guard_name' => 'web'],
-            ['name' => 'create.user', 'guard_name' => 'web'],
-            ['name' => 'edit.user', 'guard_name' => 'web'],
-            ['name' => 'delete.user', 'guard_name' => 'web'],
-            ['name' => 'show.user', 'guard_name' => 'web'],
-
-
-            ['name' => 'view.permission', 'guard_name' => 'web'],
-            ['name' => 'create.permission', 'guard_name' => 'web'],
-            ['name' => 'edit.permission', 'guard_name' => 'web'],
-            ['name' => 'delete.permission', 'guard_name' => 'web'],
-
-
+        // 2. Buat Permissions (FORMAT DIPERBAIKI)
+        $modules = [
+            'instruction' => ['view', 'create', 'show', 'edit', 'delete'],
+            'coordination' => ['view', 'create', 'show', 'edit', 'delete'],
+            'followup-coordination' => ['view', 'create', 'show', 'edit', 'delete'],
+            'followup-instruction' => ['view', 'create', 'show', 'edit', 'delete'],
+            'followup-instruction-score' => ['view', 'create', 'show', 'edit', 'delete'],
+            'forward-coordination' => ['showform', 'submit'],
+            'forward-followup-coordination' => ['showform', 'submit'],
+            'forward-followup-instruction' => ['showform', 'submit'],
+            'forward-instruction' => ['showform', 'submit'],
+            'permission' => ['view', 'create', 'edit', 'delete'],
+            'role' => ['view', 'create', 'edit', 'delete'],
+            'user' => ['view', 'create', 'edit', 'delete', 'fetch'],
         ];
 
-        foreach ($permissions as $perm) {
-            Permission::firstOrCreate(['name' => $perm['name']], ['guard_name' => 'web']);
+        // Looping untuk membuat permissions
+        foreach ($modules as $module => $actions) {
+            foreach ($actions as $action) {
+                // ---- INI BAGIAN YANG DIUBAH ----
+                // Semula: $module . '.' . $action
+                // Menjadi: $action . '.' . $module
+                $permissionName = $action . '.' . $module; 
+                // ---------------------------------
+                
+                Permission::firstOrCreate([
+                    'name' => $permissionName,
+                    'guard_name' => 'web'
+                ]);
+            }
         }
+        $this->command->info('Permissions created successfully (Format: action.module).');
 
-        $kasek   = Role::firstOrCreate(['name' => 'kasek', 'guard_name' => 'web']);
-        $kasubbag = Role::firstOrCreate(['name' => 'kasubbag', 'guard_name' => 'web']);
-        $staff   = Role::firstOrCreate(['name' => 'staff', 'guard_name' => 'web']);
+        // 3. Buat Roles (kasek, kasubbag, staff)
+        Role::firstOrCreate(['name' => 'kasek', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'kasubbag', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'staff', 'guard_name' => 'web']);
+        $this->command->info('Roles (kasek, kasubbag, staff) created successfully.');
 
+        // 4. Berikan Semua Permission ke Semua Role
+        $allPermissions = Permission::pluck('name');
+        $allRoles = Role::all();
 
-        // === ROLE ADMIN (KASEK) ===
-        $kasek->syncPermissions(array_column($permissions, 'name'));
-
-
-        // === ROLE KASUBBAG ===
-        $kasubbag->syncPermissions([
-            'view.coordination',
-            'create.coordination',
-            'submit.forwardcoordination',
-            'view.instruction',
-            'create.followupinstruction',
-            'submit.forwardfollowupInstruction',
-            'create.followupcoordination',
-            'submit.forwardfollowupcoordination',
-            'view.followupinstructionscore',
-            'create.followupinstructionscore',
-        ]);
-
-        // === ROLE STAF ===
-        $staff->syncPermissions([
-            'create.coordination',
-            'submit.forwardcoordination',
-            'view.instruction',
-            'create.followupinstruction',
-            'submit.forwardfollowupInstruction',
-        ]);
-
-
-        $kasekUser = User::firstOrCreate(
-            ['email' => 'kasek@example.com'],
-            ['name' => 'Kepala Seksi', 'telp' => "0819291891829891", 'password' => Hash::make('password')]
-        );
-        $kasekUser->assignRole($kasek);
-
-        $kasubbagUser = User::firstOrCreate(
-            ['email' => 'kasubbag@example.com'],
-            ['name' => 'Kasubbag User', 'telp' => "08019019912090", 'password' => Hash::make('password')]
-        );
-        $kasubbagUser->assignRole($kasubbag);
-
-        $staffUser = User::firstOrCreate(
-            ['email' => 'staff@example.com'],
-            ['name' => 'Staff User', 'telp' => "2119019209021", 'password' => Hash::make('password')]
-        );
-        $staffUser->assignRole($staff);
-
-        app()[PermissionRegistrar::class]->forgetCachedPermissions();
+        foreach ($allRoles as $role) {
+            $role->givePermissionTo($allPermissions);
+        }
+        
+        $this->command->info('All permissions have been assigned to all roles.');
     }
 }

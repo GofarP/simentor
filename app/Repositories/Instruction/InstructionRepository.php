@@ -84,37 +84,39 @@ class InstructionRepository implements InstructionRepositoryInterface
 
     public function storeInstruction(array $data)
     {
-        // Simpan lampiran jika ada
-        if (request()->hasFile('attachment')) {
-            $data['attachment'] = request()->file('attachment')->store('attachment', 'public');
-        }
+        return DB::transaction(function () use ($data) {
+            // Simpan lampiran jika ada
+            if (request()->hasFile('attachment')) {
+                $data['attachment'] = request()->file('attachment')->store('attachment', 'public');
+            }
 
-        // Ambil list penerima dari form
-        $receiverIds = $data['receiver_id'] ?? [];
-        unset($data['receiver_id']); // hapus dari data utama karena tidak ada di tabel utama
+            // Ambil list penerima dari form
+            $receiverIds = $data['receiver_id'] ?? [];
+            unset($data['receiver_id']); // hapus dari data utama karena tidak ada di tabel utama
 
-        // Simpan instruksi utama
-        $instruction = Instruction::create([
-            'title' => $data['title'],
-            'description' => $data['description'],
-            'start_time' => $data['start_time'],
-            'end_time' => $data['end_time'],
-            'attachment' => $data['attachment'] ?? null,
-        ]);
+            // Simpan instruksi utama
+            $instruction = Instruction::create([
+                'title' => $data['title'],
+                'description' => $data['description'],
+                'start_time' => $data['start_time'],
+                'end_time' => $data['end_time'],
+                'attachment' => $data['attachment'] ?? null,
+            ]);
 
-        $senderId = Auth::id();
+            $senderId = Auth::id();
 
-        // Simpan ke pivot via Eloquent
-        $pivotData = [];
-        foreach ($receiverIds as $receiverId) {
-            $pivotData[$receiverId] = ['sender_id' => $senderId];
-        }
+            // Simpan ke pivot via Eloquent
+            $pivotData = [];
+            foreach ($receiverIds as $receiverId) {
+                $pivotData[$receiverId] = ['sender_id' => $senderId];
+            }
 
-        if (!empty($pivotData)) {
-            $instruction->receivers()->sync($pivotData);
-        }
+            if (!empty($pivotData)) {
+                $instruction->receivers()->sync($pivotData);
+            }
 
-        return $instruction;
+            return $instruction;
+        });
     }
 
 
@@ -122,45 +124,47 @@ class InstructionRepository implements InstructionRepositoryInterface
 
     public function editInstruction(Instruction $instruction, array $data)
     {
-        if (request()->hasFile('attachment')) {
-            if ($instruction->attachment && Storage::disk('public')->exists($instruction->attachment)) {
-                Storage::disk('public')->delete($instruction->attachment);
+        return DB::transaction(function () use ($instruction, $data) {
+            if (request()->hasFile('attachment')) {
+                if ($instruction->attachment && Storage::disk('public')->exists($instruction->attachment)) {
+                    Storage::disk('public')->delete($instruction->attachment);
+                }
+                $data['attachment'] = request()->file('attachment')->store('attachment', 'public');
             }
-            $data['attachment'] = request()->file('attachment')->store('attachment', 'public');
-        }
 
-        // Update data utama
-        $instruction->update([
-            'title' => $data['title'],
-            'description' => $data['description'],
-            'start_time' => $data['start_time'],
-            'end_time' => $data['end_time'],
-            'attachment' => $data['attachment'] ?? $instruction->attachment,
-        ]);
+            // Update data utama
+            $instruction->update([
+                'title' => $data['title'],
+                'description' => $data['description'],
+                'start_time' => $data['start_time'],
+                'end_time' => $data['end_time'],
+                'attachment' => $data['attachment'] ?? $instruction->attachment,
+            ]);
 
-        // Update pivot (receiver)
-        $receiverIds = $data['receiver_id'] ?? [];
-        $senderId = Auth::id();
+            // Update pivot (receiver)
+            $receiverIds = $data['receiver_id'] ?? [];
+            $senderId = Auth::id();
 
-        // Detach existing receivers for the current sender
-        $instruction->receivers()->wherePivot('sender_id', $senderId)->detach();
+            $pivotData = [];
+            foreach ($receiverIds as $receiverId) {
+                $pivotData[$receiverId] = ['sender_id' => $senderId];
+            }
+            $instruction->receivers()->sync($pivotData);
 
-        // Attach new receivers for the current sender
-        foreach ($receiverIds as $receiverId) { // Assuming $receiverIds is an array of user IDs
-            $instruction->receivers()->attach($receiverId, ['sender_id' => $senderId]);
-        }
-
-        return $instruction;
+            return $instruction;
+        });
     }
 
 
     public function deleteInstruction(Instruction $instruction): bool
     {
-        if ($instruction->attachment && Storage::disk('public')->exists($instruction->attachment)) {
-            Storage::disk('public')->delete($instruction->attachment);
-        }
-
-        return $instruction->delete();
+        return DB::transaction(function () use ($instruction) {
+            if ($instruction->attachment && Storage::disk('public')->exists($instruction->attachment)) {
+                Storage::disk('public')->delete($instruction->attachment);
+            }
+    
+            return $instruction->delete();
+        });
     }
 
     public function getSenderIdByInstruction(int $instructionId): ?int

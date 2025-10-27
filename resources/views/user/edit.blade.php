@@ -7,7 +7,7 @@
 
             <form method="POST" action="{{ route('user.update', $user->id) }}"
                 x-on:submit="loading = true; $refs.submitBtn.disabled = true;">
-                >
+                
                 @csrf
                 @method('PUT')
 
@@ -85,7 +85,7 @@
 
 
                 <div class="mt-6 flex justify-end gap-3">
-                    <a href="{{ route('permission.index') }}"
+                    <a href="{{ route('user.index') }}"
                         class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">Batal</a>
                     <button x-ref="submitBtn" type="submit"
                         class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition flex items-center justify-center min-w-[120px]">
