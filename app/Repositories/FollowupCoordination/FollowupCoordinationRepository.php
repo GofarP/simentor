@@ -9,49 +9,35 @@ use Illuminate\Support\Facades\Storage;
 
 class FollowupCoordinationRepository implements FollowupCoordinationRepositoryInterface
 {
-    public function getAll(?string $search = null, int $perPage = 10, MessageType $messageType, bool $eager = false)
+    public function getAll(int $coordinationId, ?string $search = null, int $perPage = 10, MessageType $messageType, bool $eager = false)
     {
         $userId = Auth::id();
-        $query = FollowupCoordination::with([
-            'sender',
-            'receiver',
-            'forwardedUsers' => function ($q) {
-                $q->withPivot('forwarded_by')->withTimestamps();
-            },
-            'forwards.forwarder',
-            'forwards.receiver'
-        ])->where(function ($q) use ($userId, $messageType) {
-            switch ($messageType) {
-                case MessageType::Sent:
-                    $q->where('sender_id', $userId);
-                    break;
-                case MessageType::Received:
-                    $q->where('receiver_id', $userId)
-                        ->orWhereHas('forwardedUsers', fn($sub) => $sub->where('users.id', $userId));
-                    break;
-                case MessageType::All:
-                default:
-                    $q->where('sender_id', $userId)
-                        ->orWhere('receiver_id', $userId)
-                        ->orWhereHas('forwardedUsers', fn($sub) => $sub->where('users.id', $userId));
-                    break;
-            }
+
+        $query = FollowupCoordination::query()
+            ->where('coordination_id', $coordinationId);
+
+        if ($eager) {
+            $query->with(['forwards', 'sender', 'receiver', 'coordination']);
+        }
+
+        $query->when($search, function ($query, $search) {
+            $query->where('description', 'like', '%' . $search . '%');
         });
 
-        if (!empty($search)) {
-            $query->where(function ($q) use ($search) {
-                $q->whereHas('sender', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
-                    ->orWhereHas('receiver', fn($sub) => $sub->where('name', 'like', "%{$search}%"))
-                    ->orWhere('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
+        if ($messageType === MessageType::Sent) {
+            $query->where('sender_id', $userId);
+        } elseif ($messageType === MessageType::Received) {
+            $query->where(function ($sub) use ($userId) {
+                $sub->where('receiver_id', $userId)
+                    ->orWhereHas('forwards', function ($q2) use ($userId) {
+                        $q2->where('forwarded_to', $userId);
+                    });
             });
         }
 
-        $query->orderByDesc('created_at');
-
-        return $eager
-            ? $query->get()
-            : $query->paginate($perPage)->onEachSide(1);
+        return $query->orderByDesc('created_at')
+            ->paginate($perPage)
+            ->onEachSide(1);
     }
 
     public function storeFollowupCoordination(array $data)

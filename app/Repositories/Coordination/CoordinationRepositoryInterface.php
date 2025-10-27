@@ -7,7 +7,8 @@ use App\Models\Coordination;
 
 interface CoordinationRepositoryInterface
 {
-    public function getAll(?string $search = null, int $perPage = 10, MessageType $messageType, bool $eager = false);
+    public function getAll(?string $search = null, int $perPage = 10, MessageType $messageType, bool $eager = false);    
+    public function getCoordinationsWithFollowupCounts(?string $search = '', int $perPage = 10);
     public function storeCoordination(array $data);
     public function editCoordination(Coordination $coordination, array $data);
     public function deleteCoordination(Coordination $coordination): bool;

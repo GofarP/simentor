@@ -15,9 +15,9 @@ class FollowupCoordinationService implements FollowupCoordinationServiceInterfac
         $this->followupCoordinationRepository = $followupCoordinationRepository;
     }
 
-    public function getAll(?string $search = null, MessageType $messageType, int $perPage, bool $eager = false)
+    public function getAll( int $coordinationId ,?string $search = null, MessageType $messageType, int $perPage, bool $eager = false)
     {
-        return $this->followupCoordinationRepository->getAll($search, $perPage, $messageType, $eager);
+        return $this->followupCoordinationRepository->getAll($coordinationId,$search, $perPage, $messageType, $eager);
     }
     public function storeFollowupCoordination(array $data)
     {

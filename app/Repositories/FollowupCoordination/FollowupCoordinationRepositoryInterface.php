@@ -5,7 +5,7 @@ use App\Enums\MessageType;
 use App\Models\FollowupCoordination;
 
 interface FollowupCoordinationRepositoryInterface{
-    public function getAll(? string $search=null, int $perPage=10,MessageType $messageType ,bool $eager=false);
+    public function getAll(int $coordinationId, ?string $search=null, int $perPage=10,MessageType $messageType ,bool $eager=false);
 
     public function storeFollowupCoordination(array $data);
 

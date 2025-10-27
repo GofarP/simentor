@@ -81,6 +81,50 @@ class CoordinationRepository implements CoordinationRepositoryInterface
             ->onEachSide(1);
     }
 
+    public function getCoordinationsWithFollowupCounts(string|null $search = '', int $perPage = 10)
+    {
+        $userId = Auth::id();
+
+        $query = Coordination::withCount([
+            'followups as user_followups_count' => function ($query) use ($userId) {
+                $query->where(function ($sub) use ($userId) {
+                    $sub
+                        ->whereHas('coordination.coordinationUsers', function ($q) use ($userId) {
+                            $q->where('sender_id', $userId);
+                        })
+                        ->orWhereRaw('followup_coordinations.sender_id = ?', [$userId]);
+                });
+            },
+            'followups as total_followups_count',
+        ])
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })
+            ->where(function ($query) use ($userId) {
+                $query
+                    ->whereHas('coordinationUsers', function ($q) use ($userId) {
+                        $q->where('sender_id', $userId)
+                            ->orWhere('receiver_id', $userId);
+                    })
+                    ->orWhereHas('followups', function ($q) use ($userId) {
+                        $q->where('receiver_id', $userId);
+                    })
+                    ->orWhereHas('followups.forwards', function ($q) use ($userId) {
+                        $q->where('forwarded_to', $userId);
+                    })
+                    ->orWhereHas('forwards', function ($q) use ($userId) {
+                        $q->where('forwarded_to', $userId);
+                    });
+            });
+
+        return $query->orderByDesc('created_at')
+            ->paginate($perPage)
+            ->onEachSide(1);
+    }
+
     public function storeCoordination(array $data)
     {
         return DB::transaction(function () use ($data) {
@@ -89,11 +133,9 @@ class CoordinationRepository implements CoordinationRepositoryInterface
                 $data['attachment'] = request()->file('attachment')->store('attachment', 'public');
             }
 
-            // Ambil list penerima dari form
             $receiverIds = $data['receiver_id'] ?? [];
-            unset($data['receiver_id']); // hapus dari data utama karena tidak ada di tabel utama
+            unset($data['receiver_id']); 
 
-            // Simpan instruksi utama
             $coordination = Coordination::create([
                 'title' => $data['title'],
                 'description' => $data['description'],
@@ -158,7 +200,7 @@ class CoordinationRepository implements CoordinationRepositoryInterface
             if ($coordination->attachment && Storage::disk('public')->exists($coordination->attachment)) {
                 Storage::disk('public')->delete($coordination->attachment);
             }
-    
+
             return $coordination->delete();
         });
     }

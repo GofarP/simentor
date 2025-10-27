@@ -31,7 +31,6 @@ class Index extends Component
 
     }
 
-
     public function updatingSearch()
     {
         $this->resetPage();
@@ -60,105 +59,10 @@ class Index extends Component
         return redirect()->route('followupinstruction.create');
     }
 
-    // public function render()
-    // {
-    //     $userId = Auth::id();
-
-    //     $instructions = null;
-    //     $followupInstructions = null;
-    //     $instruction = null;
-    //     $firstFollowup = null;
-    //     $receiverId = null;
-    //     $senderId = null;
-    //     $forwardedTo = [];
-    //     $endTime = null;
-
-    //     // === MODE INSTRUCTION ===
-    //     if ($this->switch === 'instructionMode') {
-    //         $instructions = Instruction::withCount([
-    //             'followups as user_followups_count' => function ($query) use ($userId) {
-    //                 $query->where(function ($sub) use ($userId) {
-    //                     $sub
-    //                         ->whereHas('instruction.instructionUsers', function ($q) use ($userId) {
-    //                             $q->where('sender_id', $userId);
-    //                         })
-    //                         ->orWhereRaw('followup_instructions.sender_id = ?', [$userId]);
-    //                 });
-    //             },
-    //             'followups as total_followups_count',
-    //         ])
-    //             ->when($this->search, function ($query, $search) {
-    //                 $query->where(function ($q) use ($search) {
-    //                     $q->where('title', 'like', "%{$search}%")
-    //                         ->orWhere('description', 'like', "%{$search}%");
-    //                 });
-    //             })
-    //             ->where(function ($query) use ($userId) {
-    //                 $query
-    //                     ->whereHas('instructionUsers', function ($q) use ($userId) {
-    //                         $q->where('sender_id', $userId)
-    //                             ->orWhere('receiver_id', $userId);
-    //                     })
-    //                     ->orWhereHas('followups', function ($q) use ($userId) {
-    //                         $q->where('receiver_id', $userId);
-    //                     })
-    //                     ->orWhereHas('followups.forwards', function ($q) use ($userId) {
-    //                         $q->where('forwarded_to', $userId);
-    //                     })
-    //                     ->orWhereHas('forwards', function ($q) use ($userId) {
-    //                         $q->where('forwarded_to', $userId);
-    //                     });
-    //             })
-    //             ->orderByDesc('created_at')
-    //             ->paginate(10);
-    //     }
-
-    //     if ($this->switch === 'followupInstructionMode' && $this->selectedInstructionId) {
-    //         $followupInstructions = FollowupInstruction::with(['forwards', 'sender', 'receiver', 'instruction'])
-    //             ->where('instruction_id', $this->selectedInstructionId)
-    //             ->when($this->search, function ($query) {
-    //                 $query->where('description', 'like', '%' . $this->search . '%');
-    //             })
-    //             ->when($this->messageType === 'sent', function ($q) use ($userId) {
-    //                 $q->where('sender_id', $userId);
-    //             })
-    //             ->when($this->messageType === 'received', function ($q) use ($userId) {
-    //                 $q->where(function ($sub) use ($userId) {
-    //                     $sub->where('receiver_id', $userId)
-    //                         ->orWhereHas('forwards', function ($q2) use ($userId) {
-    //                             $q2->where('forwarded_to', $userId);
-    //                         });
-    //                 });
-    //             })
-    //             ->orderByDesc('created_at')
-    //             ->paginate(10);
-
-    //         $instruction = Instruction::where('id', $this->selectedInstructionId)->first();
-
-    //         $firstFollowup = $followupInstructions->first();
-    //         $receiverId = optional($firstFollowup)->receiver_id;
-    //         $senderId = optional($firstFollowup)->sender_id;
-    //         $forwardedTo = collect(optional($firstFollowup)->forwards)->pluck('receiver_id')->toArray();
-    //         $endTime = optional($instruction)->end_time;
-    //     }
-
-    //     return view('livewire.followup-instruction.index', compact(
-    //         'instructions',
-    //         'followupInstructions',
-    //         'instruction',
-    //         'firstFollowup',
-    //         'receiverId',
-    //         'senderId',
-    //         'forwardedTo',
-    //         'endTime'
-    //     ));
-    // }
-
     public function render()
     {
         $userId = Auth::id();
 
-        // 1. Inisialisasi variabel
         $instructions = null;
         $followupInstructions = null;
         $instruction = null;

@@ -18,6 +18,11 @@ class CoordinationService implements CoordinationServiceInterface
         return $this->coordinationRepository->getAll($search, $perPage, $messageType, $eager);
     }
 
+    public function getCoordinationsWithFollowupCounts(string|null $search = '', int $perPage = 10)
+    {
+        return $this->coordinationRepository->getCoordinationsWithFollowupCounts($search, $perPage);
+    }
+
     public function storeCoordination(array $data): Coordination
     {
         return $this->coordinationRepository->storeCoordination($data);

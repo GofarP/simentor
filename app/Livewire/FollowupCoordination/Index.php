@@ -9,6 +9,7 @@ use App\Models\Coordination;
 use Livewire\WithPagination;
 
 use App\Models\FollowupCoordination;
+use App\Services\Coordination\CoordinationServiceInterface;
 use Illuminate\Support\Facades\Auth;
 use App\Services\FollowupCoordination\FollowupCoordinationServiceInterface;
 
@@ -23,6 +24,15 @@ class Index extends Component
     public string $messageType = 'received';
 
     protected $updatesQueryString = ['search', 'messageType'];
+
+    protected CoordinationServiceInterface $coordinationService;
+    protected FollowupCoordinationServiceInterface $followupCoordinationService;
+
+    public function boot(FollowupCoordinationServiceInterface $followupCoordinationService,CoordinationServiceInterface $coordinationService)
+    {
+        $this->coordinationService = $coordinationService;
+        $this->followupCoordinationService = $followupCoordinationService;
+    }
 
     public function updatingSearch()
     {
@@ -54,102 +64,53 @@ class Index extends Component
     {
         $userId = Auth::id();
 
+        $coordinations = null;
+        $followupcoordinations = null;
+        $coordination = null;
+        $firstFollowup = null;
+        $receiverId = null;
+        $senderId = null;
+        $forwardedTo = [];
+        $endTime = null;
+
+        $messageTypeEnum = MessageType::tryFrom($this->messageType) ?? MessageType::Received;
+
         if ($this->switch === 'coordinationMode') {
-            $userId = Auth::id();
 
-            $coordinations = Coordination::withCount([
-                'followups as user_followups_count' => function ($query) use ($userId) {
-                    $query->where(function ($sub) use ($userId) {
-                        $sub
-                            ->whereHas('coordination.coordinationUsers', function ($q) use ($userId) {
-                                $q->where('sender_id', $userId);
-                            })
-                            ->orWhereRaw('followup_coordinations.sender_id = ?', [$userId]);
-                    });
-                },
-
-                'followups as total_followups_count',
-            ])
-                ->when($this->search, function ($query, $search) {
-                    $query->where(function ($q) use ($search) {
-                        $q->where('title', 'like', "%{$search}%")
-                            ->orWhere('description', 'like', "%{$search}%");
-                    });
-                })
-                ->where(function ($query) use ($userId) {
-                    $query
-                        ->whereHas('coordinationUsers', function ($q) use ($userId) {
-                            $q->where('sender_id', $userId)
-                                ->orWhere('receiver_id', $userId);
-                        })
-
-                        ->orWhereHas('followups', function ($q) use ($userId) {
-                            $q->where('receiver_id', $userId);
-                        })
-
-                        ->orWhereHas('followups.forwards', function ($q) use ($userId) {
-                            $q->where('forwarded_to', $userId);
-                        })
-
-                        ->orWhereHas('forwards', function ($q) use ($userId) {
-                            $q->where('forwarded_to', $userId);
-                        });
-                })
-                ->orderByDesc('created_at')
-                ->paginate(10);
-
-            return view('livewire.followup-coordination.index', compact('coordinations'));
+            $coordinations = $this->coordinationsService->getCoordinationsWithFollowupCounts(
+                $this->search,
+                10
+            );
         }
 
-
-        // === MODE FOLLOW-UP ===
         if ($this->switch === 'followupCoordinationMode' && $this->selectedCoordinationId) {
-            $followupCoordinations = FollowupCoordination::with(['forwards', 'sender', 'receiver', 'coordination'])
-                ->where('coordination_id', $this->selectedCoordinationId)
-                ->when($this->search, function ($query) {
-                    $query->where('description', 'like', '%' . $this->search . '%');
-                })
-                ->when($this->messageType === 'sent', function ($q) use ($userId) {
-                    $q->where('sender_id', $userId);
-                })
-                ->when($this->messageType === 'received', function ($q) use ($userId) {
-                    $q->where(function ($sub) use ($userId) {
-                        $sub->where('receiver_id', $userId)
-                            ->orWhereHas('forwards', function ($q2) use ($userId) {
-                                $q2->where('forwarded_to', $userId);
-                            });
-                    });
-                })
-                ->orderByDesc('created_at')
-                ->paginate(10);
+
+            // Panggil Repository Followup
+            $followupcoordinations = $this->followupCoordinationService->getAll(
+                $this->selectedCoordinationId,
+                $this->search,
+                $messageTypeEnum,
+                10,
+                true
+            );
 
             $coordination = Coordination::where('id', $this->selectedCoordinationId)->first();
-            $firstFollowup = $followupCoordinations->first();
-
+            $firstFollowup = $followupcoordinations->first();
             $receiverId = optional($firstFollowup)->receiver_id;
             $senderId = optional($firstFollowup)->sender_id;
             $forwardedTo = collect(optional($firstFollowup)->forwards)->pluck('receiver_id')->toArray();
-
             $endTime = optional($coordination)->end_time;
-
-            $isExpired = $endTime && now()->greaterThan(Carbon::parse($endTime)->addDay());
-
-            $coordinationSenderId = optional($coordination->coordinationUsers->first())->sender_id;
-
-            $isSender = Auth::id() === $coordination->coordinationUsers->first()->sender_id;
-
-
-            return view('livewire.followup-coordination.index', compact(
-                'followupCoordinations',
-                'coordination',
-                'firstFollowup',
-                'receiverId',
-                'senderId',
-                'forwardedTo',
-                'endTime',
-                'isExpired',
-                'coordinationSenderId'
-            ));
         }
+
+        return view('livewire.followup-coordination.index', compact(
+            'coordinations',
+            'followupCoordinations',
+            'coordination',
+            'firstFollowup',
+            'receiverId',
+            'senderId',
+            'forwardedTo',
+            'endTime'
+        ));
     }
 }
