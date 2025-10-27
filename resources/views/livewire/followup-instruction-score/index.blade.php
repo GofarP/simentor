@@ -47,27 +47,27 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($instructions as $index => $instruction)
-                            <tr>
-                                <td class="px-6 py-4">{{ $instructions->firstItem() + $index }}</td>
-                                <td class="px-6 py-4">{{ $instruction->title }}</td>
-                                <td class="px-6 py-4">
-                                    <div class="truncate max-w-xs" title="{{ strip_tags($instruction->description) }}">
-                                        {!! $instruction->description !!}
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    {{ $instruction->sender_id === Auth::id()
-                        ? $instruction->total_followups_count ?? 0
-                        : $instruction->user_followups_count ?? 0 }}
-                                </td>
+                        <tr>
+                            <td class="px-6 py-4">{{ $instructions->firstItem() + $index }}</td>
+                            <td class="px-6 py-4">{{ $instruction->title }}</td>
+                            <td class="px-6 py-4">
+                                <div class="truncate max-w-xs" title="{{ strip_tags($instruction->description) }}">
+                                    {!! $instruction->description !!}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ $instruction->sender_id === Auth::id()
+                                    ? $instruction->total_followups_count ?? 0
+                                    : $instruction->user_followups_count ?? 0 }}
+                            </td>
 
-                                <td class="px-6 py-4">
-                                    <button wire:click="showFollowups({{ $instruction->id }})"
-                                        class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                                        Detail
-                                    </button>
-                                </td>
-                            </tr>
+                            <td class="px-6 py-4">
+                                <button wire:click="showFollowups({{ $instruction->id }})"
+                                    class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                    Detail
+                                </button>
+                            </td>
+                        </tr>
                     @empty
                         <tr>
                             <td colspan="5" class="px-6 py-4 text-center text-gray-500">Tidak ada data</td>
@@ -83,15 +83,16 @@
             {{-- FollowupInstruction Mode --}}
         @elseif($switch === 'followupInstructionScoreMode')
             <div class="flex justify-between items-center mb-4 mt-3 px-3">
-                <button wire:click="backToInstructions" class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                <button wire:click="backToInstructions"
+                    class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
                     Kembali
                 </button>
 
-                @if ($followupInstructions->isNotEmpty() && Auth::id() !== optional($followupInstructions->first())->receiver_id)
-                    <button wire:click="goToCreate" class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                        Tambah Penilaian
-                    </button>
-                @endif
+                {{-- @if ($followupInstructions->isNotEmpty() && Auth::id() !== optional($followupInstructions->first())->receiver_id) --}}
+                <button wire:click="giveScore" class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Tambah Penilaian
+                </button>
+                {{-- @endif --}}
             </div>
 
             <div class="overflow-x-auto shadow-md sm:rounded-lg">
@@ -113,7 +114,7 @@
                             @php
                                 $instruction = $followup->instruction ?? null;
                                 $sender = $followup->sender ?? null;
-                                $scoreModel = $followup->followupInstructionScore->first();
+                                $scoreModel = $followup->followupInstructionScore()->latest()->first();
                                 $scoreValue = optional($scoreModel)->score;
                             @endphp
 
@@ -144,11 +145,15 @@
                                 </td>
 
                                 {{-- Nilai --}}
-                                <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-gray-100 text-center">
-                                    @if ($scoreValue === 1)
-                                        <img src="{{ asset('images/thumbsup.svg') }}" alt="thumbs up" class="w-6 h-6 mx-auto">
-                                    @elseif ($scoreValue === 0)
-                                        <img src="{{ asset('images/thumbsdown.svg') }}" alt="thumbs down" class="w-6 h-6 mx-auto">
+                                {{-- Nilai --}}
+                                <td
+                                    class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-gray-100 text-center">
+                                    @if ($scoreModel && $scoreModel->score === 1)
+                                        <img src="{{ asset('images/thumbsup.svg') }}" alt="thumbs up"
+                                            class="w-6 h-6 mx-auto">
+                                    @elseif ($scoreModel && $scoreModel->score === 0)
+                                        <img src="{{ asset('images/thumbsdown.svg') }}" alt="thumbs down"
+                                            class="w-6 h-6 mx-auto">
                                     @else
                                         <p class="text-gray-500 dark:text-gray-400">Belum diberi nilai</p>
                                     @endif
@@ -158,7 +163,8 @@
                                 <td class="px-6 py-4 text-sm">
                                     <div class="flex flex-wrap sm:flex-nowrap gap-2">
                                         {{-- Tombol Show --}}
-                                        <a href="{{ route('followupinstruction.show', $followup->id) }}" target="_blank"
+                                        <a href="{{ route('followupinstruction.show', $followup->id) }}"
+                                            target="_blank"
                                             class="flex-1 sm:flex-none px-3 py-2 bg-blue-600 text-white rounded-lg text-center hover:bg-blue-700 transition">
                                             Show
                                         </a>

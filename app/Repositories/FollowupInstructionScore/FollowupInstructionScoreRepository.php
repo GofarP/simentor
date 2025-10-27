@@ -26,6 +26,7 @@ class FollowupInstructionScoreRepository implements FollowupInstructionScoreRepo
     public function editFollowupInstructionScore(FollowupInstructionScore $followupInstructionScore, array $data) {
         return $followupInstructionScore->update($data);
     }
+    
 
     public function deleteFollowupInstructionScore(FollowupInstructionScore $followupInstructionScore) {
         return $followupInstructionScore->delete();

@@ -236,7 +236,7 @@
                         </li>
                     @endcan
 
-                    @can('view.followupinstructionscore')
+                    @can('view.followup-instruction-score')
                         <li class="pl-4 pr-3 py-2 rounded-lg mb-0.5 last:mb-0 bg-linear-to-r
                         @if (in_array(Request::segment(1), ['penilaian'])) from-violet-500/[0.12] dark:from-violet-500/[0.24] to-violet-500/[0.04] @endif"
                             x-data="{ open: {{ in_array(Request::segment(1), ['penilaian']) ? 'true' : 'false' }} }">

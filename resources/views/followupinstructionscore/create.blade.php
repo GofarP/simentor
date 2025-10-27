@@ -13,13 +13,16 @@
                     <label for="followup_instruction_id"
                         class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Nama Instruksi</label>
                     <select name="followup_instruction_id" id="followup_instruction_id"
-                        class="w-full pointer-events-none bg-white border rounded-md p-2">
-                        <option value="">-- Pilih Instruksi --</option>
-                        @foreach ($followupInstructions as $followupInstruction)
-                            <option value="{{ $followupInstruction->id }}" {{ old('followup_instruction_id', $followupInstructionId ?? '') == $followupInstruction->id ? 'selected' : '' }}>
+                        class="w-full pointer-events-none bg-gray-100 border rounded-md p-2">
+
+                        @if ($followupInstruction)
+                            <option value="{{ $followupInstruction->id }}" selected>
                                 {{ $followupInstruction->instruction->title }}
                             </option>
-                        @endforeach
+                        @else
+                            <option value="" selected>-- Tindak Lanjut Tidak Ditemukan --</option>
+                        @endif
+
                     </select>
                     @error('followup_instruction_id')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
@@ -43,7 +46,8 @@
                 <div class="mb-4">
                     <label for="comment"
                         class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Komentar</label>
-                    <input id="comment" type="hidden" name="comment" value="{{ old('comment', $data->comment ?? '') }}">
+                    <input id="comment" type="hidden" name="comment"
+                        value="{{ old('comment', $data->comment ?? '') }}">
                     <trix-editor input="comment"
                         class="border rounded-lg dark:bg-gray-700 dark:text-white"></trix-editor>
                     @error('comment')
@@ -65,8 +69,8 @@
                             <div class="flex items-center gap-2">
                                 <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
                                     fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                        stroke-width="4"></circle>
+                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                        stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor"
                                         d="M4 12a8 8 0 018-8v4l3-3-3-3v4a8 8 0 100 16v-4l3 3-3 3v-4a8 8 0 01-8-8z">
                                     </path>
@@ -82,7 +86,6 @@
     @push('css')
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="https://unpkg.com/trix@2.1.0/dist/trix.css">
-
     @endpush
 
     @push('js')
@@ -90,7 +93,7 @@
         <script src="https://unpkg.com/trix@2.1.0/dist/trix.umd.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script>
-            $(function () {
+            $(function() {
                 $('.js-example-basic-single').select2({
                     width: '100%'
                 });

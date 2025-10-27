@@ -25,11 +25,11 @@ class FollowupInstructionScoreController extends Controller
         $this->followupInstructionService = $followupInstructionService;
         $this->followupInstructionScoreService = $followupInstructionScoreService;
 
-        $this->middleware('permission:view.followupinstructionscore')->only('index');
-        $this->middleware('permission:create.followupinstructionscore')->only(['create', 'store']);
-        $this->middleware('permission:show.followupinstructionscore')->only('show');
-        $this->middleware('permission:edit.followupinstructionscore')->only(['edit', 'update']);
-        $this->middleware('permission:delete.followupinstructionscore')->only('destroy');
+        $this->middleware('permission:view.followup-instruction-score')->only('index');
+        $this->middleware('permission:create.followup-instruction-score')->only(['create', 'store']);
+        $this->middleware('permission:show.followup-instruction-score')->only('show');
+        $this->middleware('permission:edit.followup-instruction-score')->only(['edit', 'update']);
+        $this->middleware('permission:delete.followup-instruction-score')->only('destroy');
     }
 
     /**
@@ -46,10 +46,11 @@ class FollowupInstructionScoreController extends Controller
     public function create()
     {
         $followupInstructionId = session('selectedFollowupInstructionId');
-        $followupInstructions = $this->followupInstructionService->getAll(null, MessageType::All, 10, true);
-        return view('followupinstructionscore.create', compact('followupInstructions', 'followupInstructionId'));
-    }
 
+        $followupInstruction = \App\Models\FollowupInstruction::with('instruction')
+            ->find($followupInstructionId);
+        return view('followupinstructionscore.create', compact('followupInstruction'));
+    }
     /**
      * Store a newly created resource in storage.
      */
@@ -75,7 +76,17 @@ class FollowupInstructionScoreController extends Controller
      */
     public function edit(FollowupInstructionScore $followupinstructionscore)
     {
-        $followupInstructions = $this->followupInstructionService->getAll(null, MessageType::All, 10, true);
+        $followupInstruction = $followupinstructionscore->followupInstruction;
+        $instructionId = $followupInstruction->instruction_id;
+
+        $followupInstructions = $this->followupInstructionService->getAll(
+            $instructionId,
+            null,
+            MessageType::All,
+            10,
+            true
+        );
+
         return view('followupinstructionscore.edit', compact('followupinstructionscore', 'followupInstructions'));
     }
 
@@ -84,11 +95,19 @@ class FollowupInstructionScoreController extends Controller
      */
     public function update(FollowupInstructionScoreRequest $request, FollowupInstructionScore $followupinstructionscore)
     {
-        $data = $request->validated();
-        $data['user_id'] = Auth::id();
-        $this->followupInstructionScoreService->editFollowupInstructionScore($followupinstructionscore, $data);
-        return redirect()->route('followupinstructionscore.index')->with('success', 'Sukses mengubah penilaian instruksi');
+        $validated = $request->validated();
+
+        $this->authorize('update', $followupinstructionscore);
+
+        $validated['user_id'] = Auth::id();
+
+        $this->followupInstructionScoreService->editFollowupInstructionScore($followupinstructionscore, $validated);
+
+        return redirect()
+            ->route('followupinstructionscore.index')
+            ->with('success', 'Penilaian instruksi berhasil diperbarui.');
     }
+
 
     /**
      * Remove the specified resource from storage.
