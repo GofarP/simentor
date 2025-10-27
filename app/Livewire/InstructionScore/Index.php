@@ -2,6 +2,7 @@
 
 namespace App\Livewire\InstructionScore;
 
+use App\Services\FollowupInstructionScore\FollowupInstructionScoreServiceInterface;
 use App\Services\Instruction\InstructionService;
 use App\Services\Instruction\InstructionServiceInterface;
 use Livewire\Component;
@@ -13,10 +14,9 @@ class Index extends Component
 
     public string $search="";
 
+    protected FollowupInstructionScoreServiceInterface $instructionScoreService;
 
-    protected InstructionScoreServiceInterface $instructionScoreService;
-
-    public function boot(InstructionScoreServiceInterface $instructionScoreService){
+    public function boot(FollowupInstructionScoreServiceInterface $instructionScoreService){
         $this->instructionScoreService=$instructionScoreService;
     }
 
@@ -27,7 +27,7 @@ class Index extends Component
 
     public function render()
     {
-        $instructionScores=$this->instructionScoreService->getAllInstructionScore($this->search, 10);
+        $instructionScores=$this->instructionScoreService->getAllFollowupInstructionStore($this->search, 10);
         return view('livewire.instruction-score.index',[
             'instructionScores'=>$instructionScores
         ]);

@@ -14,9 +14,9 @@ class FollowupInstructionService implements FollowupInstructionServiceInterface
         $this->followupInstructionRepository = $followupInstructionRepository;
     }
 
-    public function getAll(?string $search = null, MessageType $messageType, int $perPage, bool $eager = false)
+    public function getAll(?int $instructionId,?string $search = null, MessageType $messageType, int $perPage, bool $eager = false)
     {
-        return $this->followupInstructionRepository->getAll($search, $perPage, $messageType, false);
+        return $this->followupInstructionRepository->getAll($instructionId,$search, $perPage, $messageType, true);
     }
 
     public function storeFollowupInstruction(array $data) {

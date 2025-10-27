@@ -16,11 +16,11 @@ class Index extends Component
     #[Url]
     public string $messageType = "received";
 
-    protected InstructionServiceInterface $instruksiService;
+    protected InstructionServiceInterface $instructionService;
 
-    public function boot(InstructionServiceInterface $instruksiService)
+    public function boot(InstructionServiceInterface $instructionService)
     {
-        $this->instruksiService = $instruksiService;
+        $this->instructionService = $instructionService;
     }
 
     public function mount()
@@ -37,7 +37,7 @@ class Index extends Component
     {
         $messageTypeEnum = MessageType::tryFrom($this->messageType) ?? MessageType::Received;
 
-        $instructions = $this->instruksiService->getAllInstruction(
+        $instructions = $this->instructionService->getAllInstruction(
             $this->search,
             10,
             $messageTypeEnum,

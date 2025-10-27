@@ -16,6 +16,10 @@ class InstructionService implements InstructionServiceInterface{
         return $this->instructionRepository->getAll($search, $perPage,$messageType, $eager);
     }
 
+    public function getInstructionsWithFollowupCounts(string|null $search = '', int $perPage = 10){
+        return $this->instructionRepository->getInstructionsWithFollowupCounts($search, $perPage);
+    }
+
     public function storeInstruction(array $data): Instruction
     {
         return $this->instructionRepository->storeInstruction($data);

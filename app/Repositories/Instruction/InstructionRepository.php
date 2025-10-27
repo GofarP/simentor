@@ -80,6 +80,52 @@ class InstructionRepository implements InstructionRepositoryInterface
             ->onEachSide(1);
     }
 
+    public function getInstructionsWithFollowupCounts(?string $search = '', int $perPage = 10)
+    {
+        $userId = Auth::id();
+
+        $query = Instruction::withCount([
+            'followups as user_followups_count' => function ($query) use ($userId) {
+                $query->where(function ($sub) use ($userId) {
+                    $sub
+                        ->whereHas('instruction.instructionUsers', function ($q) use ($userId) {
+                            $q->where('sender_id', $userId);
+                        })
+                        ->orWhereRaw('followup_instructions.sender_id = ?', [$userId]);
+                });
+            },
+            'followups as total_followups_count',
+        ])
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%");
+                });
+            })
+            ->where(function ($query) use ($userId) {
+                $query
+                    ->whereHas('instructionUsers', function ($q) use ($userId) {
+                        $q->where('sender_id', $userId)
+                            ->orWhere('receiver_id', $userId);
+                    })
+                    ->orWhereHas('followups', function ($q) use ($userId) {
+                        $q->where('receiver_id', $userId);
+                    })
+                    ->orWhereHas('followups.forwards', function ($q) use ($userId) {
+                        $q->where('forwarded_to', $userId);
+                    })
+                    ->orWhereHas('forwards', function ($q) use ($userId) {
+                        $q->where('forwarded_to', $userId);
+                    });
+            });
+
+        return $query->orderByDesc('created_at')
+            ->paginate($perPage)
+            ->onEachSide(1);
+    }
+
+
+
 
     public function storeInstruction(array $data)
     {
@@ -161,7 +207,7 @@ class InstructionRepository implements InstructionRepositoryInterface
             if ($instruction->attachment && Storage::disk('public')->exists($instruction->attachment)) {
                 Storage::disk('public')->delete($instruction->attachment);
             }
-    
+
             return $instruction->delete();
         });
     }

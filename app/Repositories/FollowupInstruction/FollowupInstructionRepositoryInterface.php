@@ -5,7 +5,7 @@ use App\Enums\MessageType;
 use App\Models\FollowupInstruction;
 
 interface FollowupInstructionRepositoryInterface{
-    public function getAll(? string $search=null, int $perPage=10,MessageType $messageType ,bool $eager=false);
+    public function getAll(int $instructionId,?string $search=null, int $perPage=10,MessageType $messageType ,bool $eager=false);
 
     public function storeFollowupInstruction(array $data);
 
