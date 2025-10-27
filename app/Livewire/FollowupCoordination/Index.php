@@ -124,17 +124,17 @@ class Index extends Component
                 ->paginate(10);
 
             $coordination = Coordination::where('id', $this->selectedCoordinationId)->first();
-            $firstFollowup = $this->followupCoordinations->first();
+            $firstFollowup = $followupCoordinations->first();
 
             $receiverId = optional($firstFollowup)->receiver_id;
             $senderId = optional($firstFollowup)->sender_id;
             $forwardedTo = collect(optional($firstFollowup)->forwards)->pluck('receiver_id')->toArray();
 
-            $endTime = optional($this->coordination)->end_time;
+            $endTime = optional($coordination)->end_time;
 
             $isExpired = $endTime && now()->greaterThan(Carbon::parse($endTime)->addDay());
 
-            $coordinationSenderId = optional($this->coordination->coordinationUsers->first())->sender_id;
+            $coordinationSenderId = optional($coordination->coordinationUsers->first())->sender_id;
 
             $isSender = Auth::id() === $coordination->coordinationUsers->first()->sender_id;
 
