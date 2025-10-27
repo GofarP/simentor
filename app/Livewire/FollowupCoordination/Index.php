@@ -65,7 +65,7 @@ class Index extends Component
         $userId = Auth::id();
 
         $coordinations = null;
-        $followupcoordinations = null;
+        $followupCoordinations = null;
         $coordination = null;
         $firstFollowup = null;
         $receiverId = null;
@@ -77,7 +77,7 @@ class Index extends Component
 
         if ($this->switch === 'coordinationMode') {
 
-            $coordinations = $this->coordinationsService->getCoordinationsWithFollowupCounts(
+            $coordinations =$this->coordinationService->getCoordinationsWithFollowupCounts(
                 $this->search,
                 10
             );
@@ -86,7 +86,7 @@ class Index extends Component
         if ($this->switch === 'followupCoordinationMode' && $this->selectedCoordinationId) {
 
             // Panggil Repository Followup
-            $followupcoordinations = $this->followupCoordinationService->getAll(
+            $followupCoordinations = $this->followupCoordinationService->getAll(
                 $this->selectedCoordinationId,
                 $this->search,
                 $messageTypeEnum,
@@ -95,7 +95,7 @@ class Index extends Component
             );
 
             $coordination = Coordination::where('id', $this->selectedCoordinationId)->first();
-            $firstFollowup = $followupcoordinations->first();
+            $firstFollowup = $followupCoordinations->first();
             $receiverId = optional($firstFollowup)->receiver_id;
             $senderId = optional($firstFollowup)->sender_id;
             $forwardedTo = collect(optional($firstFollowup)->forwards)->pluck('receiver_id')->toArray();
