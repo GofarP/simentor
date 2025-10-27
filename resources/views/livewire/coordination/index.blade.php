@@ -69,6 +69,12 @@
                     <th
                         class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         Batas Waktu</th>
+
+                    <th
+                        class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
+                        Status</th>
+
+
                     <th
                         class="px-6 py-3 text-left text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider">
                         Lampiran</th>
@@ -148,7 +154,16 @@
                             {{ \Carbon\Carbon::parse($coordination->end_time)->format('d-m-Y') }}
                         </td>
 
-                        {{-- Lampiran --}}
+                        <td class="px-6 py-4 text-sm text-gray-800">
+                            <span @class([
+                                'inline-flex items-center px-3 py-1 text-xs text-center font-medium rounded-full',
+                                'text-red-800 bg-red-100 dark:bg-red-900 dark:text-red-300' => $coordination->is_expired,
+                                'text-green-800 bg-green-100 dark:bg-green-900 dark:text-green-300' => !$coordination->is_expired,
+                            ])>
+                                {{ $coordination->is_expired ? 'Waktu habis' : 'Berlangsung' }}
+                            </span>
+
+                            {{-- Lampiran --}}
                         <td class="px-6 py-4 text-sm text-gray-800 dark:text-gray-200">
                             @if ($coordination->attachment)
                                 <a href="{{ Storage::url($coordination->attachment) }}" target="_blank"

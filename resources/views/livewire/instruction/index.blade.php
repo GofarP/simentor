@@ -158,7 +158,7 @@
                                 'text-red-800 bg-red-100 dark:bg-red-900 dark:text-red-300' => $instruction->is_expired,
                                 'text-green-800 bg-green-100 dark:bg-green-900 dark:text-green-300' => !$instruction->is_expired,
                             ])>
-                                {{ $instruction->is_expired ? 'Waktu habis' : 'Masih berlangsung' }}
+                                {{ $instruction->is_expired ? 'Waktu habis' : 'Berlangsung' }}
                             </span>
                         </td>
 
