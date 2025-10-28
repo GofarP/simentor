@@ -21,7 +21,7 @@ class Index extends Component
     public string $search = '';
     public string $switch = 'coordinationMode';
     public ?int $selectedCoordinationId = null;
-    public string $messageType = 'all';
+    public string $messageType = MessageType::All->value;
 
     protected $updatesQueryString = ['search', 'messageType'];
 

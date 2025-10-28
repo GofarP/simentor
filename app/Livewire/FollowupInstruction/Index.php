@@ -19,7 +19,7 @@ class Index extends Component
     public string $search = '';
     public string $switch = 'instructionMode';
     public ?int $selectedInstructionId = null;
-    public string $messageType = 'all';
+    public string $messageType = MessageType::All->value;
 
     protected InstructionServiceInterface $instructionService;
     protected FollowupInstructionServiceInterface $followupInstructionService;

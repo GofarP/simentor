@@ -57,7 +57,7 @@
                     <label for="waktu_mulai" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Waktu Mulai</label>
                     <input type="date" name="start_time" id="waktu_mulai" value="{{ old('start_time') }}"
                         class="form-input w-full rounded border-gray-300 dark:border-gray-600
-                               dark:bg-gray-700 dark:text-gray-200">
+                               dark:bg-gray-700 dark:text-gray-200"  min="{{ date('Y-m-d') }}">
                     @error('start_time')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror
@@ -68,7 +68,7 @@
                     <label for="end_time" class="block text-gray-700 dark:text-gray-200 font-medium mb-2">Batas Waktu</label>
                     <input type="date" name="end_time" id="end_time" value="{{ old('end_time') }}"
                         class="form-input w-full rounded border-gray-300 dark:border-gray-600
-                               dark:bg-gray-700 dark:text-gray-200">
+                               dark:bg-gray-700 dark:text-gray-200"  min="{{ date('Y-m-d') }}">
                     @error('end_time')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror

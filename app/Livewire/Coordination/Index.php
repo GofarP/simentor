@@ -15,7 +15,7 @@ class Index extends Component
     public $search = "";
 
     #[Url]
-    public string $messageType = "all";
+    public string $messageType = MessageType::All->value;
 
     protected CoordinationServiceInterface $coordinationService;
 
