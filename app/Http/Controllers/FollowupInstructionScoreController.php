@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\MessageType;
 use Illuminate\Http\Request;
+use App\Models\FollowupInstruction;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\FollowupInstructionScore;
@@ -47,7 +48,7 @@ class FollowupInstructionScoreController extends Controller
     {
         $followupInstructionId = session('selectedFollowupInstructionId');
 
-        $followupInstruction = \App\Models\FollowupInstruction::with('instruction')
+        $followupInstruction = FollowupInstruction::with('instruction')
             ->find($followupInstructionId);
         return view('followupinstructionscore.create', compact('followupInstruction'));
     }
@@ -60,7 +61,7 @@ class FollowupInstructionScoreController extends Controller
         $data['user_id'] = Auth::id();
         $this->followupInstructionScoreService->storeFollowupInstructionScore($data);
 
-        return redirect()->route('followupinstructionscore.index')->with('success', 'Sukses menambahkan penilaian instruksi');
+        return redirect()->route('followupinstructionscore.index')->with('success', 'Sukses menambahkan penilaian tindak lanjut instruksi');
     }
 
     /**
@@ -105,7 +106,7 @@ class FollowupInstructionScoreController extends Controller
 
         return redirect()
             ->route('followupinstructionscore.index')
-            ->with('success', 'Penilaian instruksi berhasil diperbarui.');
+            ->with('success', 'Penilaian tindak lanjut instruksi berhasil diubah.');
     }
 
 
@@ -115,6 +116,6 @@ class FollowupInstructionScoreController extends Controller
     public function destroy(FollowupInstructionScore $followupinstructionscore)
     {
         $this->followupInstructionScoreService->deleteFollowupInstructionScore($followupinstructionscore);
-        return redirect()->route('followupinstructionscore.index')->with('success', 'Sukses menghapus penilaian instruksi');
+        return redirect()->route('followupinstructionscore.index')->with('success', 'Sukses menghapus penilaian tindak lanjut instruksi');
     }
 }

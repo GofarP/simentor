@@ -32,13 +32,14 @@ class RoleUserPermissionSeeder extends Seeder
             'permission' => ['view', 'create', 'edit', 'delete'],
             'role' => ['view', 'create', 'edit', 'delete'],
             'user' => ['view', 'create', 'edit', 'delete', 'fetch'],
+            'instruction-score' => ['view', 'create', 'show', 'edit']
         ];
 
         foreach ($modules as $module => $actions) {
             foreach ($actions as $action) {
-               
-                $permissionName = $action . '.' . $module; 
-                
+
+                $permissionName = $action . '.' . $module;
+
                 Permission::firstOrCreate([
                     'name' => $permissionName,
                     'guard_name' => 'web'
@@ -60,7 +61,7 @@ class RoleUserPermissionSeeder extends Seeder
         foreach ($allRoles as $role) {
             $role->givePermissionTo($allPermissions);
         }
-        
+
         $this->command->info('All permissions have been assigned to all roles.');
     }
 }
