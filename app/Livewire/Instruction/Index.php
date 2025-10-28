@@ -14,7 +14,7 @@ class Index extends Component
 
     public string $search = "";
     #[Url]
-    public string $messageType = "received";
+    public string $messageType = "all";
 
     protected InstructionServiceInterface $instructionService;
 
@@ -35,7 +35,7 @@ class Index extends Component
 
     public function render()
     {
-        $messageTypeEnum = MessageType::tryFrom($this->messageType) ?? MessageType::Received;
+        $messageTypeEnum = MessageType::tryFrom($this->messageType) ?? MessageType::All;
 
         $instructions = $this->instructionService->getAllInstruction(
             $this->search,

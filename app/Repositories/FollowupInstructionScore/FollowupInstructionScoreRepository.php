@@ -2,6 +2,7 @@
 
 namespace App\Repositories\FollowupInstructionScore;
 
+use Illuminate\Support\Arr;
 use App\Models\FollowupInstruction;
 use App\Models\FollowupInstructionScore;
 
@@ -24,7 +25,9 @@ class FollowupInstructionScoreRepository implements FollowupInstructionScoreRepo
 
 
     public function editFollowupInstructionScore(FollowupInstructionScore $followupInstructionScore, array $data) {
-        return $followupInstructionScore->update($data);
+        $allowedFields=['user_id','score','comment'];
+        $filteredFields=Arr::only($data, $allowedFields);
+        return $followupInstructionScore->update($filteredFields);
     }
     
 

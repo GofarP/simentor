@@ -53,7 +53,7 @@ class FollowupInstruction extends Model
 
     public function followupInstructionScore()
     {
-        return $this->hasMany(FollowupInstructionScore::class, 'followup_instruction_id')->latest();
+        return $this->hasMany(FollowupInstructionScore::class, 'followup_instruction_id');
     }
 
     public function isExpired(): Attribute

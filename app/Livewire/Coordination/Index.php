@@ -15,7 +15,7 @@ class Index extends Component
     public $search = "";
 
     #[Url]
-    public string $messageType = "received";
+    public string $messageType = "all";
 
     protected CoordinationServiceInterface $coordinationService;
 
@@ -37,7 +37,7 @@ class Index extends Component
     public function render()
     {
         // Konversi ke enum
-        $messageTypeEnum = MessageType::tryFrom($this->messageType) ?? MessageType::Received;
+        $messageTypeEnum = MessageType::tryFrom($this->messageType) ?? MessageType::All;
 
         $coordinations = $this->coordinationService->getAllCoordination(
             $this->search,

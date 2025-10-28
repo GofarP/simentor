@@ -21,7 +21,7 @@ class Index extends Component
     public string $search = '';
     public string $switch = 'coordinationMode';
     public ?int $selectedCoordinationId = null;
-    public string $messageType = 'received';
+    public string $messageType = 'all';
 
     protected $updatesQueryString = ['search', 'messageType'];
 
@@ -73,7 +73,7 @@ class Index extends Component
         $forwardedTo = [];
         $endTime = null;
 
-        $messageTypeEnum = MessageType::tryFrom($this->messageType) ?? MessageType::Received;
+        $messageTypeEnum = MessageType::tryFrom($this->messageType) ?? MessageType::All;
 
         if ($this->switch === 'coordinationMode') {
 

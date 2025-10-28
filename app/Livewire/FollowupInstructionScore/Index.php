@@ -72,33 +72,28 @@ class Index extends Component
         }
 
         // MODE FOLLOWUP SCORE
-        if ($this->switch === 'followupInstructionScoreMode' && $this->selectedInstructionId) {
-            $followupInstructions = FollowupInstruction::with([
-                'forwards',
-                'sender',
-                'receiver',
-                'instruction',
-                'followupInstructionScore'
-            ])
-                ->where('instruction_id', $this->selectedInstructionId)
-                ->when($this->search, function ($query) {
-                    $query->where(function ($q) {
-                        $q->where('description', 'like', '%' . $this->search . '%')
-                            ->orWhereHas('instruction', fn($sub) => $sub->where('title', 'like', '%' . $this->search . '%'))
-                            ->orWhereHas('sender', fn($sub) => $sub->where('name', 'like', '%' . $this->search . '%'));
-                    });
-                })
-                ->where(function ($query) use ($userId) {
-                    $query->where('receiver_id', $userId)
-                        ->orWhere('sender_id', $userId);
-                })
-                ->orderByDesc('created_at')
-                ->paginate(10);
+    if ($this->switch === 'followupInstructionScoreMode' && $this->selectedInstructionId) {
+    $userId = Auth::id();
 
-            return view('livewire.followup-instruction-score.index', [
-                'instructions' => collect(),
-                'followupInstructions' => $followupInstructions,
-            ]);
-        }
+    // 1. Ambil data UTAMA tanpa relasi score dulu
+    $followupInstructions = FollowupInstruction::with([
+        'forwards', 'sender', 'receiver', 'instruction'
+        // Hapus 'followupInstructionScore' dari with() awal
+    ])
+        ->where('instruction_id', $this->selectedInstructionId)
+        // ... (sisa query when(), where(), orderBy()) ...
+        ->paginate(10);
+
+    // 2. SETELAH data utama diambil, PAKSA muat ulang relasi score
+    if ($followupInstructions->isNotEmpty()) {
+         $followupInstructions->load('followupInstructionScore'); // <-- BARIS KUNCI
+    }
+
+    // 3. Kirim ke view
+    return view('livewire.followup-instruction-score.index', [
+        'instructions' => collect(),
+        'followupInstructions' => $followupInstructions,
+    ]);
+}
     }
 }

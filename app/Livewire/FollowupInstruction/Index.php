@@ -19,7 +19,7 @@ class Index extends Component
     public string $search = '';
     public string $switch = 'instructionMode';
     public ?int $selectedInstructionId = null;
-    public string $messageType = 'received';
+    public string $messageType = 'all';
 
     protected InstructionServiceInterface $instructionService;
     protected FollowupInstructionServiceInterface $followupInstructionService;
@@ -72,7 +72,7 @@ class Index extends Component
         $forwardedTo = [];
         $endTime = null;
 
-        $messageTypeEnum = MessageType::tryFrom($this->messageType) ?? MessageType::Received;
+        $messageTypeEnum = MessageType::tryFrom($this->messageType) ?? MessageType::All;
 
         if ($this->switch === 'instructionMode') {
 

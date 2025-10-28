@@ -88,11 +88,6 @@
                     Kembali
                 </button>
 
-                {{-- @if ($followupInstructions->isNotEmpty() && Auth::id() !== optional($followupInstructions->first())->receiver_id) --}}
-                <button wire:click="giveScore" class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                    Tambah Penilaian
-                </button>
-                {{-- @endif --}}
             </div>
 
             <div class="overflow-x-auto shadow-md sm:rounded-lg">
