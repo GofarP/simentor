@@ -23,6 +23,7 @@ class Instruction extends Model
     ];
 
     protected $casts = [
+        'start_time'=>'date',
         'end_time' => 'date',
     ];
 

@@ -39,6 +39,9 @@
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">#</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Judul</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Deskripsi</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Waktu Mulai</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Batas Waktu</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jumlah Tindak
                             Lanjut
                         </th>
@@ -54,6 +57,25 @@
                                 <div class="truncate max-w-xs" title="{{ strip_tags($instruction->description) }}">
                                     {!! $instruction->description !!}
                                 </div>
+                            </td>
+                            <td class="px-6 py-4">
+                                {{ $instruction->start_time->format('d-m-Y') }}
+                            </td>
+                             <td class="px-6 py-4">
+                                {{ optional($instruction->end_time)->format('d-m-Y') }}
+                            </td>
+                            <td class="px-6 py-4">
+                                @if ($instruction->is_expired)
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 text-xs font-medium text-red-800 bg-red-100 rounded-full dark:bg-red-900 dark:text-red-300">
+                                        Waktu habis
+                                    </span>
+                                @else
+                                    <span
+                                        class="inline-flex items-center px-3 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full dark:bg-green-900 dark:text-green-300">
+                                        Berlangsung
+                                    </span>
+                                @endif
                             </td>
                             <td class="px-6 py-4">
                                 {{ $instruction->sender_id === Auth::id()
