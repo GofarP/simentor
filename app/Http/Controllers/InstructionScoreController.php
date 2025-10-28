@@ -25,11 +25,11 @@ class InstructionScoreController extends Controller
         $this->instructionService = $instructionService;
         $this->instructionScoreService = $instructionScoreService;
 
-        $this->middleware('permission:view.instruction-score')->only('index');
-        $this->middleware('permission:create.instruction-score')->only(['create', 'store']);
-        $this->middleware('permission:show.instruction-score')->only('show');
-        $this->middleware('permission:edit.instruction-score')->only(['edit', 'update']);
-        $this->middleware('permission:delete.instruction-score')->only('destroy');
+        // $this->middleware('permission:view.instruction-score')->only('index');
+        // $this->middleware('permission:create.instruction-score')->only(['create', 'store']);
+        // $this->middleware('permission:show.instruction-score')->only('show');
+        // $this->middleware('permission:edit.instruction-score')->only(['edit', 'update']);
+        // $this->middleware('permission:delete.instruction-score')->only('destroy');
     }
 
     /**
@@ -37,7 +37,7 @@ class InstructionScoreController extends Controller
      */
     public function index()
     {
-        return view('instruction.index');
+        //
     }
 
     /**
@@ -46,8 +46,7 @@ class InstructionScoreController extends Controller
     public function create()
     {
         $instructionId = session('selectedInstructionId');
-        $instructionId = Instruction::find($instructionId);
-        return view('followupinstructionscore.create', compact('followupInstruction'));
+        return view('instructionscore.create', compact('instructionId'));
     }
 
     /**

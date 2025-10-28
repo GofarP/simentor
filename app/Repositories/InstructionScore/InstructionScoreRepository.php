@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\FollowupInstructionScore;
+namespace App\Repositories\InstructionScore;
 
 use Illuminate\Support\Arr;
 use App\Models\InstructionScore;
@@ -29,7 +29,7 @@ class InstructionScoreRepository implements InstructionScoreRepositoryInterface
         $filteredFields=Arr::only($data, $allowedFields);
         return $instructionScore->update($filteredFields);
     }
-    
+
 
     public function deleteInstructionScore(InstructionScore $instructionScore) {
         return $instructionScore->delete();

@@ -65,5 +65,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('followupinstruction', FollowupInstructionController::class);
     Route::resource('followupcoordination', FollowupCoordinationController::class);
     Route::resource('followupinstructionscore', FollowupInstructionScoreController::class);
-    Route::resource('instructionscore', InstructionScoreController::class);
+    Route::resource('instructionscore', InstructionScoreController::class)->only(['create', 'store', 'edit', 'update', 'destroy']);
 });

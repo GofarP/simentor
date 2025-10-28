@@ -61,7 +61,7 @@
                             <td class="px-6 py-4">
                                 {{ $instruction->start_time->format('d-m-Y') }}
                             </td>
-                             <td class="px-6 py-4">
+                            <td class="px-6 py-4">
                                 {{ optional($instruction->end_time)->format('d-m-Y') }}
                             </td>
                             <td class="px-6 py-4">
@@ -84,15 +84,23 @@
                             </td>
 
                             <td class="px-6 py-4">
-                                <button wire:click="showFollowups({{ $instruction->id }})"
-                                    class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                                    Detail
-                                </button>
+                                <div class="flex items-center gap-2">
+                                    @if ($instruction->is_expired && $instruction->total_followups_count == 0)
+                                        <button wire:click='giveScoreToInstruction({{ $instruction->id }})' class="w-32 justify-center px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                                            Beri Penilaian
+                                        </button>
+                                    @endif
+
+                                    <button wire:click="showFollowups({{ $instruction->id }})"
+                                        class="w-32 justify-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                        Detail
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">Tidak ada data</td>
+                            <td colspan="8" class="px-6 py-4 text-center text-gray-500">Tidak ada data</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -136,33 +144,27 @@
                             @endphp
 
                             <tr>
-                                {{-- No --}}
                                 <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">
                                     {{ $followupInstructions->firstItem() + $index }}
                                 </td>
 
-                                {{-- Pengirim --}}
                                 <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">
                                     {{ $sender->name ?? '-' }}
                                 </td>
 
-                                {{-- Judul Instruksi --}}
                                 <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-200">
                                     {{ $instruction->title ?? '-' }}
                                 </td>
 
-                                {{-- Deskripsi Followup --}}
                                 <td class="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
                                     {!! $followup->description ?? '-' !!}
                                 </td>
 
-                                {{-- Komentar Penilaian --}}
                                 <td class="px-6 py-4 text-sm text-gray-900 dark:text-gray-300">
                                     {!! $scoreModel->comment ?? '-' !!}
                                 </td>
 
-                                {{-- Nilai --}}
-                                {{-- Nilai --}}
+
                                 <td
                                     class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-gray-100 text-center">
                                     @if ($scoreModel && $scoreModel->score === 1)
@@ -197,7 +199,7 @@
                                         @else
                                             {{-- Jika belum ada score, hanya receiver yang bisa menilai --}}
                                             @can('create', $followup)
-                                                <button wire:click="giveScore({{ $followup->id }})"
+                                                <button wire:click="giveScoreToFollowupInstruction({{ $followup->id }})"
                                                     class="flex-1 sm:flex-none px-3 py-2 bg-purple-600 text-white rounded-lg text-center hover:bg-purple-700 transition">
                                                     Beri Penilaian
                                                 </button>
