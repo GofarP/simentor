@@ -66,7 +66,7 @@
                                 {{ optional($instruction)->end_time ? \Carbon\Carbon::parse($instruction->end_time)->format('d-m-Y') : '-' }}
                             </td>
                             <td class="text-center align-middle">
-                              
+
                                 @if ($instruction->is_expired)
                                     <span
                                         class="inline-flex items-center px-3 py-1 text-xs font-medium text-red-800 bg-red-100 rounded-full">
@@ -79,11 +79,12 @@
                                     </span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4">
-                                {{ $instruction->sender_id === Auth::id()
+                            <td class="px-6 py-4 text-center">
+                                {{ $instruction->is_sender || Auth::user()->roles->first()?->name === 'kasubbag'
                                     ? $instruction->total_followups_count ?? 0
                                     : $instruction->user_followups_count ?? 0 }}
                             </td>
+
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-2">
 
@@ -118,7 +119,7 @@
                     Kembali
                 </button>
 
-            
+
                 <div class="flex gap-2">
                     @if (Auth::id() === $instruction->instruction_sender_id && $instruction->is_expired)
                         <a href="{{ route('instruction.edit', $instruction->id) }}"

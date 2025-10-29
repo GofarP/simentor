@@ -47,27 +47,27 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($coordinations as $index => $coordination)
-                            <tr>
-                                <td class="px-6 py-4">{{ $coordinations->firstItem() + $index }}</td>
-                                <td class="px-6 py-4">{{ $coordination->title }}</td>
-                                <td class="px-6 py-4">
-                                    <div class="truncate max-w-xs" title="{{ strip_tags($coordination->description) }}">
-                                        {!! $coordination->description !!}
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4">
-                                    {{ $coordination->sender_id === Auth::id()
-                        ? $coordination->total_followups_count ?? 0
-                        : $coordination->user_followups_count ?? 0 }}
-                                </td>
+                        <tr>
+                            <td class="px-6 py-4">{{ $coordinations->firstItem() + $index }}</td>
+                            <td class="px-6 py-4">{{ $coordination->title }}</td>
+                            <td class="px-6 py-4">
+                                <div class="truncate max-w-xs" title="{{ strip_tags($coordination->description) }}">
+                                    {!! $coordination->description !!}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                {{ $coordination->is_sender || Auth::user()->roles->first()?->name === 'kasubbag'
+                                    ? $coordination->total_followups_count ?? 0
+                                    : $coordination->user_followups_count ?? 0 }}
+                            </td>
 
-                                <td class="px-6 py-4">
-                                    <button wire:click="showFollowups({{ $coordination->id }})"
-                                        class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                                        Detail
-                                    </button>
-                                </td>
-                            </tr>
+                            <td class="px-6 py-4">
+                                <button wire:click="showFollowups({{ $coordination->id }})"
+                                    class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                    Detail
+                                </button>
+                            </td>
+                        </tr>
                     @empty
                         <tr>
                             <td colspan="5" class="px-6 py-4 text-center text-gray-500">Tidak ada data</td>
@@ -102,7 +102,8 @@
                                 Waktu habis
                             </button>
                         @else
-                            <button wire:click="goToCreate" class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            <button wire:click="goToCreate"
+                                class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                                 Tambah Aksi
                             </button>
                         @endif
