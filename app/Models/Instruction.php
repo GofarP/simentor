@@ -23,7 +23,7 @@ class Instruction extends Model
     ];
 
     protected $casts = [
-        'start_time'=>'date',
+        'start_time' => 'date',
         'end_time' => 'date',
     ];
 
@@ -126,5 +126,9 @@ class Instruction extends Model
         return Attribute::make(
             get: fn() => Auth::id() === $this->instruction_sender_id
         );
+    }
+    public function instructionScore()
+    {
+        return $this->hasMany(InstructionScore::class, 'instruction_id');
     }
 }

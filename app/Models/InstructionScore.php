@@ -15,6 +15,6 @@ class InstructionScore extends Model
 
     public function instruction()
     {
-        return $this->belongsTo(FollowupInstruction::class, 'followup_instruction_id');
+        return $this->belongsTo(Instruction::class, 'instruction_id');
     }
 }

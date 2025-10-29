@@ -45,59 +45,90 @@
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jumlah Tindak
                             Lanjut
                         </th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Nilai Instruksi</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Komentar</th>
+                        
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($instructions as $index => $instruction)
-                        <tr>
-                            <td class="px-6 py-4">{{ $instructions->firstItem() + $index }}</td>
-                            <td class="px-6 py-4">{{ $instruction->title }}</td>
-                            <td class="px-6 py-4">
-                                <div class="truncate max-w-xs" title="{{ strip_tags($instruction->description) }}">
-                                    {!! $instruction->description !!}
-                                </div>
-                            </td>
-                            <td class="px-6 py-4">
-                                {{ $instruction->start_time->format('d-m-Y') }}
-                            </td>
-                            <td class="px-6 py-4">
-                                {{ optional($instruction->end_time)->format('d-m-Y') }}
-                            </td>
-                            <td class="px-6 py-4">
-                                @if ($instruction->is_expired)
-                                    <span
-                                        class="inline-flex items-center px-3 py-1 text-xs font-medium text-red-800 bg-red-100 rounded-full dark:bg-red-900 dark:text-red-300">
-                                        Waktu habis
-                                    </span>
-                                @else
-                                    <span
-                                        class="inline-flex items-center px-3 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full dark:bg-green-900 dark:text-green-300">
-                                        Berlangsung
-                                    </span>
-                                @endif
-                            </td>
-                            <td class="px-6 py-4">
-                                {{ $instruction->sender_id === Auth::id()
-                                    ? $instruction->total_followups_count ?? 0
-                                    : $instruction->user_followups_count ?? 0 }}
-                            </td>
-
-                            <td class="px-6 py-4">
-                                <div class="flex items-center gap-2">
-                                    @if ($instruction->is_expired && $instruction->total_followups_count == 0)
-                                        <button wire:click='giveScoreToInstruction({{ $instruction->id }})' class="w-32 justify-center px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
-                                            Beri Penilaian
-                                        </button>
+                            <tr>
+                                <td class="px-6 py-4">{{ $instructions->firstItem() + $index }}</td>
+                                <td class="px-6 py-4">{{ $instruction->title }}</td>
+                                <td class="px-6 py-4">
+                                    <div class="truncate max-w-xs" title="{{ strip_tags($instruction->description) }}">
+                                        {!! $instruction->description !!}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    {{ $instruction->start_time->format('d-m-Y') }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    {{ optional($instruction->end_time)->format('d-m-Y') }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    @if ($instruction->is_expired)
+                                        <span
+                                            class="inline-flex items-center px-3 py-1 text-xs font-medium text-red-800 bg-red-100 rounded-full dark:bg-red-900 dark:text-red-300">
+                                            Waktu habis
+                                        </span>
+                                    @else
+                                        <span
+                                            class="inline-flex items-center px-3 py-1 text-xs font-medium text-green-800 bg-green-100 rounded-full dark:bg-green-900 dark:text-green-300">
+                                            Berlangsung
+                                        </span>
                                     @endif
+                                </td>
 
-                                    <button wire:click="showFollowups({{ $instruction->id }})"
-                                        class="w-32 justify-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                                        Detail
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                                <td class="px-6 py-4">
+                                    {{ $instruction->sender_id === Auth::id()
+                        ? $instruction->total_followups_count ?? 0
+                        : $instruction->user_followups_count ?? 0 
+                                                                                    }}
+                                </td>
+
+                                <td class="text-center">
+                                    @php
+                                        $instructionScoreId=$instruction->instructionScore->first()->id ?? null;
+                                        $score = $instruction->instructionScore->first()->score ?? 'Tidak Diberi Nilai';
+                                        $comment=$instruction->instructionScore->first()->comment ?? 'Tidak ada komentar';
+                                    @endphp
+                                    @if ($score === 1)
+                                        <img src="{{ asset('images/thumbsup.svg') }}" alt="thumbs up" class="w-6 h-6 mx-auto">
+                                    @elseif($score === 0)
+                                        <img src="{{ asset('images/thumbsdown.svg') }}" alt="thumbs up" class="w-6 h-6 mx-auto">
+                                    @else
+                                        {{ $score }}
+                                    @endif
+                                </td>
+                                <td>
+                                    {!! $comment !!}
+                                </td>
+
+                                <td class="px-6 py-4">
+                                    <div class="flex items-center gap-2">
+                                        @if ($instruction->is_expired)
+                                            @if ($instruction->total_followups_count == 0 && !$score)
+                                                <button wire:click='giveScoreToInstruction({{ $instruction->id }})'
+                                                    class="w-32 justify-center px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                                                    Beri Penilaian
+                                                </button>
+                                            @elseif($instruction->total_followups_count == 0 && $score)
+                                                <a href="{{ route('instructionscore.edit', $instructionScoreId)}}"
+                                                    class="w-32 justify-center px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                                                    Edit Penilaian
+                                                </a>
+                                            @endif
+                                        @endif
+
+                                        <button wire:click="showFollowups({{ $instruction->id }})"
+                                            class="w-32 justify-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                            Detail
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                     @empty
                         <tr>
                             <td colspan="8" class="px-6 py-4 text-center text-gray-500">Tidak ada data</td>
@@ -113,8 +144,7 @@
             {{-- FollowupInstruction Mode --}}
         @elseif($switch === 'followupInstructionScoreMode')
             <div class="flex justify-between items-center mb-4 mt-3 px-3">
-                <button wire:click="backToInstructions"
-                    class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                <button wire:click="backToInstructions" class="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700">
                     Kembali
                 </button>
 
@@ -165,14 +195,11 @@
                                 </td>
 
 
-                                <td
-                                    class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-gray-100 text-center">
+                                <td class="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-gray-100 text-center">
                                     @if ($scoreModel && $scoreModel->score === 1)
-                                        <img src="{{ asset('images/thumbsup.svg') }}" alt="thumbs up"
-                                            class="w-6 h-6 mx-auto">
+                                        <img src="{{ asset('images/thumbsup.svg') }}" alt="thumbs up" class="w-6 h-6 mx-auto">
                                     @elseif ($scoreModel && $scoreModel->score === 0)
-                                        <img src="{{ asset('images/thumbsdown.svg') }}" alt="thumbs down"
-                                            class="w-6 h-6 mx-auto">
+                                        <img src="{{ asset('images/thumbsdown.svg') }}" alt="thumbs down" class="w-6 h-6 mx-auto">
                                     @else
                                         <p class="text-gray-500 dark:text-gray-400">Belum diberi nilai</p>
                                     @endif
@@ -182,8 +209,7 @@
                                 <td class="px-6 py-4 text-sm">
                                     <div class="flex flex-wrap sm:flex-nowrap gap-2">
                                         {{-- Tombol Show --}}
-                                        <a href="{{ route('followupinstruction.show', $followup->id) }}"
-                                            target="_blank"
+                                        <a href="{{ route('followupinstruction.show', $followup->id) }}" target="_blank"
                                             class="flex-1 sm:flex-none px-3 py-2 bg-blue-600 text-white rounded-lg text-center hover:bg-blue-700 transition">
                                             Show
                                         </a>

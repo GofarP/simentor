@@ -84,7 +84,7 @@ class InstructionRepository implements InstructionRepositoryInterface
     {
         $userId = Auth::id();
 
-        $query = Instruction::withCount([
+        $query = Instruction::with('instructionScore')->withCount([
             'followups as user_followups_count' => function ($query) use ($userId) {
                 $query->where(function ($sub) use ($userId) {
                     $sub

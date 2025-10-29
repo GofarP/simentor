@@ -148,9 +148,10 @@
                     <tr>
                         <th class="px-6 py-3">#</th>
 
-                        @if ($messageType === 'received')
+                        @if ($messageType == 'received' || $messageType == 'all')
                             <th class="px-6 py-3">Pengirim</th>
-                        @elseif ($messageType === 'sent')
+                        @endif
+                        @if ($messageType == 'sent' || $messageType == 'all')
                             <th class="px-6 py-3">Penerima</th>
                         @endif
 
@@ -172,9 +173,10 @@
                             <td class="px-6 py-4">{{ $followupInstructions->firstItem() + $index }}</td>
 
                             {{-- Tampilkan kolom dinamis berdasarkan jenis pesan --}}
-                            @if ($messageType === 'received')
+                            @if ($messageType === 'received' || $messageType == 'all')
                                 <td class="px-6 py-4">{{ $f->sender->name ?? '-' }}</td>
-                            @elseif ($messageType === 'sent')
+                            @endif
+                            @if ($messageType === 'sent' || $messageType == 'all')
                                 <td class="px-6 py-4">{{ $f->receiver->name ?? '-' }}</td>
                             @endif
 

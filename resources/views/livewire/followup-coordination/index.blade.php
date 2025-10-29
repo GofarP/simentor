@@ -115,9 +115,10 @@
                     <tr>
                         <th class="px-6 py-3">#</th>
 
-                        @if ($messageType === 'received')
+                        @if ($messageType === 'received' || $messageType === 'all')
                             <th class="px-6 py-3">Pengirim</th>
-                        @elseif ($messageType === 'sent')
+                        @endif
+                        @if ($messageType === 'sent' || $messageType === 'all')
                             <th class="px-6 py-3">Penerima</th>
                         @endif
 

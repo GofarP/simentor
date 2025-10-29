@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\MessageType;
 use App\Models\Instruction;
 use Illuminate\Http\Request;
 use App\Models\InstructionScore;
@@ -46,19 +47,21 @@ class InstructionScoreController extends Controller
     public function create()
     {
         $instructionId = session('selectedInstructionId');
-        return view('instructionscore.create', compact('instructionId'));
+        $instructions = $this->instructionService->getAllInstruction(null, 10, MessageType::All, true);
+
+        return view('instructionscore.create', compact('instructionId', 'instructions'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(InstructionRequest $request)
+    public function store(InstructionScoreRequest $request)
     {
         $data = $request->validated();
         $data['user_id'] = Auth::id();
         $this->instructionScoreService->storeInstructionScore($data);
 
-        return redirect()->route('instructionscore.index')->with('success', 'Sukses menambahkan penilaian instruksi');
+        return redirect()->route('followupinstructionscore.index')->with('success', 'Sukses menambahkan penilaian instruksi');
     }
 
     /**
@@ -74,7 +77,8 @@ class InstructionScoreController extends Controller
      */
     public function edit(InstructionScore $instructionscore)
     {
-        return view('instructionscore.edit', compact('instructionscore'));
+        $instructions = $this->instructionService->getAllInstruction(null, 10, MessageType::All, true);
+        return view('instructionscore.edit', compact('instructions','instructionscore'));
     }
 
     /**
@@ -89,7 +93,7 @@ class InstructionScoreController extends Controller
         $this->instructionScoreService->editInstructionScore($instructionscore, $validated);
 
         return redirect()
-            ->route('instructionscore.index')
+            ->route('followupinstructionscore.index')
             ->with('success', 'Penilaian instruksi berhasil diperbarui.');
     }
 

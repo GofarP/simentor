@@ -56,6 +56,9 @@ class FollowupInstruction extends Model
         return $this->hasMany(FollowupInstructionScore::class, 'followup_instruction_id');
     }
 
+
+ 
+
     public function isExpired(): Attribute
     {
         return Attribute::make(
