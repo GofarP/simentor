@@ -67,9 +67,13 @@ class FollowupInstructionPolicy
 
     public function forward(User $user, FollowupInstruction $followupInstruction)
     {
+        if ($user->hasRole('kasubbag') && $user->id == $followupInstruction->sender_id) {
+            return false;
+        }
+
         return (
-            ( $user->id == $followupInstruction->sender_id ||
-               $user->hasRole('kasubbag'))
+            $user->id == $followupInstruction->sender_id ||
+            $user->hasRole('kasubbag')
         );
     }
 }

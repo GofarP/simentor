@@ -9,9 +9,11 @@ use Illuminate\Support\Facades\Storage;
 
 class FollowupInstructionRepository implements FollowupInstructionRepositoryInterface
 {
+
     public function getAll(?int $instructionId, string|null $search = null, int $perPage = 10, MessageType $messageType, bool $eager = false)
     {
         $userId = Auth::id();
+        $user = Auth::user();
 
         $query = FollowupInstruction::query()
             ->where('instruction_id', $instructionId);
@@ -33,6 +35,20 @@ class FollowupInstructionRepository implements FollowupInstructionRepositoryInte
                         $q2->where('forwarded_to', $userId);
                     });
             });
+        } elseif ($messageType === MessageType::All) {
+            // Cek role user
+            $isKasubbagOrKasek = $user->hasAnyRole(['kasubbag', 'kasek']); // sesuaikan dengan method pengecekan role Anda
+
+            if (!$isKasubbagOrKasek) {
+                // Jika staff, tampilkan hanya miliknya (sender atau receiver)
+                $query->where(function ($sub) use ($userId) {
+                    $sub->where('sender_id', $userId)
+                        ->orWhere('receiver_id', $userId)
+                        ->orWhereHas('forwards', function ($q2) use ($userId) {
+                            $q2->where('forwarded_to', $userId);
+                        });
+                });
+            }
         }
 
         return $query->orderByDesc('created_at')
