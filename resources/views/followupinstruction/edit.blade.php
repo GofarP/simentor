@@ -6,7 +6,7 @@
             <h2 class="text-2xl font-bold text-violet-600 mb-6">Edit Tindak Lanjut Instruksi</h2>
 
             <form method="POST" action="{{ route('followupinstruction.update', $followupinstruction->id) }}"
-                enctype="multipart/form-data" 
+                enctype="multipart/form-data"
                 x-on:submit="loading = true; $refs.submitBtn.disabled = true;">
                 @csrf
                 @method('PUT')
@@ -77,7 +77,7 @@
                 </div>
 
                 <div class="mt-6 flex justify-end gap-3">
-                    <a href="{{ route('followupinstruction.index') }}"
+                    <a href="{{ url()->previous() }}"
                         class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">Batal</a>
                     <button x-ref="submitBtn" type="submit"
                         class="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700 transition">
