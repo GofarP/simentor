@@ -9,9 +9,9 @@ use Illuminate\Support\Facades\Storage;
 
 class FollowupCoordinationRepository implements FollowupCoordinationRepositoryInterface
 {
-    public function getAll(int $coordinationId, ?string $search = null, int $perPage = 10, MessageType $messageType, bool $eager = false)
+    public function getAll(?int $coordinationId, string|null $search = null, int $perPage = 10, MessageType $messageType, bool $eager = false)
     {
-        $userId = Auth::id();
+        $user = Auth::user();
 
         $query = FollowupCoordination::query()
             ->where('coordination_id', $coordinationId);
@@ -25,14 +25,26 @@ class FollowupCoordinationRepository implements FollowupCoordinationRepositoryIn
         });
 
         if ($messageType === MessageType::Sent) {
-            $query->where('sender_id', $userId);
+            $query->where('sender_id', $user->id);
         } elseif ($messageType === MessageType::Received) {
-            $query->where(function ($sub) use ($userId) {
-                $sub->where('receiver_id', $userId)
-                    ->orWhereHas('forwards', function ($q2) use ($userId) {
-                        $q2->where('forwarded_to', $userId);
+            $query->where(function ($sub) use ($user) {
+                $sub->where('receiver_id', $user->id)
+                    ->orWhereHas('forwards', function ($q2) use ($user) {
+                        $q2->where('forwarded_to', $user->id);
                     });
             });
+        } elseif ($messageType === MessageType::All) {
+            $isKasubbagOrKasek = $user->hasAnyRole(['kasubbag', 'kasek']);
+
+            if (!$isKasubbagOrKasek) {
+                $query->where(function ($sub) use ($user) {
+                    $sub->where('sender_id', $user->id)
+                        ->orWhere('receiver_id', $user->id)
+                        ->orWhereHas('forwards', function ($q2) use ($user) {
+                            $q2->where('forwarded_to', $user->id);
+                        });
+                });
+            }
         }
 
         return $query->orderByDesc('created_at')

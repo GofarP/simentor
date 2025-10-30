@@ -12,7 +12,6 @@ class FollowupInstructionRepository implements FollowupInstructionRepositoryInte
 
     public function getAll(?int $instructionId, string|null $search = null, int $perPage = 10, MessageType $messageType, bool $eager = false)
     {
-        $userId = Auth::id();
         $user = Auth::user();
 
         $query = FollowupInstruction::query()
@@ -27,25 +26,23 @@ class FollowupInstructionRepository implements FollowupInstructionRepositoryInte
         });
 
         if ($messageType === MessageType::Sent) {
-            $query->where('sender_id', $userId);
+            $query->where('sender_id', $user->id);
         } elseif ($messageType === MessageType::Received) {
-            $query->where(function ($sub) use ($userId) {
-                $sub->where('receiver_id', $userId)
-                    ->orWhereHas('forwards', function ($q2) use ($userId) {
-                        $q2->where('forwarded_to', $userId);
+            $query->where(function ($sub) use ($user) {
+                $sub->where('receiver_id', $user->id)
+                    ->orWhereHas('forwards', function ($q2) use ($user) {
+                        $q2->where('forwarded_to', $user->id);
                     });
             });
         } elseif ($messageType === MessageType::All) {
-            // Cek role user
-            $isKasubbagOrKasek = $user->hasAnyRole(['kasubbag', 'kasek']); // sesuaikan dengan method pengecekan role Anda
+            $isKasubbagOrKasek = $user->hasAnyRole(['kasubbag', 'kasek']);
 
             if (!$isKasubbagOrKasek) {
-                // Jika staff, tampilkan hanya miliknya (sender atau receiver)
-                $query->where(function ($sub) use ($userId) {
-                    $sub->where('sender_id', $userId)
-                        ->orWhere('receiver_id', $userId)
-                        ->orWhereHas('forwards', function ($q2) use ($userId) {
-                            $q2->where('forwarded_to', $userId);
+                $query->where(function ($sub) use ($user) {
+                    $sub->where('sender_id', $user->id)
+                        ->orWhere('receiver_id', $user->id)
+                        ->orWhereHas('forwards', function ($q2) use ($user) {
+                            $q2->where('forwarded_to', $user->id);
                         });
                 });
             }

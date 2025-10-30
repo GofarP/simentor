@@ -74,6 +74,8 @@ class FollowupCoordinationController extends Controller
      */
     public function edit(FollowupCoordination $followupcoordination)
     {
+        $this->authorize('update', $followupcoordination);
+
         $coordinations = $this->coordinationService->getAllCoordination(null, 10, MessageType::All, true);
 
         return view('followupcoordination.edit', compact('followupcoordination', 'coordinations'));
@@ -84,6 +86,8 @@ class FollowupCoordinationController extends Controller
      */
     public function update(Request $request, FollowupCoordination $followupcoordination)
     {
+        $this->authorize('update', $followupcoordination);
+
         $this->followupCoordinationService->editFollowupCoordination($followupcoordination, $request->all());
         return redirect()->route('followupcoordination.index')->with('success', 'Sukses mengubah tindak lanjut koordinasi');
     }
@@ -93,6 +97,8 @@ class FollowupCoordinationController extends Controller
      */
     public function destroy(FollowupCoordination $followupcoordination)
     {
+        $this->authorize('delete', $followupcoordination);
+
         $this->followupCoordinationService->deleteFollowupCoordination($followupcoordination);
         return redirect()->route('followupcoordination.index')->with('success', 'Sukses menghapus tindak lanjut koordinasi');
     }

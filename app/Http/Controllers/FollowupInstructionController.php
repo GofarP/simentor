@@ -79,6 +79,7 @@ class FollowupInstructionController extends Controller
      */
     public function edit(FollowupInstruction $followupinstruction)
     {
+        $this->authorize('update', $followupinstruction);
         $instructions = $this->InstructionServiceInterface->getAllInstruction(null, 10, MessageType::All, true);
         return view('followupinstruction.edit', compact('followupinstruction', 'instructions'));
     }
@@ -88,6 +89,7 @@ class FollowupInstructionController extends Controller
      */
     public function update(FollowupInstructionRequest $request, FollowupInstruction $followupinstruction)
     {
+        $this->authorize('update', $followupinstruction);
         $this->followupInstructionServiceInterface->editFollowupInstruction($followupinstruction, $request->all());
         return redirect()->route('followupinstruction.index')->with('success', 'Sukses mengubah tindak lanjut instruksi');
     }
@@ -97,6 +99,7 @@ class FollowupInstructionController extends Controller
      */
     public function destroy(FollowupInstruction $followupinstruction)
     {
+        $this->authorize('delete', $followupinstruction);
         $this->followupInstructionServiceInterface->deleteFollowupInstruction($followupinstruction);
         return redirect()->route('instruction.index')->with('success', 'Sukses menghapus instruction');
     }
