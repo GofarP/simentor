@@ -177,7 +177,7 @@
                             @if ($messageType === 'received' || $messageType == 'all')
                                 <td class="px-6 py-4">
                                     <span
-                                        class="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded-full text-xs">
+                                        class="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded-full text-xs inline-block mb-1">
                                         {{ $f->sender->name ?? '-' }}
                                     </span>
                                 </td>
@@ -192,22 +192,23 @@
                             @endif
 
                             <td class="px-6 py-4">
-                                <span
-                                    class="px-2 py-1 bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-100 rounded-full text-xs inline-block mb-1">
-                                    @foreach ($f->forwards->unique('forwarded_by') as $forward)
-                                        {{ $forward->forwarder->name ?? '-' }}
-                                    @endforeach
-                                </span>
+                                @if ($f->forwards->isNotEmpty())
+                                    <span
+                                        class="px-2 py-1 bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-100 rounded-full text-xs inline-block mb-1">
+                                        {{ $f->forwards->unique('forwarded_by')->pluck('forwarder.name')->join(', ') }}
+                                    </span>
+                                @endif
                             </td>
 
                             <td class="px-6 py-4">
-                                <span
-                                    class="px-2 py-1 bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 rounded-full text-xs inline-block mb-1">
-                                    @foreach ($f->forwards as $forward)
-                                        {{ $forward->receiver->name ?? '-' }}
-                                    @endforeach
-                                </span>
+                                @if ($f->forwards->isNotEmpty())
+                                    <span
+                                        class="px-2 py-1 bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 rounded-full text-xs inline-block mb-1">
+                                        {{ $f->forwards->pluck('receiver.name')->join(', ') }}
+                                    </span>
+                                @endif
                             </td>
+
 
                             <td class="px-6 py-4">{{ $f->instruction->title ?? '-' }}</td>
                             <td class="px-6 py-4">{!! $f->description !!}</td>
