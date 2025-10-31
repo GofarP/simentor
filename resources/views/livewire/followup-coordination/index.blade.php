@@ -47,27 +47,27 @@
                 </thead>
                 <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                     @forelse($coordinations as $index => $coordination)
-                            <tr>
-                                <td class="px-6 py-4">{{ $coordinations->firstItem() + $index }}</td>
-                                <td class="px-6 py-4">{{ $coordination->title }}</td>
-                                <td class="px-6 py-4">
-                                    <div class="truncate max-w-xs" title="{{ strip_tags($coordination->description) }}">
-                                        {!! $coordination->description !!}
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 text-center">
-                                    {{ $coordination->is_sender || Auth::user()->roles->first()?->name === 'kasubbag'
-                        ? $coordination->total_followups_count ?? 0
-                        : $coordination->user_followups_count ?? 0 }}
-                                </td>
+                        <tr>
+                            <td class="px-6 py-4">{{ $coordinations->firstItem() + $index }}</td>
+                            <td class="px-6 py-4">{{ $coordination->title }}</td>
+                            <td class="px-6 py-4">
+                                <div class="truncate max-w-xs" title="{{ strip_tags($coordination->description) }}">
+                                    {!! $coordination->description !!}
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                {{ $coordination->is_sender || Auth::user()->roles->first()?->name === 'kasubbag'
+                                    ? $coordination->total_followups_count ?? 0
+                                    : $coordination->user_followups_count ?? 0 }}
+                            </td>
 
-                                <td class="px-6 py-4">
-                                    <button wire:click="showFollowups({{ $coordination->id }})"
-                                        class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
-                                        Detail
-                                    </button>
-                                </td>
-                            </tr>
+                            <td class="px-6 py-4">
+                                <button wire:click="showFollowups({{ $coordination->id }})"
+                                    class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                    Detail
+                                </button>
+                            </td>
+                        </tr>
                     @empty
                         <tr>
                             <td colspan="5" class="px-6 py-4 text-center text-gray-500">Tidak ada data</td>
@@ -102,7 +102,8 @@
                                 Waktu habis
                             </button>
                         @else
-                            <button wire:click="goToCreate" class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            <button wire:click="goToCreate"
+                                class="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                                 Tambah Aksi
                             </button>
                         @endif
@@ -140,22 +141,38 @@
                             <td class="px-6 py-4">{{ $followupCoordinations->firstItem() + $index }}</td>
 
                             @if ($messageType === 'received' || $messageType === 'all')
-                                <td class="px-6 py-4">{{ $f->sender->name ?? '-' }}</td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded-full text-xs inline-block mb-1">
+                                        {{ $f->sender->name ?? '-' }}
+                                    </span>
+                                </td>
                             @endif
                             @if ($messageType === 'sent' || $messageType === 'all')
-                                <td class="px-6 py-4">{{ $f->receiver->name ?? '-' }}</td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="px-2 py-1 bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 rounded-full text-xs inline-block mb-1">
+                                        {{ $f->receiver->name ?? '-' }}
+                                    </span>
+                                </td>
                             @endif
 
                             <td class="px-6 py-4">
-                                @foreach ($f->forwards->unique('forwarded_by') as $forward)
-                                    {{ $forward->forwarder->name ?? '-' }}
-                                @endforeach
+                                @if ($f->forwards->isNotEmpty())
+                                    <span
+                                        class="px-2 py-1 bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-100 rounded-full text-xs inline-block mb-1">
+                                        {{ $f->forwards->unique('forwarded_by')->pluck('forwarder.name')->join(', ') }}
+                                    </span>
+                                @endif
                             </td>
 
                             <td class="px-6 py-4">
-                                @foreach ($f->forwards as $forward)
-                                    {{ $forward->receiver->name ?? '-' }}
-                                @endforeach
+                                @if ($f->forwards->isNotEmpty())
+                                    <span
+                                        class="px-2 py-1 bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 rounded-full text-xs inline-block mb-1">
+                                        {{ $f->forwards->pluck('receiver.name')->join(', ') }}
+                                    </span>
+                                @endif
                             </td>
 
                             <td class="px-6 py-4">{{ $f->coordination->title ?? '-' }}</td>
