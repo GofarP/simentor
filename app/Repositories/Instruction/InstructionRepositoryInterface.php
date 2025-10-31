@@ -1,22 +1,30 @@
 <?php
+
 namespace App\Repositories\Instruction;
-use App\Enums\MessageType;
+
 use App\Models\Instruction;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface InstructionRepositoryInterface
 {
+   
+    public function query(): Builder;
 
-    public function getAll(? string $search=null, int $perPage=10, MessageType $messageType  ,bool $eager=false);
-    
-    public function getInstructionsWithFollowupCounts(?string $search = '', int $perPage = 10);
+   
+    public function paginate(Builder $query, int $perPage): LengthAwarePaginator;
 
-    public function storeInstruction(array $data);
-
-    public function editInstruction(Instruction $instruction, array $data);
-
-    public function deleteInstruction(Instruction $instruction):bool;
-
-    public function getSenderIdByInstruction(int $instructionId):?int;
+    public function getInstructionById(int $instructionId): ?Instruction;
 
 
+    public function create(array $data): Instruction;
+
+
+    public function update(Instruction $instruction, array $data): bool;
+
+
+    public function delete(Instruction $instruction): bool;
+
+
+    public function syncReceivers(Instruction $instruction, array $pivotData): void;
 }

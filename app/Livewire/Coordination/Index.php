@@ -39,7 +39,7 @@ class Index extends Component
         // Konversi ke enum
         $messageTypeEnum = MessageType::tryFrom($this->messageType) ?? MessageType::All;
 
-        $coordinations = $this->coordinationService->getAllCoordination(
+        $coordinations = $this->coordinationService->getAllCoordinations(
             $this->search,
             10,
             $messageTypeEnum, true

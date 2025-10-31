@@ -95,7 +95,7 @@ class CoordinationController extends Controller
     {
         $this->authorize('update', $coordination);
         $messageType = $request->query('messageType', 'received');
-        $this->coordinationService->editCoordination($coordination, $request->all());
+        $this->coordinationService->updateCoordination($coordination, $request->all());
         return redirect()->route('coordination.index', ['messageType' => $messageType])->with('success', 'Sukses Mengubah Koordinasi');
     }
 
@@ -118,7 +118,7 @@ class CoordinationController extends Controller
         $userId = Auth::id();
 
 
-        $coordinations = $this->coordinationService->getAllCoordination(
+        $coordinations = $this->coordinationService->getAllCoordinations(
             $search,
             10,
             $messageType,

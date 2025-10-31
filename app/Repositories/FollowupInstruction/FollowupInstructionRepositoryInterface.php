@@ -1,16 +1,24 @@
 <?php
-namespace App\Repositories\FollowupInstruction;
 
-use App\Enums\MessageType;
+namespace App\Repositories\FollowupInstruction; // Sesuaikan namespace Anda
+
 use App\Models\FollowupInstruction;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 
-interface FollowupInstructionRepositoryInterface{
-    public function getAll(int $instructionId,?string $search=null, int $perPage=10,MessageType $messageType ,bool $eager=false);
+interface FollowupInstructionRepositoryInterface
+{
+    
+    public function query(): Builder;
 
-    public function storeFollowupInstruction(array $data);
+    
+    public function paginate(Builder $query, int $perPage): LengthAwarePaginator;
+    
+    
+    public function storeFollowupInstruction(array $data): FollowupInstruction;
 
-    public function editFollowupInstruction(FollowupInstruction $followupInstruction,array $data);
+    
+    public function editFollowupInstruction(FollowupInstruction $followupInstruction, array $data): bool;
 
-    public function deleteFollowupInstruction(FollowupInstruction $followupInstruction):bool;
+    public function deleteFollowupInstruction(FollowupInstruction $followupInstruction): bool;
 }
-

@@ -2,15 +2,30 @@
 
 namespace App\Repositories\Coordination;
 
-use App\Enums\MessageType;
 use App\Models\Coordination;
+use Faker\Core\Coordinates;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
+
 
 interface CoordinationRepositoryInterface
 {
-    public function getAll(?string $search = null, int $perPage = 10, MessageType $messageType, bool $eager = false);    
-    public function getCoordinationsWithFollowupCounts(?string $search = '', int $perPage = 10);
-    public function storeCoordination(array $data);
-    public function editCoordination(Coordination $coordination, array $data);
-    public function deleteCoordination(Coordination $coordination): bool;
-    public function getSenderIdByCoordination(int $id):int;
+     public function query(): Builder;
+
+   
+    public function paginate(Builder $query, int $perPage): LengthAwarePaginator;
+
+    public function getCoordinationById(int $coordinationId): ?Coordination;
+
+
+    public function create(array $data): Coordination;
+
+
+    public function update(Coordination $coordination, array $data): bool;
+
+
+    public function delete(Coordination $coordination): bool;
+
+
+    public function syncReceivers(Coordination $coordination, array $pivotData): void;
 }

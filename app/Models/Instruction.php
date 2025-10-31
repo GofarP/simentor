@@ -65,7 +65,6 @@ class Instruction extends Model
             ->withTimestamps();
     }
 
-    // RELASI LAINNYA
     public function followups()
     {
         return $this->hasMany(FollowupInstruction::class, 'instruction_id');
@@ -131,4 +130,6 @@ class Instruction extends Model
     {
         return $this->hasMany(InstructionScore::class, 'instruction_id');
     }
+
+
 }

@@ -3,13 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Enums\MessageType;
-use App\Http\Requests\FollowupCoordinationRequest;
-use App\Models\FollowupCoordination;
+use Illuminate\Http\Request;
 use App\Models\FollowupInstruction;
+use App\Http\Controllers\Controller;
+use App\Models\FollowupCoordination;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\FollowupCoordinationRequest;
 use App\Services\Coordination\CoordinationServiceInterface;
 use App\Services\FollowupCoordination\FollowupCoordinationService;
 use App\Services\FollowupCoordination\FollowupCoordinationServiceInterface;
-use Illuminate\Http\Request;
 
 class FollowupCoordinationController extends Controller
 {
@@ -26,7 +28,6 @@ class FollowupCoordinationController extends Controller
         $this->middleware('permission:show.followup-coordination')->only('show');
         $this->middleware('permission:edit.followup-coordination')->only(['edit', 'update']);
         $this->middleware('permission:delete.followup-coordination')->only('destroy');
-
     }
     /**
      * Display a listing of the resource.
@@ -42,59 +43,61 @@ class FollowupCoordinationController extends Controller
     public function create()
     {
         $coordinationId = session('selectedCoordinationId');
-        $coordinations = $this->coordinationService->getAllCoordination(null, 10, MessageType::All, false);
+        $coordinations = $this->coordinationService->getAllCoordinations(null, 10, MessageType::All, false);
         return view('followupcoordination.create', compact('coordinations', 'coordinationId'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    
     public function store(FollowupCoordinationRequest $request)
     {
         $data = $request->validated();
-        $data['receiver_id'] = $this->coordinationService->getSenderIdByCoordination($data['coordination_id']);
+        $data['sender_id'] = Auth::id();
+        if ($request->hasFile('attachment')) {
+            $data['attachment'] = $request->file('attachment')->store('attachment', 'public');
+        }
+        if ($request->hasFile('proof')) {
+            $data['proof'] = $request->file('proof')->store('proof', 'public');
+        }
 
-        $this->followupCoordinationService->storeFollowupCoordination($data);
+        try {
+            $this->followupCoordinationService->storeFollowupCoordination($data);
+        } catch (\Exception $e) {
+            return back()->with('error', $e->getMessage());
+        }
+
         session()->forget('selectedCoordinationId');
         return redirect()
-            ->route('followupcoordination.index')
+            ->route('followupinstruction.index')
             ->with('success', 'Sukses menambah tindak lanjut koordinasi');
     }
 
-    /**
-     * Display the specified resource.
-     */
+    
     public function show(FollowupCoordination $followupcoordination)
     {
         return view('followupcoordination.show', compact('followupcoordination'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
+    
     public function edit(FollowupCoordination $followupcoordination)
     {
         $this->authorize('update', $followupcoordination);
-
-        $coordinations = $this->coordinationService->getAllCoordination(null, 10, MessageType::All, true);
-
-        return view('followupcoordination.edit', compact('followupcoordination', 'coordinations'));
+        $coordinations = $this->coordinationService->getAllCoordinations(null, 10, MessageType::All, true);
+        return view('followupcoordination.edit', compact('followupinstruction', 'coordinations'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    
     public function update(Request $request, FollowupCoordination $followupcoordination)
     {
         $this->authorize('update', $followupcoordination);
+        $data = $request->validated();
+        $this->followupCoordinationService->editFollowupCoordination($followupcoordination, $data);
 
-        $this->followupCoordinationService->editFollowupCoordination($followupcoordination, $request->all());
-        return redirect()->route('followupcoordination.index')->with('success', 'Sukses mengubah tindak lanjut koordinasi');
+        return redirect()
+            ->route('followupcoordination.index')
+            ->with('success', 'Tindak lanjut koordinasi berhasil diperbarui.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
+    
     public function destroy(FollowupCoordination $followupcoordination)
     {
         $this->authorize('delete', $followupcoordination);

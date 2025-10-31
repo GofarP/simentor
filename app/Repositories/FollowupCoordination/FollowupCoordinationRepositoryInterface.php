@@ -1,16 +1,25 @@
 <?php
+
 namespace App\Repositories\FollowupCoordination;
 
-use App\Enums\MessageType;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 use App\Models\FollowupCoordination;
 
-interface FollowupCoordinationRepositoryInterface{
-    public function getAll(int $coordinationId, ?string $search=null, int $perPage=10,MessageType $messageType ,bool $eager=false);
+interface FollowupCoordinationRepositoryInterface
+{
 
-    public function storeFollowupCoordination(array $data);
+    public function query(): Builder;
 
-    public function editFollowupCoordination(FollowupCoordination $followupInstruction,array $data);
 
-    public function deleteFollowupCoordination(FollowupCoordination $followupInstruction):bool;
+    public function paginate(Builder $query, int $perPage): LengthAwarePaginator;
+
+
+    public function storeFollowupCoordination(array $data): FollowupCoordination;
+
+
+    public function editFollowupCoordination(FollowupCoordination $followupCoordination, array $data): bool;
+
+    public function deleteFollowupCoordination(FollowupCoordination $followupCoordination): bool;
 }
-

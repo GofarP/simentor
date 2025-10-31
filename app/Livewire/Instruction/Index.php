@@ -4,8 +4,8 @@ namespace App\Livewire\Instruction;
 
 use Livewire\Component;
 use App\Enums\MessageType;
-use Livewire\WithPagination;
 use Livewire\Attributes\Url;
+use Livewire\WithPagination;
 use App\Services\Instruction\InstructionServiceInterface;
 
 class Index extends Component
@@ -37,7 +37,7 @@ class Index extends Component
     {
         $messageTypeEnum = MessageType::tryFrom($this->messageType) ?? MessageType::All;
 
-        $instructions = $this->instructionService->getAllInstruction(
+        $instructions = $this->instructionService->getAllInstructions(
             $this->search,
             10,
             $messageTypeEnum,

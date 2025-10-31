@@ -3,14 +3,13 @@ namespace App\Services\Instruction;
 
 use App\Enums\MessageType;
 use App\Models\Instruction;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 interface InstructionServiceInterface
 {
-    public function getAllInstruction($search=null, int $perPage=10,MessageType $messageType, bool $eager=false);
-    public function getInstructionsWithFollowupCounts(?string $search = '', int $perPage = 10);
-    public function storeInstruction(array $data):Instruction;
-    public function editInstruction(Instruction $instruction, array $data):Instruction;
-    public function deleteInstruction(Instruction $instruction):bool;
-    public function getSenderIdByInstruction(int $instructionId):?int;
-
+    public function getAllInstructions(?string $search, int $perPage, MessageType $messageType, bool $eager): LengthAwarePaginator;
+    public function getInstructionsWithFollowupCounts(?string $search, int $perPage): LengthAwarePaginator;
+    public function storeInstruction(array $data): Instruction;
+    public function updateInstruction(Instruction $instruction, array $data): Instruction;
+    public function deleteInstruction(Instruction $instruction): bool;
 }

@@ -62,7 +62,7 @@
                     </label>
                     <input type="date" name="start_time" id="start_time"
                         value="{{ old('start_time', $coordination->start_time ? \Carbon\Carbon::parse($coordination->start_time)->format('Y-m-d') : '') }}"
-                        class="form-input w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"  min="{{ date('Y-m-d') }}">
+                        class="form-input w-full rounded border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"  min="{{ date('Y-m-d') }}" readonly>
                     @error('start_time')
                         <span class="text-red-600 text-sm mt-1 block">{{ $message }}</span>
                     @enderror

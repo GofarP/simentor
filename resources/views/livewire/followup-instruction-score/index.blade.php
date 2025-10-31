@@ -47,7 +47,7 @@
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Nilai Instruksi</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Komentar</th>
-                        
+
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
@@ -84,22 +84,23 @@
                                 <td class="px-6 py-4">
                                     {{ $instruction->sender_id === Auth::id()
                         ? $instruction->total_followups_count ?? 0
-                        : $instruction->user_followups_count ?? 0 
-                                                                                    }}
+                        : $instruction->user_followups_count ?? 0 }}
                                 </td>
 
+                                @php
+                                    $scoreModel = $instruction->instructionScore->first();
+                                    $instructionScoreId = $scoreModel->id ?? null;
+                                    $scoreValue = $scoreModel->score ?? 'Tidak Diberi Nilai';
+                                    $comment = $scoreModel->comment ?? 'Tidak ada komentar';
+                                @endphp
+
                                 <td class="text-center">
-                                    @php
-                                        $instructionScoreId=$instruction->instructionScore->first()->id ?? null;
-                                        $score = $instruction->instructionScore->first()->score ?? 'Tidak Diberi Nilai';
-                                        $comment=$instruction->instructionScore->first()->comment ?? 'Tidak ada komentar';
-                                    @endphp
-                                    @if ($score === 1)
+                                    @if ($scoreModel && $scoreValue === 1)
                                         <img src="{{ asset('images/thumbsup.svg') }}" alt="thumbs up" class="w-6 h-6 mx-auto">
-                                    @elseif($score === 0)
+                                    @elseif($scoreModel && $scoreValue === 0)
                                         <img src="{{ asset('images/thumbsdown.svg') }}" alt="thumbs up" class="w-6 h-6 mx-auto">
                                     @else
-                                        {{ $score }}
+                                        {{ $scoreValue }}
                                     @endif
                                 </td>
                                 <td>
@@ -108,20 +109,28 @@
 
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-2">
+
                                         @if ($instruction->is_expired)
-                                            @if ($instruction->total_followups_count == 0 && !$score)
-                                                <button wire:click='giveScoreToInstruction({{ $instruction->id }})'
-                                                    class="w-32 justify-center px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
-                                                    Beri Penilaian
-                                                </button>
-                                            @elseif($instruction->total_followups_count == 0 && $score)
-                                                <a href="{{ route('instructionscore.edit', $instructionScoreId)}}"
-                                                    class="w-32 justify-center px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
-                                                    Edit Penilaian
-                                                </a>
+
+                                            @if ($instruction->total_followups_count == 0)
+
+
+                                                @if ($scoreModel)
+                                                    <a href="{{ route('instructionscore.edit', $instructionScoreId)}}"
+                                                        class="w-32 justify-center px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                                                        Edit Penilaian
+                                                    </a>
+                                                @else
+                                                    <button wire:click='giveScoreToInstruction({{ $instruction->id }})'
+                                                        class="w-32 justify-center px-3 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+                                                        Beri Penilaian
+                                                    </button>
+                                                @endif
+
                                             @endif
                                         @endif
 
+                                        {{-- Tombol Detail selalu tampil --}}
                                         <button wire:click="showFollowups({{ $instruction->id }})"
                                             class="w-32 justify-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
                                             Detail

@@ -100,7 +100,7 @@ class InstructionController extends Controller
         $messageType = $request->query('messageType', 'received');
 
         $this->authorize('update', $instruction);
-        $this->instructionService->editInstruction($instruction, $request->all());
+        $this->instructionService->updateInstruction($instruction, $request->all());
         return redirect()->route('instruction.index', ['messageType' => $messageType])
             ->with('success', 'Sukses mengubah instruction');
     }
@@ -132,7 +132,7 @@ class InstructionController extends Controller
         $messageType = MessageType::All;
         $userId = Auth::id();
 
-        $instructions = $this->instructionService->getAllInstruction(
+        $instructions = $this->instructionService->getAllInstructions(
             $search,
             10,
             $messageType,
