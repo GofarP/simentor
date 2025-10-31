@@ -53,8 +53,6 @@ class FollowupInstruction extends Model
     }
 
 
- 
-
     public function isExpired(): Attribute
     {
         return Attribute::make(

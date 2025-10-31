@@ -175,22 +175,38 @@
 
                             {{-- Tampilkan kolom dinamis berdasarkan jenis pesan --}}
                             @if ($messageType === 'received' || $messageType == 'all')
-                                <td class="px-6 py-4">{{ $f->sender->name ?? '-' }}</td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-100 rounded-full text-xs">
+                                        {{ $f->sender->name ?? '-' }}
+                                    </span>
+                                </td>
                             @endif
                             @if ($messageType === 'sent' || $messageType == 'all')
-                                <td class="px-6 py-4">{{ $f->receiver->name ?? '-' }}</td>
+                                <td class="px-6 py-4">
+                                    <span
+                                        class="px-2 py-1 bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100 rounded-full text-xs inline-block mb-1">
+                                        {{ $f->receiver->name ?? '-' }}
+                                    </span>
+                                </td>
                             @endif
 
                             <td class="px-6 py-4">
-                                @foreach ($f->forwards->unique('forwarded_by') as $forward)
-                                    {{ $forward->forwarder->name ?? '-' }}
-                                @endforeach
+                                <span
+                                    class="px-2 py-1 bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-100 rounded-full text-xs inline-block mb-1">
+                                    @foreach ($f->forwards->unique('forwarded_by') as $forward)
+                                        {{ $forward->forwarder->name ?? '-' }}
+                                    @endforeach
+                                </span>
                             </td>
 
                             <td class="px-6 py-4">
-                                @foreach ($f->forwards as $forward)
-                                    {{ $forward->receiver->name ?? '-' }}
-                                @endforeach
+                                <span
+                                    class="px-2 py-1 bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100 rounded-full text-xs inline-block mb-1">
+                                    @foreach ($f->forwards as $forward)
+                                        {{ $forward->receiver->name ?? '-' }}
+                                    @endforeach
+                                </span>
                             </td>
 
                             <td class="px-6 py-4">{{ $f->instruction->title ?? '-' }}</td>
