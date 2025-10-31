@@ -1,13 +1,18 @@
 <?php
-
 namespace App\Repositories\ForwardInstruction;
 
 use App\Models\Instruction;
+use App\Models\ForwardInstruction;
+use Illuminate\Database\Eloquent\Builder;
 
 interface ForwardInstructionRepositoryInterface
 {
-    public function forwardInstruction(Instruction $instruction, array $data);
-    public function deleteForwardInstruction(Instruction $instruction):bool;
 
-    public function getForwardInstruction(Instruction $instruction);
+    public function syncForwardedUsers(Instruction $instruction, array $pivotData);
+
+
+    public function deleteByInstructionId(int $instructionId): bool;
+
+
+    public function getQueryByInstructionId(int $instructionId): Builder;
 }

@@ -1,39 +1,34 @@
 <?php
-
 namespace App\Repositories\ForwardInstruction;
 
-use App\Enums\MessageType;
-use App\Models\ForwardCoordination;
-use App\Models\ForwardInstruction;
 use App\Models\Instruction;
-use App\Repositories\ForwardCoordination\ForwardCoordinationRepositoryInterface;
-use App\Repositories\ForwardInstruction\ForwardInstructionRepositoryInterface;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use App\Models\ForwardInstruction;
+use Illuminate\Database\Eloquent\Builder;
 
 class ForwardInstructionRepository implements ForwardInstructionRepositoryInterface
 {
-    public function forwardInstruction(Instruction $instruction, array $data)
+    /**
+     * Method "Bodoh": Hanya tahu cara sync.
+     */
+    public function syncForwardedUsers(Instruction $instruction, array $pivotData)
     {
-        $forwardedTo = $data['forwarded_to'] ?? [];
-
-        $instruction->forwardedUsers()->sync(
-            collect($forwardedTo)->mapWithKeys(function ($receiverId) {
-                return [$receiverId => ['forwarded_by' => Auth::id()]];
-            })->toArray()
-        );
-
-        return $instruction->forwardedUsers;
+        // Logika sync dipindahkan ke sini
+        return $instruction->forwardedUsers()->sync($pivotData);
     }
 
-    public function deleteForwardInstruction(Instruction $instruction): bool
+    /**
+     * Method "Bodoh": Hanya tahu cara delete.
+     */
+    public function deleteByInstructionId(int $instructionId): bool
     {
-        return ForwardInstruction::where('instruction_id', $instruction->id)->delete();
+        return ForwardInstruction::where('instruction_id', $instructionId)->delete();
     }
 
-
-    public function getForwardInstruction(Instruction $instruction)
+    /**
+     * Method "Bodoh": Hanya tahu cara get query.
+     */
+    public function getQueryByInstructionId(int $instructionId): Builder
     {
-        return ForwardInstruction::where('instruction_id', $instruction->id);
+        return ForwardInstruction::where('instruction_id', $instructionId);
     }
 }
