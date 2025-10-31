@@ -21,8 +21,15 @@ class FollowupCoordinationPolicy
      */
     public function view(User $user, FollowupCoordination $followupCoordination): bool
     {
-        return $user->id === $followupCoordination->sender_id ||
-            $user->id === $followupCoordination->receiver_id;
+        return
+            $user->id === $followupCoordination->sender_id ||
+            $user->id === $followupCoordination->receiver_id ||
+            $followupCoordination->forwards()
+            ->where(function ($q) use ($user) {
+                $q->where('forwarded_to', $user->id)
+                    ->orWhere('forwarded_by', $user->id);
+            })->exists() ||
+            $user->hasRole('kasubbag');
     }
 
     /**
