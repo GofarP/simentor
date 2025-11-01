@@ -1,40 +1,31 @@
 <?php
+namespace App\Repositories\ForwardCoordination;
 
-namespace App\Repositories\forwardCoordination;
-
-use App\Enums\MessageType;
 use App\Models\Coordination;
 use App\Models\ForwardCoordination;
-use App\Models\ForwardInstruction;
-use App\Models\Instruction;
-use App\Repositories\ForwardCoordination\ForwardCoordinationRepositoryInterface;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Database\Eloquent\Builder;
+
+
 
 class ForwardCoordinationRepository implements ForwardCoordinationRepositoryInterface
 {
-    public function forwardCoordination(Coordination $coordination, array $data)
+
+    public function syncForwardedUsers(Coordination $instruction, array $pivotData)
     {
-        $forwardedRecords = [];
-
-        foreach ($data['forwarded_to'] as $receiverId) {
-            $forwardedRecords[] = ForwardCoordination::create([
-                'coordination_id' => $coordination->id,
-                'forwarded_by' => Auth::id(),
-                'forwarded_to' => $receiverId,
-            ]);
-        }
-
-        return $forwardedRecords;
+        return $instruction->forwardedUsers()->sync($pivotData);
     }
 
-    public function deleteForwardCoordination(Coordination $coordination): bool
+
+    public function deleteByCoordinationId(int $coordinationId): bool
     {
-        return ForwardCoordination::where('coordination_id', $coordination->id)->delete();
+        return ForwardCoordination::where('coordination_id', $coordinationId)->delete();
     }
 
 
-    public function getForwardCoordination(Coordination $coordination){
-        return ForwardCoordination::where('coordination_id',$coordination->id);
+    public function getQueryByCoordinationId(int $coordinationId): Builder
+    {
+        return ForwardCoordination::where('coordination_id', $coordinationId);
+
     }
+
 }

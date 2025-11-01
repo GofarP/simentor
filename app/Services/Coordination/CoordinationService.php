@@ -75,11 +75,11 @@ class CoordinationService implements CoordinationServiceInterface
                   ->orWhereHas('forwards.receiver', fn($sub) => $sub->where('name', 'like', "%{$search}%"));
             });
         }
-        
+
         return $this->coordinationRepository->paginate($query, $perPage);
     }
 
-   
+
     public function getCoordinationsWithFollowupCounts(?string $search = '', int $perPage = 10): LengthAwarePaginator
     {
         $userId = Auth::id();
@@ -125,7 +125,7 @@ class CoordinationService implements CoordinationServiceInterface
         return $this->coordinationRepository->paginate($query, $perPage);
     }
 
-  
+
     public function storeCoordination(array $data): Coordination
     {
         return DB::transaction(function () use ($data) {
@@ -159,7 +159,7 @@ class CoordinationService implements CoordinationServiceInterface
         });
     }
 
- 
+
     public function updateCoordination(Coordination $coordination, array $data): Coordination
     {
         return DB::transaction(function () use ($coordination, $data) {
@@ -184,14 +184,14 @@ class CoordinationService implements CoordinationServiceInterface
             foreach ($receiverIds as $receiverId) {
                 $pivotData[$receiverId] = ['sender_id' => $senderId];
             }
-            
+
             $this->coordinationRepository->syncReceivers($coordination, $pivotData);
 
             return $coordination;
         });
     }
 
-   
+
     public function deleteCoordination(Coordination $coordination): bool
     {
         return DB::transaction(function () use ($coordination) {

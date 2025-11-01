@@ -2,7 +2,6 @@
 namespace App\Repositories\ForwardInstruction;
 
 use App\Models\Instruction;
-use App\Models\ForwardInstruction;
 use Illuminate\Database\Eloquent\Builder;
 
 interface ForwardInstructionRepositoryInterface

@@ -2,14 +2,17 @@
 
 namespace App\Repositories\ForwardCoordination;
 
-use App\Enums\MessageType;
+
 use App\Models\Coordination;
-use App\Models\ForwardCoordination;
+use Illuminate\Database\Eloquent\Builder;
 
 interface ForwardCoordinationRepositoryInterface
 {
-    public function forwardCoordination(Coordination $coordination, array $data);
-    public function deleteForwardCoordination(Coordination $forwardCoordination):bool;
+    public function syncForwardedUsers(Coordination $coordination, array $pivotData);
 
-    public function getForwardCoordination(Coordination $forwardCoordination);
+
+    public function deleteByCoordinationId(int $coordinationId): bool;
+
+
+    public function getQueryByCoordinationId(int $coordinationId): Builder;
 }
