@@ -1,44 +1,44 @@
 <?php
 
-namespace App\Repositories\Permission;
+namespace App\Repositories\Permission; // Sesuaikan namespace
 
-use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class PermissionRepository implements PermissionRepositoryInterface
 {
-    public function getAll(?string $search = '', int $perPage = 10, bool $eager = false)
+    public function query(): Builder
     {
-        $query = Permission::query();
-
-        if ($search) {
-            $query->where('name', 'like', '%' . $search . '%');
-        }
-
-        $query->orderByDesc('created_at');
-
-        if ($eager) {
-            return $query->get();
-        }
-
-        return $query->paginate($perPage)->onEachSide(1);
+        return Permission::query();
     }
 
+    public function paginate(Builder $query, int $perPage): LengthAwarePaginator
+    {
+        return $query->orderByDesc('created_at')
+                     ->paginate($perPage)
+                     ->onEachSide(1);
+    }
 
-    public function storePermission(array $data)
+    public function get(Builder $query): Collection
+    {
+        return $query->orderByDesc('created_at')->get();
+    }
+
+    public function create(array $data): Permission
     {
         return Permission::create($data);
     }
 
-    public function editPermission(Permission $permission, array $data)
+    public function update(Permission $permission, array $data): bool
     {
-        $permission->update($data);
-        return $permission;
+        return $permission->update($data);
     }
 
-    public function deletePermission(Permission $permission): bool
+    public function delete(Permission $permission): bool
     {
-        return $permission->delete();
+       return $permission->delete();
     }
 
     public function getNamesByIds(array $ids): Collection

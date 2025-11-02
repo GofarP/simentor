@@ -36,9 +36,17 @@ class FollowupInstructionPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user, FollowupInstruction $followup): bool
+    public function create(User $user, FollowupInstruction $followupInstruction): bool
     {
-        return $user->id === $followup->receiver_id;
+        return
+            $user->id === $followupInstruction->sender_id ||
+            $user->id === $followupInstruction->receiver_id ||
+            $followupInstruction->forwards()
+            ->where(function ($q) use ($user) {
+                $q->where('forwarded_to', $user->id)
+                    ->orWhere('forwarded_by', $user->id);
+            })->exists() ||
+            $user->hasRole('kasubbag');
     }
 
     /**
@@ -46,7 +54,15 @@ class FollowupInstructionPolicy
      */
     public function update(User $user, FollowupInstruction $followupInstruction): bool
     {
-        return $user->id === $followupInstruction->sender_id;
+        return
+            $user->id === $followupInstruction->sender_id ||
+            $user->id === $followupInstruction->receiver_id ||
+            $followupInstruction->forwards()
+            ->where(function ($q) use ($user) {
+                $q->where('forwarded_to', $user->id)
+                    ->orWhere('forwarded_by', $user->id);
+            })->exists() ||
+            $user->hasRole('kasubbag');
     }
 
     /**

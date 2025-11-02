@@ -27,7 +27,7 @@ class Index extends Component
 
     public function render()
     {
-        $users=$this->userService->getAllUser($this->search,10);
+        $users=$this->userService->getAllUsers($this->search,10, false);
         return view('livewire.user.index',[
             'users'=>$users
         ]);

@@ -1,15 +1,32 @@
 <?php
-namespace App\Repositories\Permission;
 
-use Illuminate\Support\Collection;
+namespace App\Repositories\Permission; // Sesuaikan namespace
+
 use Spatie\Permission\Models\Permission;
-
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 interface PermissionRepositoryInterface
 {
-    public function getAll(?string $search = '', int $perPage = 10, bool $eager=false);
-    public function storePermission(array $data);
-    public function editPermission(Permission $permission, array $data);
-    public function deletePermission(Permission $permission): bool;
+   
+    public function query(): Builder;
+
+
+    public function paginate(Builder $query, int $perPage): LengthAwarePaginator;
+
+
+    public function get(Builder $query): Collection;
+
+
+    public function create(array $data): Permission;
+
+
+    public function update(Permission $permission, array $data): bool;
+
+
+    public function delete(Permission $permission): bool;
+
+
     public function getNamesByIds(array $ids): Collection;
 }

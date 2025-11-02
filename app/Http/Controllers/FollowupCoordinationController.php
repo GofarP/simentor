@@ -47,7 +47,7 @@ class FollowupCoordinationController extends Controller
         return view('followupcoordination.create', compact('coordinations', 'coordinationId'));
     }
 
-    
+
     public function store(FollowupCoordinationRequest $request)
     {
         $data = $request->validated();
@@ -71,22 +71,22 @@ class FollowupCoordinationController extends Controller
             ->with('success', 'Sukses menambah tindak lanjut koordinasi');
     }
 
-    
+
     public function show(FollowupCoordination $followupcoordination)
     {
         return view('followupcoordination.show', compact('followupcoordination'));
     }
 
-    
+
     public function edit(FollowupCoordination $followupcoordination)
     {
         $this->authorize('update', $followupcoordination);
         $coordinations = $this->coordinationService->getAllCoordinations(null, 10, MessageType::All, true);
-        return view('followupcoordination.edit', compact('followupinstruction', 'coordinations'));
+        return view('followupcoordination.edit', compact('followupcoordination', 'coordinations'));
     }
 
-    
-    public function update(Request $request, FollowupCoordination $followupcoordination)
+
+    public function update(FollowupCoordinationRequest $request, FollowupCoordination $followupcoordination)
     {
         $this->authorize('update', $followupcoordination);
         $data = $request->validated();
@@ -97,7 +97,7 @@ class FollowupCoordinationController extends Controller
             ->with('success', 'Tindak lanjut koordinasi berhasil diperbarui.');
     }
 
-    
+
     public function destroy(FollowupCoordination $followupcoordination)
     {
         $this->authorize('delete', $followupcoordination);

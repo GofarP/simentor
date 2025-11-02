@@ -1,91 +1,63 @@
 <?php
 
-namespace App\Repositories\User;
+namespace App\Repositories\User; // Sesuaikan namespace Anda
 
 use App\Models\User;
-use Illuminate\Support\Collection;
 use Spatie\Permission\Models\Role;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 class UserRepository implements UserRepositoryInterface
 {
-    public function getAll(?string $search = '', int $perPage = 10, bool $eager = false)
+    public function query(): Builder
     {
-        $query = User::with('roles');
-        if ($search) {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('email', 'like', '%' . $search . '%')
-                    ->orWhere('telp', 'like', '%' . $search . '%');
-            })
-            ->orWhereHas('roles', function ($q) use ($search) {
-                    $q->where('name', 'like', '%' . $search . '%');
-            });
-        }
-
-
-        $query->orderByDesc('created_at');
-
-        if ($eager) {
-            return $query->get();
-        }
-
-        return $query->paginate($perPage)->onEachSide(1);
+        return User::query();
     }
 
-
-    public function storeUser(array $data)
+    public function paginate(Builder $query, int $perPage): LengthAwarePaginator
     {
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-            'telp' => $data['telp'] ?? null,
-        ]);
-
-        if (!empty($data['role_id'])) {
-            $role = Role::find($data['role_id']);
-            if ($role) {
-                $user->assignRole($role);
-            }
-        }
-
-        return $user;
+        return $query->orderByDesc('created_at')
+                     ->paginate($perPage)
+                     ->onEachSide(1);
     }
 
-
-    public function editUser(User $user, array $data): User
+    public function get(Builder $query): Collection
     {
-        // Jika password kosong, jangan update
-        if (empty($data['password'])) {
-            unset($data['password']);
-        } else {
-            $data['password'] = bcrypt($data['password']);
-        }
-
-        $user->update($data);
-
-        // Sinkronisasi role
-        if (!empty($data['role_id'])) {
-            $role = Role::find($data['role_id']);
-            if ($role) {
-                $user->syncRoles([$role->name]);
-            }
-        }
-
-        return $user;
+        return $query->orderByDesc('created_at')->get();
     }
 
-    public function deleteUser(User $user): bool
+    public function create(array $data): User
     {
-        $user->syncRoles([]);
-        $user->delete();
-        return true;
+        // Hanya create. Hashing password dilakukan di Service.
+        return User::create($data);
     }
 
-    public function getReceiver()
+    public function update(User $user, array $data): bool
     {
-        return User::where('id','!=',Auth::user()->id)->get();
+        // Hanya update. Hashing password dilakukan di Service.
+        return $user->update($data);
+    }
+
+    public function delete(User $user): bool
+    {
+       // Hanya delete. Sync roles dilakukan di Service.
+       return $user->delete();
+    }
+
+    public function assignRole(User $user, Role $role): void
+    {
+        $user->assignRole($role);
+    }
+
+    public function syncRoles(User $user, array $roleNames): void
+    {
+        $user->syncRoles($roleNames);
+    }
+
+    public function getWhereNotId(int $userId): Collection
+    {
+        // Repo "bodoh" ini menerima ID dari Service
+        return User::where('id', '!=', $userId)->get();
     }
 }

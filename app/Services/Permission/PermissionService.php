@@ -2,36 +2,55 @@
 
 namespace App\Services\Permission;
 
-use App\Repositories\Permission\PermissionRepositoryInterface;
 use Spatie\Permission\Models\Permission;
-
+use App\Repositories\Permission\PermissionRepositoryInterface;
+use Illuminate\Support\Collection;
 
 class PermissionService implements PermissionServiceInterface
 {
-    protected PermissionRepositoryInterface $permissionRepository;
+    protected $permissionRepository;
 
     public function __construct(PermissionRepositoryInterface $permissionRepository)
     {
         $this->permissionRepository = $permissionRepository;
     }
 
-    public function getAllPermissions( $search = null, int $perPage = 10, bool $eager = false)
+
+    public function getAllPermissions(?string $search = '', int $perPage = 10, bool $eager = false)
     {
-        return $this->permissionRepository->getAll($search, $perPage, $eager);
+        $query = $this->permissionRepository->query();
+
+        if (!empty($search)) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+
+        if ($eager) {
+            return $this->permissionRepository->get($query);
+        }
+
+        return $this->permissionRepository->paginate($query, $perPage);
     }
+
 
     public function storePermission(array $data): Permission
     {
-        return $this->permissionRepository->storePermission($data);
+        return $this->permissionRepository->create($data);
     }
 
-    public function editPermission(Permission $permission, array $data): Permission
+    public function editPermission(Permission $permission, array $data): bool
     {
-        return $this->permissionRepository->editPermission($permission, $data);
+        return $this->permissionRepository->update($permission, $data);
     }
+
 
     public function deletePermission(Permission $permission): bool
     {
-        return $this->permissionRepository->deletePermission($permission);
+        return $this->permissionRepository->delete($permission);
+    }
+
+
+    public function getNamesByIds(array $ids): Collection
+    {
+        return $this->permissionRepository->getNamesByIds($ids);
     }
 }

@@ -2,34 +2,73 @@
 
 namespace App\Services\Role;
 
+use Spatie\Permission\Models\Role;
 use App\Repositories\Role\RoleRepositoryInterface;
 use App\Repositories\Permission\PermissionRepositoryInterface;
-use Spatie\Permission\Models\Role;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
 class RoleService implements RoleServiceInterface
 {
+    protected $roleRepository;
+    protected $permissionRepository;
+
     public function __construct(
-        protected RoleRepositoryInterface $roleRepository,
-        protected PermissionRepositoryInterface $permissionRepository
+        RoleRepositoryInterface $roleRepository,
+        PermissionRepositoryInterface $permissionRepository
     ) {
+        $this->roleRepository = $roleRepository;
+        $this->permissionRepository = $permissionRepository;
     }
 
-    public function getAllRoles(?string $search = null, int $perPage = 10, bool $eager = false): LengthAwarePaginator|Collection
+
+    public function getAllRoles(?string $search = '', int $perPage = 10, bool $eager = false)
     {
-        return $this->roleRepository->getAll($search, $perPage, $eager);
+        $query = $this->roleRepository->query();
+
+        $query->with('permissions');
+
+        if (!empty($search)) {
+            $query->where('name', 'like', '%' . $search . '%');
+        }
+
+
+        if ($eager) {
+            return $this->roleRepository->get($query);
+        }
+
+        return $this->roleRepository->paginate($query, $perPage);
     }
+
 
     public function storeRole(array $data, array $permissionIds = []): Role
     {
-        return $this->roleRepository->store($data, $permissionIds);
+        return DB::transaction(function () use ($data, $permissionIds) {
+            $role = $this->roleRepository->create($data);
+
+            if (!empty($permissionIds)) {
+                $permissionNames = $this->permissionRepository->getNamesByIds($permissionIds)->toArray();
+
+                $this->roleRepository->syncPermissions($role, $permissionNames);
+            }
+            return $role;
+        });
     }
 
-    public function editRole(Role $role, array $data, array $permissionIds = []): Role
+
+    public function updateRole(Role $role, array $data, array $permissionIds = []): Role
     {
-        return $this->roleRepository->update($role, $data, $permissionIds);
+        return DB::transaction(function () use ($role, $data, $permissionIds) {
+            $this->roleRepository->update($role, $data);
+
+            $permissionNames = $this->permissionRepository->getNamesByIds($permissionIds)->toArray();
+
+            $this->roleRepository->syncPermissions($role, $permissionNames);
+
+            return $role;
+        });
     }
+
 
     public function deleteRole(Role $role): bool
     {

@@ -2,36 +2,38 @@
 
 namespace App\Repositories\InstructionScore;
 
-use Illuminate\Support\Arr;
 use App\Models\InstructionScore;
-use App\Repositories\InstructionScore\InstructionScoreRepositoryInterface;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class InstructionScoreRepository implements InstructionScoreRepositoryInterface
 {
-    public function getAllInstructionStore(?string $search = null, int $id, int $perPage = 10)
+    public function query(): Builder
     {
-        return InstructionScore::with('instruction')
-            ->whereHas('instruction', function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            })
-            ->orderByDesc('created_at')
-            ->paginate(10);
+        return InstructionScore::query();
     }
 
-    public function storeInstructionScore(array $data) {
+    public function paginate(Builder $query, int $perPage): LengthAwarePaginator
+    {
+        return $query->orderByDesc('created_at')
+                     ->paginate($perPage)
+                     ->onEachSide(1);
+    }
+
+    public function store(array $data): InstructionScore
+    {
         return InstructionScore::create($data);
     }
 
-
-    public function editInstructionScore(InstructionScore $instructionScore, array $data) {
-        $allowedFields=['user_id','score','comment'];
-        $filteredFields=Arr::only($data, $allowedFields);
-        return $instructionScore->update($filteredFields);
+    public function update(InstructionScore $instructionScore, array $data): bool
+    {
+        // Hanya update.
+        return $instructionScore->update($data);
     }
 
-
-    public function deleteInstructionScore(InstructionScore $instructionScore) {
-        return $instructionScore->delete();
+    public function delete(InstructionScore $instructionScore): bool
+    {
+       // Hanya delete.
+       return $instructionScore->delete();
     }
 }

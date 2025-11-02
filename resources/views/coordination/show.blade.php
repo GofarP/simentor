@@ -57,7 +57,7 @@
 
             {{-- Tombol Aksi --}}
             <div class="mt-6 flex justify-end">
-                <a href="{{ route('coordination.index') }}"
+                <a href="{{ url()->previous() }}"
                     class="px-4 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition">
                     Kembali
                 </a>

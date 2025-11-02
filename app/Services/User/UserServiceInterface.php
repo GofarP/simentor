@@ -1,15 +1,34 @@
 <?php
 
-namespace App\Services\User;
+namespace App\Services\User; // Sesuaikan namespace Anda
 
 use App\Models\User;
+use Illuminate\Support\Collection;
 
 interface UserServiceInterface
 {
-    public function getAllUser($search = null, int $perPage = 10, bool $eager = false);
-    public function storeUser(array $data): User;
-    public function editUser(User $permission, array $data): User;
-    public function deleteUser(User $permission): bool;
-    public function getReceiver();
+    /**
+     * Mengambil daftar user dengan filter.
+     */
+    public function getAllUsers(?string $search, int $perPage, bool $eager);
 
+    /**
+     * Menjalankan logika bisnis untuk menyimpan user baru.
+     */
+    public function storeUser(array $data): User;
+
+    /**
+     * Menjalankan logika bisnis untuk mengedit user.
+     */
+    public function editUser(User $user, array $data): User;
+
+    /**
+     * Menjalankan logika bisnis untuk menghapus user.
+     */
+    public function deleteUser(User $user): bool;
+
+    /**
+     * Mengambil daftar user penerima (selain diri sendiri).
+     */
+    public function getReceiver(): Collection;
 }

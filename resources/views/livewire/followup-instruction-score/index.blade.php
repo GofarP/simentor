@@ -225,14 +225,13 @@
 
                                         {{-- Jika sudah ada score --}}
                                         @if ($scoreModel)
-                                            @can('update', $scoreModel)
+                                            @can('update',$scoreModel->followupInstruction )
                                                 <a href="{{ route('followupinstructionscore.edit', $scoreModel->id) }}"
                                                     class="flex-1 sm:flex-none px-3 py-2 bg-purple-600 text-white rounded-lg text-center hover:bg-purple-700 transition">
                                                     Edit Penilaian
                                                 </a>
                                             @endcan
                                         @else
-                                            {{-- Jika belum ada score, hanya receiver yang bisa menilai --}}
                                             @can('create', $followup)
                                                 <button wire:click="giveScoreToFollowupInstruction({{ $followup->id }})"
                                                     class="flex-1 sm:flex-none px-3 py-2 bg-purple-600 text-white rounded-lg text-center hover:bg-purple-700 transition">
